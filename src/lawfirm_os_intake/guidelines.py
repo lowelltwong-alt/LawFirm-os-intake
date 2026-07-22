@@ -668,9 +668,7 @@ def _project_line(
     # Task-hour cap is attributed before rate caps: scale the rate-shaped compliant
     # fees down to the capped compliant hours. The reduction is a distinct,
     # additive attribution and never overlaps the rate/staffing deltas below.
-    effective_compliant_hours = (
-        line.estimated_hours if compliant_hours is None else compliant_hours
-    )
+    effective_compliant_hours = line.estimated_hours if compliant_hours is None else compliant_hours
     task_hour_cap_applied = (
         line.estimated_hours > 0 and effective_compliant_hours < line.estimated_hours
     )

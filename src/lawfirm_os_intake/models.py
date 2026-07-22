@@ -9048,7 +9048,9 @@ class AdjustmentLedger(StrictModel):
             raise ValueError("adjustment ledger entries must be in declared attribution order")
         recomputed: dict[str, int] = {}
         for entry in self.entries:
-            recomputed[entry.rule_kind] = recomputed.get(entry.rule_kind, 0) + entry.delta_minor_units
+            recomputed[entry.rule_kind] = (
+                recomputed.get(entry.rule_kind, 0) + entry.delta_minor_units
+            )
         if recomputed != {kind: total for kind, total in self.category_delta_minor_units.items()}:
             raise ValueError("adjustment ledger category deltas do not equal the sum of entries")
         if self.total_delta_minor_units != sum(entry.delta_minor_units for entry in self.entries):

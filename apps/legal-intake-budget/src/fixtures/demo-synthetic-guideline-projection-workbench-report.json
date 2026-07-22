@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "synthetic_guideline_projection_workbench_report_id": "synguidelineprojection-ecf27d414a2bc189",
+  "synthetic_guideline_projection_workbench_report_id": "synguidelineprojection-f091734649c1b224",
   "status": "synthetic_guideline_projection_workbench_ready_for_review",
   "methodology_version": "synthetic_guideline_projection_workbench.v0_1",
   "budget_proposal_id": "synthetic-guideline-projection-medmal.v0_1",
@@ -45,34 +45,210 @@
           "proposal_lines_unchanged": true,
           "no_submission_authority": true
         },
+        "pack_selection": {
+          "schema_version": "0.1",
+          "status": "selected",
+          "confirmed_carrier_id": "synthetic-carrier-a",
+          "confirmed_program": null,
+          "confirmed_jurisdiction": null,
+          "as_of": null,
+          "considered_packs": [
+            {
+              "pack_id": "synthetic-carrier-a",
+              "carrier_name": "Harbor Point Insurance",
+              "included": true,
+              "exclusion_reason": null
+            },
+            {
+              "pack_id": "synthetic-carrier-b",
+              "carrier_name": "Cascade Mutual",
+              "included": false,
+              "exclusion_reason": "confirmed_carrier_id_mismatch"
+            }
+          ],
+          "selected_pack_id": "synthetic-carrier-a",
+          "selected_revision": "0.1",
+          "selected_content_hash": "sha256:7714dd0d1511c7b9d91f7d54089ec96e0a277f4796895075655ae65bb55da320",
+          "blocked_reason": null,
+          "data_scope": "synthetic_only",
+          "candidate_only": true,
+          "non_authoritative": true,
+          "not_authorized_for_client_submission": true
+        },
+        "adjustment_ledger": {
+          "schema_version": "0.1",
+          "currency": "USD",
+          "attribution_order": [
+            "pack_effective_selection",
+            "task_hour_cap",
+            "staffing_rule",
+            "rate_cap",
+            "expense_cap",
+            "disallowance",
+            "contingency",
+            "preapproval_unsupported"
+          ],
+          "entries": [
+            {
+              "order_index": 0,
+              "rule_kind": "pack_effective_selection",
+              "rule_id": "pack::synthetic-carrier-a@0.1",
+              "line_id": null,
+              "phase_id": null,
+              "task_id": null,
+              "before_minor_units": 0,
+              "after_minor_units": 0,
+              "delta_minor_units": 0,
+              "note": "Selected candidate guideline pack for the confirmed carrier."
+            },
+            {
+              "order_index": 1,
+              "rule_kind": "task_hour_cap",
+              "rule_id": "task_hour_cap::synthetic-carrier-a::bl-fc454115ccac788d",
+              "line_id": "bl-fc454115ccac788d",
+              "phase_id": "L300",
+              "task_id": "L330",
+              "before_minor_units": 2640000,
+              "after_minor_units": 1340000,
+              "delta_minor_units": 1300000,
+              "note": ""
+            },
+            {
+              "order_index": 2,
+              "rule_kind": "staffing_rule",
+              "rule_id": "staffing_rule::synthetic-carrier-a::bl-8fbe2ee76bd0983e",
+              "line_id": "bl-8fbe2ee76bd0983e",
+              "phase_id": "L300",
+              "task_id": "L310",
+              "before_minor_units": 1130000,
+              "after_minor_units": 734000,
+              "delta_minor_units": 396000,
+              "note": ""
+            },
+            {
+              "order_index": 3,
+              "rule_kind": "rate_cap",
+              "rule_id": "rate_cap::synthetic-carrier-a::bl-840795360bc7361f",
+              "line_id": "bl-840795360bc7361f",
+              "phase_id": "L100",
+              "task_id": "L130",
+              "before_minor_units": 540000,
+              "after_minor_units": 510000,
+              "delta_minor_units": 30000,
+              "note": ""
+            },
+            {
+              "order_index": 3,
+              "rule_kind": "rate_cap",
+              "rule_id": "rate_cap::synthetic-carrier-a::bl-66db624ab50c3779",
+              "line_id": "bl-66db624ab50c3779",
+              "phase_id": "L200",
+              "task_id": "L240",
+              "before_minor_units": 1880000,
+              "after_minor_units": 1780000,
+              "delta_minor_units": 100000,
+              "note": ""
+            },
+            {
+              "order_index": 3,
+              "rule_kind": "rate_cap",
+              "rule_id": "rate_cap::synthetic-carrier-a::bl-f4871f80efa63865",
+              "line_id": "bl-f4871f80efa63865",
+              "phase_id": "L300",
+              "task_id": "L340",
+              "before_minor_units": 4080000,
+              "after_minor_units": 4020000,
+              "delta_minor_units": 60000,
+              "note": ""
+            },
+            {
+              "order_index": 4,
+              "rule_kind": "expense_cap",
+              "rule_id": "expense_cap::synthetic-carrier-a::bl-fc454115ccac788d",
+              "line_id": "bl-fc454115ccac788d",
+              "phase_id": "L300",
+              "task_id": "L330",
+              "before_minor_units": 2640000,
+              "after_minor_units": 2580000,
+              "delta_minor_units": 60000,
+              "note": ""
+            },
+            {
+              "order_index": 4,
+              "rule_kind": "expense_cap",
+              "rule_id": "expense_cap::synthetic-carrier-a::bl-f4871f80efa63865",
+              "line_id": "bl-f4871f80efa63865",
+              "phase_id": "L300",
+              "task_id": "L340",
+              "before_minor_units": 4080000,
+              "after_minor_units": 3580000,
+              "delta_minor_units": 500000,
+              "note": ""
+            },
+            {
+              "order_index": 6,
+              "rule_kind": "contingency",
+              "rule_id": "contingency::synthetic-carrier-a",
+              "line_id": null,
+              "phase_id": null,
+              "task_id": null,
+              "before_minor_units": 747600,
+              "after_minor_units": 606150,
+              "delta_minor_units": 141450,
+              "note": "Contingency recomputed from the compliant fee base."
+            }
+          ],
+          "category_delta_minor_units": {
+            "pack_effective_selection": 0,
+            "task_hour_cap": 1300000,
+            "staffing_rule": 396000,
+            "rate_cap": 190000,
+            "expense_cap": 560000,
+            "contingency": 141450
+          },
+          "total_delta_minor_units": 2587450,
+          "non_authoritative": true
+        },
+        "projection_report": {
+          "schema_version": "0.1",
+          "currency": "USD",
+          "work_plan_total": 148406.0,
+          "guideline_adjusted_reimbursement": 122531.5,
+          "unreimbursed_exposure": 25874.5,
+          "reimbursement_priced": true,
+          "work_plan_is_immutable_baseline": true,
+          "non_authoritative": true
+        },
         "proposed_total": 148406.0,
-        "compliant_total": 136506.5,
+        "compliant_total": 122531.5,
         "proposed_subtotal_fees": 99680.0,
-        "compliant_subtotal_fees": 93820.0,
+        "compliant_subtotal_fees": 80820.0,
         "proposed_subtotal_expenses": 41250.0,
         "compliant_subtotal_expenses": 35650.0,
         "proposed_contingency_amount": 7476.0,
-        "compliant_contingency_amount": 7036.5,
+        "compliant_contingency_amount": 6061.5,
         "projection_pricing_status": "priced",
-        "total_delta": 11899.5,
+        "total_delta": 25874.5,
         "over_cap_amount": 7500.0,
         "disallowed_amount": 0.0,
+        "task_hour_cap_delta": 13000.0,
+        "task_hour_cap_delta_signed": 13000.0,
         "rate_cap_delta": 1900.0,
         "expense_cap_delta": 5600.0,
         "disallowed_delta": 0.0,
         "staffing_rule_delta": 3960.0,
-        "contingency_delta": 439.5,
-        "total_delta_signed": 11899.5,
+        "contingency_delta": 1414.5,
+        "total_delta_signed": 25874.5,
         "rate_cap_delta_signed": 1900.0,
         "expense_cap_delta_signed": 5600.0,
         "disallowed_delta_signed": 0.0,
         "staffing_rule_delta_signed": 3960.0,
-        "contingency_delta_signed": 439.5,
+        "contingency_delta_signed": 1414.5,
         "compliant_increase_amount": 0.0,
         "proposed_blended_rate": 307.65,
-        "compliant_blended_rate": 289.57,
-        "blended_rate_delta": 18.08,
-        "blended_rate_delta_signed": 18.08,
+        "compliant_blended_rate": 249.44,
+        "blended_rate_delta": 58.21,
+        "blended_rate_delta_signed": 58.21,
         "line_count": 14,
         "capped_line_count": 4,
         "disallowed_line_count": 0,
@@ -89,7 +265,7 @@
             "proposed_hours_percent": 29.63,
             "compliant_hours_percent": 16.05,
             "proposed_fee_percent": 24.08,
-            "compliant_fee_percent": 13.86
+            "compliant_fee_percent": 16.09
           },
           {
             "role": "paralegal",
@@ -100,7 +276,7 @@
             "proposed_hours_percent": 14.81,
             "compliant_hours_percent": 28.4,
             "proposed_fee_percent": 7.7,
-            "compliant_fee_percent": 15.69
+            "compliant_fee_percent": 18.21
           },
           {
             "role": "partner",
@@ -111,22 +287,23 @@
             "proposed_hours_percent": 23.46,
             "compliant_hours_percent": 23.46,
             "proposed_fee_percent": 34.31,
-            "compliant_fee_percent": 34.43
+            "compliant_fee_percent": 39.97
           },
           {
             "role": "senior_associate",
             "proposed_hours": 104.0,
             "compliant_hours": 104.0,
             "proposed_fees": 33800.0,
-            "compliant_fees": 33800.0,
+            "compliant_fees": 20800.0,
             "proposed_hours_percent": 32.1,
             "compliant_hours_percent": 32.1,
             "proposed_fee_percent": 33.91,
-            "compliant_fee_percent": 36.03
+            "compliant_fee_percent": 25.74
           }
         ],
         "lines": [
           {
+            "line_id": "bl-606fb6c03771fa6a",
             "phase_id": "L100",
             "task_id": "L110",
             "external_code_candidate": "L110",
@@ -134,6 +311,10 @@
             "staffing_role": "associate",
             "compliant_staffing_role": "associate",
             "proposed_hours": 16.0,
+            "compliant_hours": 16.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 250.0,
             "staffing_rule_rate": null,
             "compliant_rate": 250.0,
@@ -178,6 +359,7 @@
             "note": "no guideline adjustment"
           },
           {
+            "line_id": "bl-6aebceac31398680",
             "phase_id": "L100",
             "task_id": "L120",
             "external_code_candidate": "L120",
@@ -185,6 +367,10 @@
             "staffing_role": "senior_associate",
             "compliant_staffing_role": "senior_associate",
             "proposed_hours": 14.0,
+            "compliant_hours": 14.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 325.0,
             "staffing_rule_rate": null,
             "compliant_rate": 325.0,
@@ -229,6 +415,7 @@
             "note": "no guideline adjustment"
           },
           {
+            "line_id": "bl-840795360bc7361f",
             "phase_id": "L100",
             "task_id": "L130",
             "external_code_candidate": "L130",
@@ -236,6 +423,10 @@
             "staffing_role": "partner",
             "compliant_staffing_role": "partner",
             "proposed_hours": 12.0,
+            "compliant_hours": 12.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 450.0,
             "staffing_rule_rate": null,
             "compliant_rate": 425.0,
@@ -282,6 +473,7 @@
             "note": "rate capped from 450.0 to 425.0"
           },
           {
+            "line_id": "bl-a6b4fc4b7bd73495",
             "phase_id": "L100",
             "task_id": "L140",
             "external_code_candidate": "L140",
@@ -289,6 +481,10 @@
             "staffing_role": "paralegal",
             "compliant_staffing_role": "paralegal",
             "proposed_hours": 18.0,
+            "compliant_hours": 18.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 160.0,
             "staffing_rule_rate": null,
             "compliant_rate": 160.0,
@@ -333,6 +529,7 @@
             "note": "no guideline adjustment"
           },
           {
+            "line_id": "bl-31dc4d619ee9d564",
             "phase_id": "L100",
             "task_id": "L150",
             "external_code_candidate": "L150",
@@ -340,6 +537,10 @@
             "staffing_role": "senior_associate",
             "compliant_staffing_role": "senior_associate",
             "proposed_hours": 4.0,
+            "compliant_hours": 4.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 325.0,
             "staffing_rule_rate": null,
             "compliant_rate": 325.0,
@@ -384,6 +585,7 @@
             "note": "no guideline adjustment"
           },
           {
+            "line_id": "bl-8ad2fab439784b72",
             "phase_id": "L100",
             "task_id": "L160",
             "external_code_candidate": "L160",
@@ -391,6 +593,10 @@
             "staffing_role": "senior_associate",
             "compliant_staffing_role": "senior_associate",
             "proposed_hours": 22.0,
+            "compliant_hours": 22.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 325.0,
             "staffing_rule_rate": null,
             "compliant_rate": 325.0,
@@ -435,6 +641,7 @@
             "note": "no guideline adjustment"
           },
           {
+            "line_id": "bl-3f842a1f9e6aae4b",
             "phase_id": "L200",
             "task_id": "L210",
             "external_code_candidate": "L210",
@@ -442,6 +649,10 @@
             "staffing_role": "associate",
             "compliant_staffing_role": "associate",
             "proposed_hours": 16.0,
+            "compliant_hours": 16.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 250.0,
             "staffing_rule_rate": null,
             "compliant_rate": 250.0,
@@ -486,6 +697,7 @@
             "note": "no guideline adjustment"
           },
           {
+            "line_id": "bl-9af731b9e6ecc352",
             "phase_id": "L200",
             "task_id": "L230",
             "external_code_candidate": "L230",
@@ -493,6 +705,10 @@
             "staffing_role": "associate",
             "compliant_staffing_role": "associate",
             "proposed_hours": 8.0,
+            "compliant_hours": 8.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 250.0,
             "staffing_rule_rate": null,
             "compliant_rate": 250.0,
@@ -537,6 +753,7 @@
             "note": "no guideline adjustment"
           },
           {
+            "line_id": "bl-66db624ab50c3779",
             "phase_id": "L200",
             "task_id": "L240",
             "external_code_candidate": "L240",
@@ -544,6 +761,10 @@
             "staffing_role": "partner",
             "compliant_staffing_role": "partner",
             "proposed_hours": 40.0,
+            "compliant_hours": 40.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 450.0,
             "staffing_rule_rate": null,
             "compliant_rate": 425.0,
@@ -590,6 +811,7 @@
             "note": "rate capped from 450.0 to 425.0"
           },
           {
+            "line_id": "bl-8fbe2ee76bd0983e",
             "phase_id": "L300",
             "task_id": "L310",
             "external_code_candidate": "L310",
@@ -597,6 +819,10 @@
             "staffing_role": "associate",
             "compliant_staffing_role": "paralegal",
             "proposed_hours": 44.0,
+            "compliant_hours": 44.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 250.0,
             "staffing_rule_rate": 160.0,
             "compliant_rate": 160.0,
@@ -643,6 +869,7 @@
             "note": "staffing role projected from associate to paralegal"
           },
           {
+            "line_id": "bl-0bc285c5101a039d",
             "phase_id": "L300",
             "task_id": "L320",
             "external_code_candidate": "L320",
@@ -650,6 +877,10 @@
             "staffing_role": "paralegal",
             "compliant_staffing_role": "paralegal",
             "proposed_hours": 30.0,
+            "compliant_hours": 30.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 160.0,
             "staffing_rule_rate": null,
             "compliant_rate": 160.0,
@@ -694,6 +925,7 @@
             "note": "no guideline adjustment"
           },
           {
+            "line_id": "bl-fc454115ccac788d",
             "phase_id": "L300",
             "task_id": "L330",
             "external_code_candidate": "L330",
@@ -701,27 +933,31 @@
             "staffing_role": "senior_associate",
             "compliant_staffing_role": "senior_associate",
             "proposed_hours": 64.0,
+            "compliant_hours": 24.0,
+            "task_hour_cap_applied": true,
+            "task_hour_cap_delta": 13000.0,
+            "task_hour_cap_delta_signed": 13000.0,
             "proposed_rate": 325.0,
             "staffing_rule_rate": null,
             "compliant_rate": 325.0,
             "proposed_fees": 20800.0,
-            "compliant_fees": 20800.0,
+            "compliant_fees": 7800.0,
             "proposed_expenses": 5600.0,
             "compliant_expenses": 5000.0,
             "proposed_line_total": 26400.0,
-            "compliant_line_total": 25800.0,
+            "compliant_line_total": 12800.0,
             "capped": true,
             "disallowed": false,
             "rate_cap_applied": false,
             "expense_cap_applied": true,
             "staffing_rule_applied": false,
             "rate_unknown_for_reshaped_role": false,
-            "over_cap_amount": 600.0,
+            "over_cap_amount": 13600.0,
             "rate_cap_delta": 0.0,
             "expense_cap_delta": 600.0,
             "disallowed_delta": 0.0,
             "staffing_rule_delta": 0.0,
-            "line_delta_signed": 600.0,
+            "line_delta_signed": 13600.0,
             "rate_cap_delta_signed": 0.0,
             "expense_cap_delta_signed": 600.0,
             "disallowed_delta_signed": 0.0,
@@ -734,7 +970,7 @@
               "expense_cap_delta": 600.0,
               "disallowed_delta": 0.0,
               "staffing_delta": 0.0,
-              "line_delta_signed": 600.0,
+              "line_delta_signed": 13600.0,
               "rate_cap_delta_signed": 0.0,
               "expense_cap_delta_signed": 600.0,
               "disallowed_delta_signed": 0.0,
@@ -742,11 +978,13 @@
               "compliant_increase_amount": 0.0
             },
             "guideline_refs": [
+              "carrier-guideline://synthetic-carrier-guideline/synthetic-carrier-a/task_role_hour_caps/L330/senior_associate",
               "carrier-guideline://synthetic-carrier-guideline/synthetic-carrier-a/expense_caps/E115"
             ],
-            "note": "expense capped from 5600.0 to 5000.0"
+            "note": "task-hour capped from 64.0 to 24.0 hours; expense capped from 5600.0 to 5000.0"
           },
           {
+            "line_id": "bl-f4871f80efa63865",
             "phase_id": "L300",
             "task_id": "L340",
             "external_code_candidate": "L340",
@@ -754,6 +992,10 @@
             "staffing_role": "partner",
             "compliant_staffing_role": "partner",
             "proposed_hours": 24.0,
+            "compliant_hours": 24.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 450.0,
             "staffing_rule_rate": null,
             "compliant_rate": 425.0,
@@ -801,6 +1043,7 @@
             "note": "rate capped from 450.0 to 425.0; expense capped from 30000.0 to 25000.0"
           },
           {
+            "line_id": "bl-4bc62a7fafe02dc9",
             "phase_id": "L300",
             "task_id": "L350",
             "external_code_candidate": "L350",
@@ -808,6 +1051,10 @@
             "staffing_role": "associate",
             "compliant_staffing_role": "associate",
             "proposed_hours": 12.0,
+            "compliant_hours": 12.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 250.0,
             "staffing_rule_rate": null,
             "compliant_rate": 250.0,
@@ -1089,9 +1336,9 @@
         "review_notes": [],
         "note": "Synthetic carrier rate card synthetic-carrier-a for state NV (carrier matched by carrier_alias, state by jurisdiction_alias); title rates resolved by carrier_state_title; named timekeeper overrides, when present, take precedence only for matching synthetic task timekeeper IDs; rates are synthetic and not authorized for real billing."
       },
-      "gross_reductions": 11899.5,
+      "gross_reductions": 25874.5,
       "gross_increases": 0.0,
-      "net_delta": 11899.5
+      "net_delta": 25874.5
     },
     {
       "carrier_id": "synthetic-carrier-b",
@@ -1131,6 +1378,299 @@
           "proposal_lines_unchanged": true,
           "no_submission_authority": true
         },
+        "pack_selection": {
+          "schema_version": "0.1",
+          "status": "selected",
+          "confirmed_carrier_id": "synthetic-carrier-b",
+          "confirmed_program": null,
+          "confirmed_jurisdiction": null,
+          "as_of": null,
+          "considered_packs": [
+            {
+              "pack_id": "synthetic-carrier-a",
+              "carrier_name": "Harbor Point Insurance",
+              "included": false,
+              "exclusion_reason": "confirmed_carrier_id_mismatch"
+            },
+            {
+              "pack_id": "synthetic-carrier-b",
+              "carrier_name": "Cascade Mutual",
+              "included": true,
+              "exclusion_reason": null
+            }
+          ],
+          "selected_pack_id": "synthetic-carrier-b",
+          "selected_revision": "0.1",
+          "selected_content_hash": "sha256:6c930a727e5dc198de9d54a609957bbd93d3aa1fb37ae9ab0855e0c2434e0126",
+          "blocked_reason": null,
+          "data_scope": "synthetic_only",
+          "candidate_only": true,
+          "non_authoritative": true,
+          "not_authorized_for_client_submission": true
+        },
+        "adjustment_ledger": {
+          "schema_version": "0.1",
+          "currency": "USD",
+          "attribution_order": [
+            "pack_effective_selection",
+            "task_hour_cap",
+            "staffing_rule",
+            "rate_cap",
+            "expense_cap",
+            "disallowance",
+            "contingency",
+            "preapproval_unsupported"
+          ],
+          "entries": [
+            {
+              "order_index": 0,
+              "rule_kind": "pack_effective_selection",
+              "rule_id": "pack::synthetic-carrier-b@0.1",
+              "line_id": null,
+              "phase_id": null,
+              "task_id": null,
+              "before_minor_units": 0,
+              "after_minor_units": 0,
+              "delta_minor_units": 0,
+              "note": "Selected candidate guideline pack for the confirmed carrier."
+            },
+            {
+              "order_index": 2,
+              "rule_kind": "staffing_rule",
+              "rule_id": "staffing_rule::synthetic-carrier-b::bl-8fbe2ee76bd0983e",
+              "line_id": "bl-8fbe2ee76bd0983e",
+              "phase_id": "L300",
+              "task_id": "L310",
+              "before_minor_units": 1130000,
+              "after_minor_units": 668000,
+              "delta_minor_units": 462000,
+              "note": ""
+            },
+            {
+              "order_index": 2,
+              "rule_kind": "staffing_rule",
+              "rule_id": "staffing_rule::synthetic-carrier-b::bl-f4871f80efa63865",
+              "line_id": "bl-f4871f80efa63865",
+              "phase_id": "L300",
+              "task_id": "L340",
+              "before_minor_units": 4080000,
+              "after_minor_units": 3708000,
+              "delta_minor_units": 372000,
+              "note": ""
+            },
+            {
+              "order_index": 3,
+              "rule_kind": "rate_cap",
+              "rule_id": "rate_cap::synthetic-carrier-b::bl-606fb6c03771fa6a",
+              "line_id": "bl-606fb6c03771fa6a",
+              "phase_id": "L100",
+              "task_id": "L110",
+              "before_minor_units": 400000,
+              "after_minor_units": 384000,
+              "delta_minor_units": 16000,
+              "note": ""
+            },
+            {
+              "order_index": 3,
+              "rule_kind": "rate_cap",
+              "rule_id": "rate_cap::synthetic-carrier-b::bl-6aebceac31398680",
+              "line_id": "bl-6aebceac31398680",
+              "phase_id": "L100",
+              "task_id": "L120",
+              "before_minor_units": 455000,
+              "after_minor_units": 420000,
+              "delta_minor_units": 35000,
+              "note": ""
+            },
+            {
+              "order_index": 3,
+              "rule_kind": "rate_cap",
+              "rule_id": "rate_cap::synthetic-carrier-b::bl-840795360bc7361f",
+              "line_id": "bl-840795360bc7361f",
+              "phase_id": "L100",
+              "task_id": "L130",
+              "before_minor_units": 540000,
+              "after_minor_units": 480000,
+              "delta_minor_units": 60000,
+              "note": ""
+            },
+            {
+              "order_index": 3,
+              "rule_kind": "rate_cap",
+              "rule_id": "rate_cap::synthetic-carrier-b::bl-a6b4fc4b7bd73495",
+              "line_id": "bl-a6b4fc4b7bd73495",
+              "phase_id": "L100",
+              "task_id": "L140",
+              "before_minor_units": 313000,
+              "after_minor_units": 295000,
+              "delta_minor_units": 18000,
+              "note": ""
+            },
+            {
+              "order_index": 3,
+              "rule_kind": "rate_cap",
+              "rule_id": "rate_cap::synthetic-carrier-b::bl-31dc4d619ee9d564",
+              "line_id": "bl-31dc4d619ee9d564",
+              "phase_id": "L100",
+              "task_id": "L150",
+              "before_minor_units": 130000,
+              "after_minor_units": 120000,
+              "delta_minor_units": 10000,
+              "note": ""
+            },
+            {
+              "order_index": 3,
+              "rule_kind": "rate_cap",
+              "rule_id": "rate_cap::synthetic-carrier-b::bl-8ad2fab439784b72",
+              "line_id": "bl-8ad2fab439784b72",
+              "phase_id": "L100",
+              "task_id": "L160",
+              "before_minor_units": 965000,
+              "after_minor_units": 910000,
+              "delta_minor_units": 55000,
+              "note": ""
+            },
+            {
+              "order_index": 3,
+              "rule_kind": "rate_cap",
+              "rule_id": "rate_cap::synthetic-carrier-b::bl-3f842a1f9e6aae4b",
+              "line_id": "bl-3f842a1f9e6aae4b",
+              "phase_id": "L200",
+              "task_id": "L210",
+              "before_minor_units": 430000,
+              "after_minor_units": 414000,
+              "delta_minor_units": 16000,
+              "note": ""
+            },
+            {
+              "order_index": 3,
+              "rule_kind": "rate_cap",
+              "rule_id": "rate_cap::synthetic-carrier-b::bl-9af731b9e6ecc352",
+              "line_id": "bl-9af731b9e6ecc352",
+              "phase_id": "L200",
+              "task_id": "L230",
+              "before_minor_units": 200000,
+              "after_minor_units": 192000,
+              "delta_minor_units": 8000,
+              "note": ""
+            },
+            {
+              "order_index": 3,
+              "rule_kind": "rate_cap",
+              "rule_id": "rate_cap::synthetic-carrier-b::bl-66db624ab50c3779",
+              "line_id": "bl-66db624ab50c3779",
+              "phase_id": "L200",
+              "task_id": "L240",
+              "before_minor_units": 1880000,
+              "after_minor_units": 1680000,
+              "delta_minor_units": 200000,
+              "note": ""
+            },
+            {
+              "order_index": 3,
+              "rule_kind": "rate_cap",
+              "rule_id": "rate_cap::synthetic-carrier-b::bl-0bc285c5101a039d",
+              "line_id": "bl-0bc285c5101a039d",
+              "phase_id": "L300",
+              "task_id": "L320",
+              "before_minor_units": 600000,
+              "after_minor_units": 570000,
+              "delta_minor_units": 30000,
+              "note": ""
+            },
+            {
+              "order_index": 3,
+              "rule_kind": "rate_cap",
+              "rule_id": "rate_cap::synthetic-carrier-b::bl-fc454115ccac788d",
+              "line_id": "bl-fc454115ccac788d",
+              "phase_id": "L300",
+              "task_id": "L330",
+              "before_minor_units": 2640000,
+              "after_minor_units": 2480000,
+              "delta_minor_units": 160000,
+              "note": ""
+            },
+            {
+              "order_index": 3,
+              "rule_kind": "rate_cap",
+              "rule_id": "rate_cap::synthetic-carrier-b::bl-4bc62a7fafe02dc9",
+              "line_id": "bl-4bc62a7fafe02dc9",
+              "phase_id": "L300",
+              "task_id": "L350",
+              "before_minor_units": 330000,
+              "after_minor_units": 318000,
+              "delta_minor_units": 12000,
+              "note": ""
+            },
+            {
+              "order_index": 4,
+              "rule_kind": "expense_cap",
+              "rule_id": "expense_cap::synthetic-carrier-b::bl-8ad2fab439784b72",
+              "line_id": "bl-8ad2fab439784b72",
+              "phase_id": "L100",
+              "task_id": "L160",
+              "before_minor_units": 965000,
+              "after_minor_units": 895000,
+              "delta_minor_units": 70000,
+              "note": ""
+            },
+            {
+              "order_index": 4,
+              "rule_kind": "expense_cap",
+              "rule_id": "expense_cap::synthetic-carrier-b::bl-fc454115ccac788d",
+              "line_id": "bl-fc454115ccac788d",
+              "phase_id": "L300",
+              "task_id": "L330",
+              "before_minor_units": 2640000,
+              "after_minor_units": 2530000,
+              "delta_minor_units": 110000,
+              "note": ""
+            },
+            {
+              "order_index": 4,
+              "rule_kind": "expense_cap",
+              "rule_id": "expense_cap::synthetic-carrier-b::bl-f4871f80efa63865",
+              "line_id": "bl-f4871f80efa63865",
+              "phase_id": "L300",
+              "task_id": "L340",
+              "before_minor_units": 4080000,
+              "after_minor_units": 3080000,
+              "delta_minor_units": 1000000,
+              "note": ""
+            },
+            {
+              "order_index": 6,
+              "rule_kind": "contingency",
+              "rule_id": "contingency::synthetic-carrier-b",
+              "line_id": null,
+              "phase_id": null,
+              "task_id": null,
+              "before_minor_units": 747600,
+              "after_minor_units": 0,
+              "delta_minor_units": 747600,
+              "note": "Contingency recomputed from the compliant fee base."
+            }
+          ],
+          "category_delta_minor_units": {
+            "pack_effective_selection": 0,
+            "staffing_rule": 834000,
+            "rate_cap": 620000,
+            "expense_cap": 1180000,
+            "contingency": 747600
+          },
+          "total_delta_minor_units": 3381600,
+          "non_authoritative": true
+        },
+        "projection_report": {
+          "schema_version": "0.1",
+          "currency": "USD",
+          "work_plan_total": 148406.0,
+          "guideline_adjusted_reimbursement": 114590.0,
+          "unreimbursed_exposure": 33816.0,
+          "reimbursement_priced": true,
+          "work_plan_is_immutable_baseline": true,
+          "non_authoritative": true
+        },
         "proposed_total": 148406.0,
         "compliant_total": 114590.0,
         "proposed_subtotal_fees": 99680.0,
@@ -1143,6 +1683,8 @@
         "total_delta": 33816.0,
         "over_cap_amount": 18000.0,
         "disallowed_amount": 0.0,
+        "task_hour_cap_delta": 0.0,
+        "task_hour_cap_delta_signed": 0.0,
         "rate_cap_delta": 6200.0,
         "expense_cap_delta": 11800.0,
         "disallowed_delta": 0.0,
@@ -1213,6 +1755,7 @@
         ],
         "lines": [
           {
+            "line_id": "bl-606fb6c03771fa6a",
             "phase_id": "L100",
             "task_id": "L110",
             "external_code_candidate": "L110",
@@ -1220,6 +1763,10 @@
             "staffing_role": "associate",
             "compliant_staffing_role": "associate",
             "proposed_hours": 16.0,
+            "compliant_hours": 16.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 250.0,
             "staffing_rule_rate": null,
             "compliant_rate": 240.0,
@@ -1266,6 +1813,7 @@
             "note": "rate capped from 250.0 to 240.0"
           },
           {
+            "line_id": "bl-6aebceac31398680",
             "phase_id": "L100",
             "task_id": "L120",
             "external_code_candidate": "L120",
@@ -1273,6 +1821,10 @@
             "staffing_role": "senior_associate",
             "compliant_staffing_role": "senior_associate",
             "proposed_hours": 14.0,
+            "compliant_hours": 14.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 325.0,
             "staffing_rule_rate": null,
             "compliant_rate": 300.0,
@@ -1319,6 +1871,7 @@
             "note": "rate capped from 325.0 to 300.0"
           },
           {
+            "line_id": "bl-840795360bc7361f",
             "phase_id": "L100",
             "task_id": "L130",
             "external_code_candidate": "L130",
@@ -1326,6 +1879,10 @@
             "staffing_role": "partner",
             "compliant_staffing_role": "partner",
             "proposed_hours": 12.0,
+            "compliant_hours": 12.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 450.0,
             "staffing_rule_rate": null,
             "compliant_rate": 400.0,
@@ -1372,6 +1929,7 @@
             "note": "rate capped from 450.0 to 400.0"
           },
           {
+            "line_id": "bl-a6b4fc4b7bd73495",
             "phase_id": "L100",
             "task_id": "L140",
             "external_code_candidate": "L140",
@@ -1379,6 +1937,10 @@
             "staffing_role": "paralegal",
             "compliant_staffing_role": "paralegal",
             "proposed_hours": 18.0,
+            "compliant_hours": 18.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 160.0,
             "staffing_rule_rate": null,
             "compliant_rate": 150.0,
@@ -1425,6 +1987,7 @@
             "note": "rate capped from 160.0 to 150.0"
           },
           {
+            "line_id": "bl-31dc4d619ee9d564",
             "phase_id": "L100",
             "task_id": "L150",
             "external_code_candidate": "L150",
@@ -1432,6 +1995,10 @@
             "staffing_role": "senior_associate",
             "compliant_staffing_role": "senior_associate",
             "proposed_hours": 4.0,
+            "compliant_hours": 4.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 325.0,
             "staffing_rule_rate": null,
             "compliant_rate": 300.0,
@@ -1478,6 +2045,7 @@
             "note": "rate capped from 325.0 to 300.0"
           },
           {
+            "line_id": "bl-8ad2fab439784b72",
             "phase_id": "L100",
             "task_id": "L160",
             "external_code_candidate": "L160",
@@ -1485,6 +2053,10 @@
             "staffing_role": "senior_associate",
             "compliant_staffing_role": "senior_associate",
             "proposed_hours": 22.0,
+            "compliant_hours": 22.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 325.0,
             "staffing_rule_rate": null,
             "compliant_rate": 300.0,
@@ -1532,6 +2104,7 @@
             "note": "rate capped from 325.0 to 300.0; expense capped from 2500.0 to 1800.0"
           },
           {
+            "line_id": "bl-3f842a1f9e6aae4b",
             "phase_id": "L200",
             "task_id": "L210",
             "external_code_candidate": "L210",
@@ -1539,6 +2112,10 @@
             "staffing_role": "associate",
             "compliant_staffing_role": "associate",
             "proposed_hours": 16.0,
+            "compliant_hours": 16.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 250.0,
             "staffing_rule_rate": null,
             "compliant_rate": 240.0,
@@ -1585,6 +2162,7 @@
             "note": "rate capped from 250.0 to 240.0"
           },
           {
+            "line_id": "bl-9af731b9e6ecc352",
             "phase_id": "L200",
             "task_id": "L230",
             "external_code_candidate": "L230",
@@ -1592,6 +2170,10 @@
             "staffing_role": "associate",
             "compliant_staffing_role": "associate",
             "proposed_hours": 8.0,
+            "compliant_hours": 8.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 250.0,
             "staffing_rule_rate": null,
             "compliant_rate": 240.0,
@@ -1638,6 +2220,7 @@
             "note": "rate capped from 250.0 to 240.0"
           },
           {
+            "line_id": "bl-66db624ab50c3779",
             "phase_id": "L200",
             "task_id": "L240",
             "external_code_candidate": "L240",
@@ -1645,6 +2228,10 @@
             "staffing_role": "partner",
             "compliant_staffing_role": "partner",
             "proposed_hours": 40.0,
+            "compliant_hours": 40.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 450.0,
             "staffing_rule_rate": null,
             "compliant_rate": 400.0,
@@ -1691,6 +2278,7 @@
             "note": "rate capped from 450.0 to 400.0"
           },
           {
+            "line_id": "bl-8fbe2ee76bd0983e",
             "phase_id": "L300",
             "task_id": "L310",
             "external_code_candidate": "L310",
@@ -1698,6 +2286,10 @@
             "staffing_role": "associate",
             "compliant_staffing_role": "paralegal",
             "proposed_hours": 44.0,
+            "compliant_hours": 44.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 250.0,
             "staffing_rule_rate": 145.0,
             "compliant_rate": 145.0,
@@ -1744,6 +2336,7 @@
             "note": "staffing role projected from associate to paralegal"
           },
           {
+            "line_id": "bl-0bc285c5101a039d",
             "phase_id": "L300",
             "task_id": "L320",
             "external_code_candidate": "L320",
@@ -1751,6 +2344,10 @@
             "staffing_role": "paralegal",
             "compliant_staffing_role": "paralegal",
             "proposed_hours": 30.0,
+            "compliant_hours": 30.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 160.0,
             "staffing_rule_rate": null,
             "compliant_rate": 150.0,
@@ -1797,6 +2394,7 @@
             "note": "rate capped from 160.0 to 150.0"
           },
           {
+            "line_id": "bl-fc454115ccac788d",
             "phase_id": "L300",
             "task_id": "L330",
             "external_code_candidate": "L330",
@@ -1804,6 +2402,10 @@
             "staffing_role": "senior_associate",
             "compliant_staffing_role": "senior_associate",
             "proposed_hours": 64.0,
+            "compliant_hours": 64.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 325.0,
             "staffing_rule_rate": null,
             "compliant_rate": 300.0,
@@ -1851,6 +2453,7 @@
             "note": "rate capped from 325.0 to 300.0; expense capped from 5600.0 to 4500.0"
           },
           {
+            "line_id": "bl-f4871f80efa63865",
             "phase_id": "L300",
             "task_id": "L340",
             "external_code_candidate": "L340",
@@ -1858,6 +2461,10 @@
             "staffing_role": "partner",
             "compliant_staffing_role": "senior_associate",
             "proposed_hours": 24.0,
+            "compliant_hours": 24.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 450.0,
             "staffing_rule_rate": 295.0,
             "compliant_rate": 295.0,
@@ -1905,6 +2512,7 @@
             "note": "staffing role projected from partner to senior_associate; expense capped from 30000.0 to 20000.0"
           },
           {
+            "line_id": "bl-4bc62a7fafe02dc9",
             "phase_id": "L300",
             "task_id": "L350",
             "external_code_candidate": "L350",
@@ -1912,6 +2520,10 @@
             "staffing_role": "associate",
             "compliant_staffing_role": "associate",
             "proposed_hours": 12.0,
+            "compliant_hours": 12.0,
+            "task_hour_cap_applied": false,
+            "task_hour_cap_delta": 0.0,
+            "task_hour_cap_delta_signed": 0.0,
             "proposed_rate": 250.0,
             "staffing_rule_rate": null,
             "compliant_rate": 240.0,
@@ -2214,7 +2826,7 @@
       "source_id": "guideline",
       "label": "Synthetic candidate guideline",
       "source_ref": "config/synthetic-carrier-guideline.yaml",
-      "source_sha256": "sha256:a223a90fd311da3734cce58940f7323e1d387362ae197e058f2092dcd46a73ae",
+      "source_sha256": "sha256:d59337a5c03783207daef66f660fe00593287cf0ec6f1bb0a9a88c8bff26cfa5",
       "used_for": "frozen synthetic projection replay"
     },
     {

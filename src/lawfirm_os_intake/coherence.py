@@ -214,6 +214,7 @@ def check_projection_coherence(payload: dict[str, Any]) -> list[dict[str, Any]]:
     violations: list[dict[str, Any]] = []
     total_delta = _amount(payload.get("total_delta"))
     buckets = [
+        "task_hour_cap_delta",
         "rate_cap_delta",
         "expense_cap_delta",
         "disallowed_delta",
