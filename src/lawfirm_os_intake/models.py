@@ -20114,6 +20114,30 @@ class SyntheticActualsWorkbenchReport(StrictModel):
             raise ValueError(
                 "revised synthetic actuals comparison requires revision identity and ref"
             )
+        # Integrity backstop: the report id is a build-time digest over the serialized
+        # comparison and source hashes. Recompute it so tampering that stays internally
+        # consistent (e.g. swapping actual_fees<->actual_expenses within a row, which
+        # preserves the row and report totals) is still rejected. This is a defense-in-
+        # depth check, not a substitute for the builder's immutable-source binding: an
+        # editor who also recomputes the id needs the source to be caught, which is the
+        # builder's responsibility.
+        from .util import digest_json
+
+        expected_report_id = (
+            "synactualsworkbench-"
+            + digest_json(
+                {
+                    "budget_proposal_sha256": self.budget_proposal_sha256,
+                    "actuals_source_sha256": self.actuals_source_sha256,
+                    "comparison": self.comparison.model_dump(mode="json"),
+                    "methodology_version": self.methodology_version,
+                }
+            ).removeprefix("sha256:")[:16]
+        )
+        if self.synthetic_actuals_workbench_report_id != expected_report_id:
+            raise ValueError(
+                "synthetic actuals workbench report id does not bind its serialized comparison"
+            )
         return self
 
 
@@ -20422,6 +20446,19 @@ class SyntheticGuidelineProjectionWorkbenchReport(StrictModel):
                     or projection.compliant_total != compliant_total
                 ):
                     raise ValueError("synthetic guideline displayed lines do not reconcile")
+            # Bind the displayed gross partition to the projection's own computed deltas
+            # so gross_reductions and gross_increases cannot both be inflated by the same
+            # amount while their (already checked) difference stays equal to net_delta.
+            # Placed after the pricing checks so an incomplete-pricing report reports that
+            # first.
+            if (
+                view.gross_reductions != projection.total_delta
+                or view.gross_increases != projection.compliant_increase_amount
+                or view.net_delta != projection.total_delta_signed
+            ):
+                raise ValueError(
+                    "synthetic guideline projection gross partition does not match projection"
+                )
         return self
 
 
