@@ -96,6 +96,25 @@ unsupported findings.
 3. The firm mistakes reimbursement limits for an adequate litigation plan
    (mitigated by preserving work_plan_total separately from reimbursement).
 
+## Additions (2026-07-21, owner-approved)
+- **Layered composition decision**: case_model → case_sizing → firm_rates →
+  carrier_overlays → exporters; carriers/case-types/regimes are data packs
+  composed at runtime (N+M+K, never N×M×K templates); Excel is exporter #1, not
+  the tool. Design: `CASE_SIZING_AND_TRAINING_DESIGN.md`;
+  modules: `MODULAR_ARCHITECTURE.md`.
+- **case_sizing layer**: CaseCostDriver contract, proportionality gate
+  (blocked_disproportionate_budget + override-with-reason), settlement-posture
+  arithmetic (cost-of-risk comparison, candidate-only) — the $10k-case/$50k-budget
+  guard.
+- **Firm output shape grounded**: the firm's sanitized budget template (Downloads)
+  is dollar-per-UTBMS-task only — no role/rate/hours — so the engine keeps the
+  role×rate×hours decomposition internal (that is where guidelines bind) and
+  exports down; the template's own defects (missing G33–G85 subtotal formulas,
+  P85 double-count of P129) are corrected in our exporter, documented, never
+  reproduced.
+- **Execution vehicle**: `OPUS_MARATHON_GOAL_converged.md` (waves CW0–CW7,
+  serialized, WIP=1) supersedes all earlier marathon prompts.
+
 ## What survives from the earlier work (unchanged)
 F1–F4 trust fixes (committed, full-suite green); the DAD synthetic-silver
 reconciliation; §18/§21 governance; the modular *principle* (as logical contracts

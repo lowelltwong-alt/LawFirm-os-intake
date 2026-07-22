@@ -85,6 +85,18 @@ orchestrator. Same outputs, seams added — a safe, test-guarded refactor first.
   I/O contracts, not stage internals.
 - `ui` (`apps/legal-intake-budget`): depends only on the exported TS
   data-contract. Already the pattern; keep it.
+- `case_sizing` (added 2026-07-21): proportionality gate + CaseCostDriver
+  contract + settlement-posture arithmetic; sits between the case model and
+  firm-rate resolution; extends the existing drivers.py / nonlinear-template
+  machinery. See `CASE_SIZING_AND_TRAINING_DESIGN.md`.
+- `exporters` (added 2026-07-21): pluggable renderer boundary — firm-Excel
+  (the sanitized template shape, with corrected formulas), LEDES, PDF; the
+  structured model is the source of truth, Excel is exporter #1, never the tool.
+- `economic_regime` (added 2026-07-21): data-only profile selecting payer, rate
+  source, constraint packs (carrier guidelines vs corporate OCGs — same rule IR),
+  proportionality policy, staffing norms; insurance-defense active, white-shoe
+  stub. Layers compose at runtime: N carriers + M case types + K regimes stay
+  N+M+K artifacts, never N×M×K spreadsheets.
 
 ## The seam mechanism (how "worked on separately" actually works)
 For each module ship three things: (1) the versioned contract; (2) a fixtures
