@@ -1,0 +1,29 @@
+{
+  "additionalProperties": false,
+  "description": "Firm disposition for one checkpoint case. Real firm review is a human gate;\nsynthetic placeholders are explicitly labeled and never real validation.",
+  "properties": {
+    "disposition": {
+      "default": "pending_firm_review",
+      "enum": [
+        "pending_firm_review",
+        "useful",
+        "wrong_workflow",
+        "missing_rule"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "is_synthetic_placeholder": {
+      "default": true,
+      "title": "Is Synthetic Placeholder",
+      "type": "boolean"
+    },
+    "reason": {
+      "default": "",
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "title": "FirmCheckpointCaseDisposition",
+  "type": "object"
+}

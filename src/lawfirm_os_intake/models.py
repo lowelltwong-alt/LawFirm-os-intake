@@ -9451,6 +9451,76 @@ class RouterEvaluationReport(StrictModel):
         return self
 
 
+class FirmCheckpointCaseDisposition(StrictModel):
+    """Firm disposition for one checkpoint case. Real firm review is a human gate;
+    synthetic placeholders are explicitly labeled and never real validation."""
+
+    disposition: Literal["pending_firm_review", "useful", "wrong_workflow", "missing_rule"] = (
+        "pending_firm_review"
+    )
+    is_synthetic_placeholder: bool = True
+    reason: str = ""
+
+
+class FirmCheckpointCase(StrictModel):
+    case_id: str
+    label: str
+    matter_family: str
+    routed_decision: Literal["route", "abstain"]
+    routed_family: str | None = None
+    case_sizing_report: "CaseSizingReport"
+    trips_proportionality_gate: bool
+    recommended_posture: Literal["settle_now", "defend_then_settle", "try"]
+    expected_preapproval_trip: bool
+    firm_excel_export_id: str
+    firm_excel_original_total_minor_units: int = Field(ge=0)
+    disposition: FirmCheckpointCaseDisposition = Field(
+        default_factory=FirmCheckpointCaseDisposition
+    )
+
+    @model_validator(mode="after")
+    def _case_consistent_fail_closed(self) -> "FirmCheckpointCase":
+        expected_trip = (
+            self.case_sizing_report.proportionality.status == "blocked_disproportionate_budget"
+        )
+        if self.trips_proportionality_gate != expected_trip:
+            raise ValueError(
+                "checkpoint case proportionality trip does not match the sizing report"
+            )
+        if self.recommended_posture != (
+            self.case_sizing_report.settlement_posture_analysis.recommended_posture
+        ):
+            raise ValueError("checkpoint case recommended posture does not match the sizing report")
+        return self
+
+
+class FirmCheckpointPacket(StrictModel):
+    """A no-data firm checkpoint packet: synthetic cases run end-to-end with a
+    disposition sheet. The real firm checkpoint is a human gate; this packet does
+    not and cannot substitute firm validation."""
+
+    schema_version: str = "0.1"
+    packet_id: str
+    cases: list[FirmCheckpointCase] = Field(default_factory=list)
+    requires_firm_dispositions: Literal[True] = True
+    synthetic_placeholder_dispositions_used: bool = True
+    real_firm_validation_status: Literal["open_pending_firm_review"] = "open_pending_firm_review"
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    not_authorized_for_client_submission: Literal[True] = True
+    generated_at: str
+
+    @model_validator(mode="after")
+    def _packet_fail_closed(self) -> "FirmCheckpointPacket":
+        if len(self.cases) != 3:
+            raise ValueError("firm checkpoint packet must contain exactly three cases")
+        placeholder_used = any(case.disposition.is_synthetic_placeholder for case in self.cases)
+        if self.synthetic_placeholder_dispositions_used != placeholder_used:
+            raise ValueError("synthetic_placeholder_dispositions_used must reflect the cases")
+        return self
+
+
 class CarrierCompliantProjectionBasis(StrictModel):
     guideline_id: str
     guideline_ref: str
