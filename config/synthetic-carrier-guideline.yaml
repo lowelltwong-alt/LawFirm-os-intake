@@ -32,6 +32,11 @@ carriers:
       preferred_drafting_role: associate
       max_timekeepers_per_event:
         L330: 1
+      # Aggregate task x role hour cap (synthetic): deposition-prep senior-associate
+      # hours are capped in the compliant projection; excess hours are removed.
+      task_role_hour_caps:
+        L330:
+          senior_associate: 24
     pre_approval_thresholds:
       experts_over_count: 3
       expert_spend_over_amount: 25000

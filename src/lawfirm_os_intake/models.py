@@ -8487,7 +8487,34 @@ class ConflictSearchTerm(StrictModel):
     evidence_refs: list[EvidenceRef]
 
 
+def stable_budget_line_id(
+    phase_id: str,
+    task_id: str,
+    staffing_role: str,
+    timekeeper_id: str | None,
+    *,
+    occurrence: int = 0,
+) -> str:
+    """Deterministic, stable identity for a budget line.
+
+    Derived from the line's own identity so it is reproducible across rebuilds of
+    the same input; ``occurrence`` disambiguates otherwise-identical lines.
+    """
+
+    from .util import digest_json
+
+    basis = [
+        str(phase_id),
+        str(task_id),
+        str(staffing_role),
+        str(timekeeper_id or ""),
+        int(occurrence),
+    ]
+    return "bl-" + digest_json(basis).removeprefix("sha256:")[:16]
+
+
 class BudgetLine(StrictModel):
+    line_id: str = ""
     phase_id: str
     phase_name: str
     task_id: str
@@ -8522,6 +8549,16 @@ class BudgetLine(StrictModel):
         "unknown",
     ] = "template_default"
     estimate_basis_refs: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def line_id_recomputed_never_silent_empty(self) -> "BudgetLine":
+        # A stable line identity is always present, recomputed from the line's own
+        # identity when absent — never a silent empty string.
+        if not self.line_id:
+            self.line_id = stable_budget_line_id(
+                self.phase_id, self.task_id, self.staffing_role, self.timekeeper_id
+            )
+        return self
 
 
 class BudgetSupportItem(StrictModel):
@@ -8810,6 +8847,7 @@ class IntensityNormalizationSignoffGateReport(StrictModel):
 
 
 class CarrierCompliantProjectionLine(StrictModel):
+    line_id: str = ""
     phase_id: str
     task_id: str
     external_code_candidate: str | None = None
@@ -8817,6 +8855,10 @@ class CarrierCompliantProjectionLine(StrictModel):
     staffing_role: str
     compliant_staffing_role: str | None = None
     proposed_hours: float = Field(ge=0)
+    compliant_hours: float | None = Field(default=None, ge=0)
+    task_hour_cap_applied: bool = False
+    task_hour_cap_delta: float = Field(default=0, ge=0)
+    task_hour_cap_delta_signed: float = 0
     proposed_rate: float | None = Field(default=None, ge=0)
     staffing_rule_rate: float | None = Field(default=None, ge=0)
     compliant_rate: float | None = Field(default=None, ge=0)
@@ -8875,6 +8917,189 @@ class CarrierCompliantLeverageSummary(StrictModel):
     compliant_fee_percent: float = Field(ge=0)
 
 
+class ConsideredPack(StrictModel):
+    pack_id: str
+    carrier_name: str | None = None
+    included: bool
+    exclusion_reason: str | None = None
+
+
+class PackSelectionDecision(StrictModel):
+    """Typed, fail-closed carrier guideline pack selection.
+
+    A missing or wrong confirmed carrier yields ``blocked_missing_context`` and
+    never silently falls back to a default carrier pack. Candidate-only review
+    evidence; it authorizes no submission and asserts no canonical authority.
+    """
+
+    schema_version: str = "0.1"
+    status: Literal[
+        "selected",
+        "blocked_missing_context",
+        "blocked_overlap",
+        "no_applicable_pack",
+    ]
+    confirmed_carrier_id: str | None = None
+    confirmed_program: str | None = None
+    confirmed_jurisdiction: str | None = None
+    as_of: str | None = None
+    considered_packs: list[ConsideredPack] = Field(default_factory=list)
+    selected_pack_id: str | None = None
+    selected_revision: str | None = None
+    selected_content_hash: str | None = None
+    blocked_reason: str | None = None
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    not_authorized_for_client_submission: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _selection_is_consistent(self) -> "PackSelectionDecision":
+        included = [pack.pack_id for pack in self.considered_packs if pack.included]
+        if self.status == "selected":
+            if not self.selected_pack_id:
+                raise ValueError("selected pack selection requires selected_pack_id")
+            if not (self.selected_content_hash and _is_sha256_ref(self.selected_content_hash)):
+                raise ValueError("selected pack selection requires a sha256 content hash")
+            if not self.selected_revision:
+                raise ValueError("selected pack selection requires a revision")
+            if self.blocked_reason is not None:
+                raise ValueError("selected pack selection must not carry a blocked_reason")
+            if included != [self.selected_pack_id]:
+                raise ValueError("selected pack must be the single included considered pack")
+        else:
+            if self.selected_pack_id is not None or self.selected_content_hash is not None:
+                raise ValueError("blocked pack selection must not carry a selected pack")
+            if not self.blocked_reason:
+                raise ValueError("blocked pack selection requires a blocked_reason")
+            if included:
+                raise ValueError("blocked pack selection must not include any considered pack")
+        return self
+
+
+ADJUSTMENT_LEDGER_ORDER = (
+    "pack_effective_selection",
+    "task_hour_cap",
+    "staffing_rule",
+    "rate_cap",
+    "expense_cap",
+    "disallowance",
+    "contingency",
+    "preapproval_unsupported",
+)
+_ADJUSTMENT_LEDGER_ORDER_INDEX = {kind: index for index, kind in enumerate(ADJUSTMENT_LEDGER_ORDER)}
+
+
+class AdjustmentLedgerEntry(StrictModel):
+    """One ordered, rule-attributed adjustment effect, in exact integer minor units.
+
+    ``delta_minor_units`` is the signed reduction (positive reduces the proposal);
+    ``after_minor_units == before_minor_units - delta_minor_units`` exactly.
+    """
+
+    order_index: int = Field(ge=0)
+    rule_kind: Literal[
+        "pack_effective_selection",
+        "task_hour_cap",
+        "staffing_rule",
+        "rate_cap",
+        "expense_cap",
+        "disallowance",
+        "contingency",
+        "preapproval_unsupported",
+    ]
+    rule_id: str
+    line_id: str | None = None
+    phase_id: str | None = None
+    task_id: str | None = None
+    before_minor_units: int
+    after_minor_units: int
+    delta_minor_units: int
+    note: str = ""
+
+    @model_validator(mode="after")
+    def _entry_arithmetic_is_exact(self) -> "AdjustmentLedgerEntry":
+        if self.after_minor_units != self.before_minor_units - self.delta_minor_units:
+            raise ValueError("adjustment ledger entry after != before - delta")
+        if self.order_index != _ADJUSTMENT_LEDGER_ORDER_INDEX[self.rule_kind]:
+            raise ValueError("adjustment ledger entry order_index does not match rule_kind order")
+        return self
+
+
+class AdjustmentLedger(StrictModel):
+    """Ordered, non-commutative-safe attribution of every projection adjustment.
+
+    Per-rule deltas are recomputed from the entries and must sum to the category
+    deltas and the total delta (fail-closed). Candidate-only review evidence.
+    """
+
+    schema_version: str = "0.1"
+    currency: str = "USD"
+    attribution_order: list[str] = Field(default_factory=lambda: list(ADJUSTMENT_LEDGER_ORDER))
+    entries: list[AdjustmentLedgerEntry] = Field(default_factory=list)
+    category_delta_minor_units: dict[str, int] = Field(default_factory=dict)
+    total_delta_minor_units: int = 0
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _ledger_reconciles_fail_closed(self) -> "AdjustmentLedger":
+        order_positions = [entry.order_index for entry in self.entries]
+        if order_positions != sorted(order_positions):
+            raise ValueError("adjustment ledger entries must be in declared attribution order")
+        recomputed: dict[str, int] = {}
+        for entry in self.entries:
+            recomputed[entry.rule_kind] = (
+                recomputed.get(entry.rule_kind, 0) + entry.delta_minor_units
+            )
+        if recomputed != {kind: total for kind, total in self.category_delta_minor_units.items()}:
+            raise ValueError("adjustment ledger category deltas do not equal the sum of entries")
+        if self.total_delta_minor_units != sum(entry.delta_minor_units for entry in self.entries):
+            raise ValueError("adjustment ledger total delta does not equal the sum of entries")
+        if self.total_delta_minor_units != sum(self.category_delta_minor_units.values()):
+            raise ValueError("adjustment ledger total delta does not equal the category deltas")
+        return self
+
+
+class ProjectionReport(StrictModel):
+    """The three distinct output quantities, kept semantically separate.
+
+    ``work_plan_total`` is the firm's immutable work-plan baseline and is NEVER
+    overwritten by reimbursement math; ``guideline_adjusted_reimbursement`` is
+    what the carrier guideline would reimburse; ``unreimbursed_exposure`` is the
+    gap the firm/client bears (work_plan_total - reimbursement), recomputed
+    fail-closed. Candidate-only review evidence.
+    """
+
+    schema_version: str = "0.1"
+    currency: str = "USD"
+    work_plan_total: float | None = None
+    guideline_adjusted_reimbursement: float | None = None
+    unreimbursed_exposure: float | None = None
+    reimbursement_priced: bool
+    work_plan_is_immutable_baseline: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _exposure_reconciles_and_work_plan_preserved(self) -> "ProjectionReport":
+        if not self.reimbursement_priced:
+            if (
+                self.guideline_adjusted_reimbursement is not None
+                or self.unreimbursed_exposure is not None
+            ):
+                raise ValueError(
+                    "unpriced projection report must not carry reimbursement or exposure"
+                )
+            return self
+        if self.work_plan_total is None or self.guideline_adjusted_reimbursement is None:
+            raise ValueError("priced projection report requires work plan and reimbursement totals")
+        expected = round(self.work_plan_total - self.guideline_adjusted_reimbursement, 2)
+        if self.unreimbursed_exposure != expected:
+            raise ValueError(
+                "unreimbursed_exposure must equal work_plan_total - guideline_adjusted_reimbursement"
+            )
+        return self
+
+
 class CarrierCompliantProjectionBasis(StrictModel):
     guideline_id: str
     guideline_ref: str
@@ -8897,6 +9122,9 @@ class CarrierCompliantProjection(StrictModel):
     projection_id: str
     status: Literal["projected_for_human_review"]
     basis: CarrierCompliantProjectionBasis
+    pack_selection: PackSelectionDecision | None = None
+    adjustment_ledger: AdjustmentLedger | None = None
+    projection_report: ProjectionReport | None = None
     proposed_total: float | None = None
     compliant_total: float | None = None
     proposed_subtotal_fees: float | None = None
@@ -8909,6 +9137,8 @@ class CarrierCompliantProjection(StrictModel):
     total_delta: float = Field(default=0, ge=0)
     over_cap_amount: float = Field(ge=0)
     disallowed_amount: float = Field(default=0, ge=0)
+    task_hour_cap_delta: float = Field(default=0, ge=0)
+    task_hour_cap_delta_signed: float = 0
     rate_cap_delta: float = Field(ge=0)
     expense_cap_delta: float = Field(ge=0)
     disallowed_delta: float = Field(default=0, ge=0)

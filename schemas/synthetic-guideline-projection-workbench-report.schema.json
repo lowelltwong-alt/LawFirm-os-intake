@@ -1,5 +1,147 @@
 {
   "$defs": {
+    "AdjustmentLedger": {
+      "additionalProperties": false,
+      "description": "Ordered, non-commutative-safe attribution of every projection adjustment.\n\nPer-rule deltas are recomputed from the entries and must sum to the category\ndeltas and the total delta (fail-closed). Candidate-only review evidence.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "currency": {
+          "default": "USD",
+          "title": "Currency",
+          "type": "string"
+        },
+        "attribution_order": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Attribution Order",
+          "type": "array"
+        },
+        "entries": {
+          "items": {
+            "$ref": "#/$defs/AdjustmentLedgerEntry"
+          },
+          "title": "Entries",
+          "type": "array"
+        },
+        "category_delta_minor_units": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Category Delta Minor Units",
+          "type": "object"
+        },
+        "total_delta_minor_units": {
+          "default": 0,
+          "title": "Total Delta Minor Units",
+          "type": "integer"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "title": "AdjustmentLedger",
+      "type": "object"
+    },
+    "AdjustmentLedgerEntry": {
+      "additionalProperties": false,
+      "description": "One ordered, rule-attributed adjustment effect, in exact integer minor units.\n\n``delta_minor_units`` is the signed reduction (positive reduces the proposal);\n``after_minor_units == before_minor_units - delta_minor_units`` exactly.",
+      "properties": {
+        "order_index": {
+          "minimum": 0,
+          "title": "Order Index",
+          "type": "integer"
+        },
+        "rule_kind": {
+          "enum": [
+            "pack_effective_selection",
+            "task_hour_cap",
+            "staffing_rule",
+            "rate_cap",
+            "expense_cap",
+            "disallowance",
+            "contingency",
+            "preapproval_unsupported"
+          ],
+          "title": "Rule Kind",
+          "type": "string"
+        },
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "line_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line Id"
+        },
+        "phase_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phase Id"
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Id"
+        },
+        "before_minor_units": {
+          "title": "Before Minor Units",
+          "type": "integer"
+        },
+        "after_minor_units": {
+          "title": "After Minor Units",
+          "type": "integer"
+        },
+        "delta_minor_units": {
+          "title": "Delta Minor Units",
+          "type": "integer"
+        },
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_index",
+        "rule_kind",
+        "rule_id",
+        "before_minor_units",
+        "after_minor_units",
+        "delta_minor_units"
+      ],
+      "title": "AdjustmentLedgerEntry",
+      "type": "object"
+    },
     "CarrierCompliantLeverageSummary": {
       "additionalProperties": false,
       "properties": {
@@ -81,6 +223,39 @@
         },
         "basis": {
           "$ref": "#/$defs/CarrierCompliantProjectionBasis"
+        },
+        "pack_selection": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PackSelectionDecision"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "adjustment_ledger": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AdjustmentLedger"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "projection_report": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProjectionReport"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "proposed_total": {
           "anyOf": [
@@ -188,6 +363,17 @@
           "default": 0,
           "minimum": 0,
           "title": "Disallowed Amount",
+          "type": "number"
+        },
+        "task_hour_cap_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Task Hour Cap Delta",
+          "type": "number"
+        },
+        "task_hour_cap_delta_signed": {
+          "default": 0,
+          "title": "Task Hour Cap Delta Signed",
           "type": "number"
         },
         "rate_cap_delta": {
@@ -473,6 +659,11 @@
     "CarrierCompliantProjectionLine": {
       "additionalProperties": false,
       "properties": {
+        "line_id": {
+          "default": "",
+          "title": "Line Id",
+          "type": "string"
+        },
         "phase_id": {
           "title": "Phase Id",
           "type": "string"
@@ -524,6 +715,35 @@
         "proposed_hours": {
           "minimum": 0,
           "title": "Proposed Hours",
+          "type": "number"
+        },
+        "compliant_hours": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compliant Hours"
+        },
+        "task_hour_cap_applied": {
+          "default": false,
+          "title": "Task Hour Cap Applied",
+          "type": "boolean"
+        },
+        "task_hour_cap_delta": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Task Hour Cap Delta",
+          "type": "number"
+        },
+        "task_hour_cap_delta_signed": {
+          "default": 0,
+          "title": "Task Hour Cap Delta Signed",
           "type": "number"
         },
         "proposed_rate": {
@@ -1020,6 +1240,275 @@
         "reason"
       ],
       "title": "CarrierPreapprovalRequirement",
+      "type": "object"
+    },
+    "ConsideredPack": {
+      "additionalProperties": false,
+      "properties": {
+        "pack_id": {
+          "title": "Pack Id",
+          "type": "string"
+        },
+        "carrier_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Carrier Name"
+        },
+        "included": {
+          "title": "Included",
+          "type": "boolean"
+        },
+        "exclusion_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exclusion Reason"
+        }
+      },
+      "required": [
+        "pack_id",
+        "included"
+      ],
+      "title": "ConsideredPack",
+      "type": "object"
+    },
+    "PackSelectionDecision": {
+      "additionalProperties": false,
+      "description": "Typed, fail-closed carrier guideline pack selection.\n\nA missing or wrong confirmed carrier yields ``blocked_missing_context`` and\nnever silently falls back to a default carrier pack. Candidate-only review\nevidence; it authorizes no submission and asserts no canonical authority.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "selected",
+            "blocked_missing_context",
+            "blocked_overlap",
+            "no_applicable_pack"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "confirmed_carrier_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confirmed Carrier Id"
+        },
+        "confirmed_program": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confirmed Program"
+        },
+        "confirmed_jurisdiction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confirmed Jurisdiction"
+        },
+        "as_of": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "As Of"
+        },
+        "considered_packs": {
+          "items": {
+            "$ref": "#/$defs/ConsideredPack"
+          },
+          "title": "Considered Packs",
+          "type": "array"
+        },
+        "selected_pack_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Pack Id"
+        },
+        "selected_revision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Revision"
+        },
+        "selected_content_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Content Hash"
+        },
+        "blocked_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Blocked Reason"
+        },
+        "data_scope": {
+          "const": "synthetic_only",
+          "default": "synthetic_only",
+          "title": "Data Scope",
+          "type": "string"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "not_authorized_for_client_submission": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Client Submission",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "PackSelectionDecision",
+      "type": "object"
+    },
+    "ProjectionReport": {
+      "additionalProperties": false,
+      "description": "The three distinct output quantities, kept semantically separate.\n\n``work_plan_total`` is the firm's immutable work-plan baseline and is NEVER\noverwritten by reimbursement math; ``guideline_adjusted_reimbursement`` is\nwhat the carrier guideline would reimburse; ``unreimbursed_exposure`` is the\ngap the firm/client bears (work_plan_total - reimbursement), recomputed\nfail-closed. Candidate-only review evidence.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "currency": {
+          "default": "USD",
+          "title": "Currency",
+          "type": "string"
+        },
+        "work_plan_total": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Work Plan Total"
+        },
+        "guideline_adjusted_reimbursement": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guideline Adjusted Reimbursement"
+        },
+        "unreimbursed_exposure": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unreimbursed Exposure"
+        },
+        "reimbursement_priced": {
+          "title": "Reimbursement Priced",
+          "type": "boolean"
+        },
+        "work_plan_is_immutable_baseline": {
+          "const": true,
+          "default": true,
+          "title": "Work Plan Is Immutable Baseline",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "reimbursement_priced"
+      ],
+      "title": "ProjectionReport",
       "type": "object"
     },
     "SyntheticGuidelineProjectionWorkbenchCheck": {

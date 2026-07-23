@@ -203,7 +203,7 @@
       "inclusion": "excluded_context_only",
       "reason": "Guidelines remain a separate candidate policy lane and are not applied to this fixed proposal.",
       "source_ref": "config/synthetic-carrier-guideline.yaml",
-      "source_sha256": "sha256:a223a90fd311da3734cce58940f7323e1d387362ae197e058f2092dcd46a73ae"
+      "source_sha256": "sha256:d59337a5c03783207daef66f660fe00593287cf0ec6f1bb0a9a88c8bff26cfa5"
     },
     {
       "lane_id": "synthetic_actuals",

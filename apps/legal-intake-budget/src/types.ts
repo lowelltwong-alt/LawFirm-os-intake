@@ -1180,6 +1180,23 @@ export type SyntheticGuidelineProjectionWorkbenchReport = {
     projection: {
       proposed_total: number | null;
       compliant_total: number | null;
+      pack_selection: {
+        status:
+          | "selected"
+          | "blocked_missing_context"
+          | "blocked_overlap"
+          | "no_applicable_pack";
+        selected_pack_id: string | null;
+        selected_revision: string | null;
+        selected_content_hash: string | null;
+        blocked_reason: string | null;
+      } | null;
+      projection_report: {
+        work_plan_total: number | null;
+        guideline_adjusted_reimbursement: number | null;
+        unreimbursed_exposure: number | null;
+        reimbursement_priced: boolean;
+      } | null;
       rate_cap_delta: number;
       expense_cap_delta: number;
       disallowed_delta: number;
@@ -1194,6 +1211,7 @@ proposed_subtotal_fees: number | null;
       compliant_contingency_amount: number | null;
       line_count: number;
       lines: Array<{
+        line_id: string;
         phase_id: string;
         task_id: string;
         staffing_role: string;

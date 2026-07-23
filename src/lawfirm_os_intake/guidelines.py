@@ -6,6 +6,9 @@ from typing import Any
 import yaml
 
 from .models import (
+    ADJUSTMENT_LEDGER_ORDER,
+    AdjustmentLedger,
+    AdjustmentLedgerEntry,
     BudgetLine,
     BudgetProposal,
     CarrierCompliantLeverageSummary,
@@ -14,9 +17,83 @@ from .models import (
     CarrierCompliantProjection,
     CarrierCompliantProjectionBasis,
     CarrierCompliantProjectionLine,
+    ConsideredPack,
+    PackSelectionDecision,
+    ProjectionReport,
 )
 from .rates import RoleRateResolution
-from .util import new_id, now_iso
+from .util import digest_json, new_id, now_iso
+
+
+def select_pack(
+    guideline: dict[str, Any],
+    *,
+    carrier_id: str | None,
+    jurisdiction: str | None = None,
+    program: str | None = None,
+    as_of: str | None = None,
+) -> PackSelectionDecision:
+    """Resolve the applicable carrier guideline pack, fail-closed.
+
+    A missing or wrong confirmed carrier returns ``blocked_missing_context`` and
+    never falls back to ``default_carrier_id`` — the caller must surface the
+    typed blocked state instead of pricing against a default pack.
+    """
+
+    carriers = guideline.get("carriers", {})
+    carriers = carriers if isinstance(carriers, dict) else {}
+    confirmed = (carrier_id or "").strip() or None
+
+    def _considered(included_id: str | None, exclusion_reason: str) -> list[ConsideredPack]:
+        packs: list[ConsideredPack] = []
+        for pack_id in sorted(carriers):
+            spec = carriers[pack_id] if isinstance(carriers[pack_id], dict) else {}
+            included = pack_id == included_id
+            carrier_name = spec.get("carrier_name")
+            packs.append(
+                ConsideredPack(
+                    pack_id=str(pack_id),
+                    carrier_name=str(carrier_name) if carrier_name else None,
+                    included=included,
+                    exclusion_reason=None if included else exclusion_reason,
+                )
+            )
+        return packs
+
+    if confirmed is None:
+        return PackSelectionDecision(
+            status="blocked_missing_context",
+            confirmed_carrier_id=None,
+            confirmed_jurisdiction=jurisdiction,
+            confirmed_program=program,
+            as_of=as_of,
+            considered_packs=_considered(None, "no_confirmed_carrier_to_match"),
+            blocked_reason="missing_confirmed_carrier",
+        )
+    if confirmed not in carriers:
+        return PackSelectionDecision(
+            status="blocked_missing_context",
+            confirmed_carrier_id=confirmed,
+            confirmed_jurisdiction=jurisdiction,
+            confirmed_program=program,
+            as_of=as_of,
+            considered_packs=_considered(None, "confirmed_carrier_id_mismatch"),
+            blocked_reason="confirmed_carrier_not_in_guideline",
+        )
+
+    spec = carriers[confirmed] if isinstance(carriers[confirmed], dict) else {}
+    revision = str(spec.get("revision") or guideline.get("version") or "unknown")
+    return PackSelectionDecision(
+        status="selected",
+        confirmed_carrier_id=confirmed,
+        confirmed_jurisdiction=jurisdiction,
+        confirmed_program=program,
+        as_of=as_of,
+        considered_packs=_considered(confirmed, "confirmed_carrier_id_mismatch"),
+        selected_pack_id=confirmed,
+        selected_revision=revision,
+        selected_content_hash=digest_json(spec),
+    )
 
 
 def load_carrier_guideline(path: str | Path) -> dict[str, Any]:
@@ -70,7 +147,10 @@ def build_carrier_preapproval_report(
     guideline_ref: str,
     carrier_id: str | None,
 ) -> CarrierPreapprovalReport | None:
-    resolved_carrier_id = carrier_id or str(guideline.get("default_carrier_id", ""))
+    selection = select_pack(guideline, carrier_id=carrier_id)
+    if selection.status != "selected":
+        return None
+    resolved_carrier_id = selection.selected_pack_id or ""
     carrier_rules = _carrier_rules(guideline, resolved_carrier_id)
     if carrier_rules is None:
         return None
@@ -147,6 +227,154 @@ def build_carrier_preapproval_report(
     )
 
 
+def _minor(amount: float | None) -> int:
+    """Exact integer minor units (cents) for candidate synthetic money."""
+
+    return int(round((amount or 0.0) * 100))
+
+
+def _adjustment_order_index(rule_kind: str) -> int:
+    return ADJUSTMENT_LEDGER_ORDER.index(rule_kind)
+
+
+def _task_role_hour_caps(staffing_rules: dict[str, Any]) -> dict[tuple[str, str], float]:
+    """Aggregate task x role hour caps: {(task_id, role): cap_hours}."""
+
+    raw = staffing_rules.get("task_role_hour_caps") or {}
+    caps: dict[tuple[str, str], float] = {}
+    if isinstance(raw, dict):
+        for task_id, role_caps in raw.items():
+            if not isinstance(role_caps, dict):
+                continue
+            for role, cap in role_caps.items():
+                try:
+                    caps[(str(task_id), str(role))] = float(cap)
+                except (TypeError, ValueError):
+                    continue
+    return caps
+
+
+def _compliant_hours_by_line(
+    lines: list[BudgetLine], task_role_hour_caps: dict[tuple[str, str], float]
+) -> dict[str, float]:
+    """Distribute each exceeded aggregate task x role hour cap proportionally across its lines."""
+
+    if not task_role_hour_caps:
+        return {}
+    aggregate: dict[tuple[str, str], float] = {}
+    for line in lines:
+        key = (line.task_id, line.staffing_role)
+        if key in task_role_hour_caps:
+            aggregate[key] = aggregate.get(key, 0.0) + line.estimated_hours
+    compliant: dict[str, float] = {}
+    for line in lines:
+        key = (line.task_id, line.staffing_role)
+        cap = task_role_hour_caps.get(key)
+        if cap is None:
+            continue
+        total = aggregate.get(key, 0.0)
+        if total > cap and total > 0:
+            compliant[line.line_id] = round(line.estimated_hours * (cap / total), 4)
+    return compliant
+
+
+def _build_adjustment_ledger(
+    projection_lines: list[CarrierCompliantProjectionLine],
+    *,
+    selection: PackSelectionDecision,
+    carrier_id: str,
+    proposed_contingency: float | None,
+    compliant_contingency: float | None,
+) -> AdjustmentLedger:
+    """Ordered, rule-attributed ledger of every projection adjustment (exact minor units)."""
+
+    entries: list[AdjustmentLedgerEntry] = []
+    # 0: pack/effective selection — records the selected pack; no money delta itself.
+    entries.append(
+        AdjustmentLedgerEntry(
+            order_index=0,
+            rule_kind="pack_effective_selection",
+            rule_id=f"pack::{selection.selected_pack_id}@{selection.selected_revision}",
+            before_minor_units=0,
+            after_minor_units=0,
+            delta_minor_units=0,
+            note="Selected candidate guideline pack for the confirmed carrier.",
+        )
+    )
+
+    # 1..5: per-line rule effects, grouped by rule kind to preserve attribution order.
+    line_kinds: list[tuple[str, str]] = [
+        ("task_hour_cap", "task_hour_cap_delta_signed"),
+        ("staffing_rule", "staffing_rule_delta_signed"),
+        ("rate_cap", "rate_cap_delta_signed"),
+        ("expense_cap", "expense_cap_delta_signed"),
+        ("disallowance", "disallowed_delta_signed"),
+    ]
+    for rule_kind, delta_attr in line_kinds:
+        order_index = _adjustment_order_index(rule_kind)
+        for line in projection_lines:
+            delta = _minor(getattr(line, delta_attr))
+            if delta == 0:
+                continue
+            before = _minor(line.proposed_line_total)
+            entries.append(
+                AdjustmentLedgerEntry(
+                    order_index=order_index,
+                    rule_kind=rule_kind,  # type: ignore[arg-type]
+                    rule_id=f"{rule_kind}::{carrier_id}::{line.line_id}",
+                    line_id=line.line_id or None,
+                    phase_id=line.phase_id,
+                    task_id=line.task_id,
+                    before_minor_units=before,
+                    after_minor_units=before - delta,
+                    delta_minor_units=delta,
+                )
+            )
+
+    # 6: contingency.
+    contingency_delta = _minor(proposed_contingency) - _minor(compliant_contingency)
+    if contingency_delta != 0:
+        before = _minor(proposed_contingency)
+        entries.append(
+            AdjustmentLedgerEntry(
+                order_index=_adjustment_order_index("contingency"),
+                rule_kind="contingency",
+                rule_id=f"contingency::{carrier_id}",
+                before_minor_units=before,
+                after_minor_units=before - contingency_delta,
+                delta_minor_units=contingency_delta,
+                note="Contingency recomputed from the compliant fee base.",
+            )
+        )
+
+    # 7: unsupported findings — reshaped roles with no synthetic rate (no money delta).
+    for line in projection_lines:
+        if line.rate_unknown_for_reshaped_role:
+            entries.append(
+                AdjustmentLedgerEntry(
+                    order_index=_adjustment_order_index("preapproval_unsupported"),
+                    rule_kind="preapproval_unsupported",
+                    rule_id=f"unsupported::{carrier_id}::{line.line_id}",
+                    line_id=line.line_id or None,
+                    phase_id=line.phase_id,
+                    task_id=line.task_id,
+                    before_minor_units=0,
+                    after_minor_units=0,
+                    delta_minor_units=0,
+                    note="Reshaped role has no synthetic rate; effect is unsupported and hours-only.",
+                )
+            )
+
+    category: dict[str, int] = {}
+    for entry in entries:
+        category[entry.rule_kind] = category.get(entry.rule_kind, 0) + entry.delta_minor_units
+    return AdjustmentLedger(
+        entries=entries,
+        category_delta_minor_units=category,
+        total_delta_minor_units=sum(entry.delta_minor_units for entry in entries),
+    )
+
+
 def build_carrier_compliant_projection(
     budget: BudgetProposal,
     *,
@@ -155,7 +383,12 @@ def build_carrier_compliant_projection(
     carrier_id: str | None,
     rate_resolution: RoleRateResolution | None = None,
 ) -> CarrierCompliantProjection | None:
-    resolved_carrier_id = carrier_id or str(guideline.get("default_carrier_id", ""))
+    selection = select_pack(guideline, carrier_id=carrier_id)
+    if selection.status != "selected":
+        # Missing/wrong carrier is a typed blocked selection, never a silent
+        # projection priced against the guideline's default carrier.
+        return None
+    resolved_carrier_id = selection.selected_pack_id or ""
     carrier_rules = _carrier_rules(guideline, resolved_carrier_id)
     if carrier_rules is None:
         return None
@@ -174,6 +407,8 @@ def build_carrier_compliant_projection(
         str(code): str(role)
         for code, role in (staffing_rules.get("task_role_overrides") or {}).items()
     }
+    task_role_hour_caps = _task_role_hour_caps(staffing_rules)
+    compliant_hours_by_line = _compliant_hours_by_line(budget.lines, task_role_hour_caps)
     role_rates = _projection_role_rates(budget.lines, rate_resolution)
     projection_lines = [
         _project_line(
@@ -185,6 +420,7 @@ def build_carrier_compliant_projection(
             disallowed_expense_codes=disallowed_expense_codes,
             task_role_overrides=task_role_overrides,
             role_rates=role_rates,
+            compliant_hours=compliant_hours_by_line.get(line.line_id),
         )
         for line in budget.lines
     ]
@@ -228,6 +464,10 @@ def build_carrier_compliant_projection(
         if budget.total_proposed_budget is not None and projection_pricing_status == "priced"
         else None
     )
+    task_hour_cap_delta = round(sum(line.task_hour_cap_delta for line in projection_lines), 2)
+    task_hour_cap_delta_signed = round(
+        sum(line.task_hour_cap_delta_signed for line in projection_lines), 2
+    )
     rate_cap_delta = round(
         sum(line.rate_cap_delta for line in projection_lines),
         2,
@@ -264,7 +504,8 @@ def build_carrier_compliant_projection(
     )
     over_cap_amount = round(rate_cap_delta + expense_cap_delta, 2)
     total_delta = round(
-        rate_cap_delta
+        task_hour_cap_delta
+        + rate_cap_delta
         + expense_cap_delta
         + disallowed_delta
         + staffing_rule_delta
@@ -280,9 +521,37 @@ def build_carrier_compliant_projection(
         total_hours=sum(line.proposed_hours for line in projection_lines),
     )
 
+    adjustment_ledger = _build_adjustment_ledger(
+        projection_lines,
+        selection=selection,
+        carrier_id=resolved_carrier_id,
+        proposed_contingency=proposed_contingency,
+        compliant_contingency=compliant_contingency,
+    )
+    # Output-language split: the work-plan total is the immutable proposal baseline
+    # (never overwritten by reimbursement math); reimbursement and exposure are the
+    # guideline-adjusted view composed on top.
+    reimbursement_priced = (
+        projection_pricing_status == "priced"
+        and compliant_total is not None
+        and budget.total_proposed_budget is not None
+    )
+    projection_report = ProjectionReport(
+        work_plan_total=budget.total_proposed_budget,
+        guideline_adjusted_reimbursement=compliant_total if reimbursement_priced else None,
+        unreimbursed_exposure=(
+            round(budget.total_proposed_budget - compliant_total, 2)
+            if reimbursement_priced
+            else None
+        ),
+        reimbursement_priced=reimbursement_priced,
+    )
     return CarrierCompliantProjection(
         projection_id=new_id("carrierprojection"),
         status="projected_for_human_review",
+        pack_selection=selection,
+        adjustment_ledger=adjustment_ledger,
+        projection_report=projection_report,
         basis=CarrierCompliantProjectionBasis(
             guideline_id=str(guideline.get("guideline_id", "unknown")),
             guideline_ref=guideline_ref,
@@ -307,6 +576,8 @@ def build_carrier_compliant_projection(
         total_delta=total_delta,
         over_cap_amount=over_cap_amount,
         disallowed_amount=disallowed_delta,
+        task_hour_cap_delta=task_hour_cap_delta,
+        task_hour_cap_delta_signed=task_hour_cap_delta_signed,
         rate_cap_delta=rate_cap_delta,
         expense_cap_delta=expense_cap_delta,
         disallowed_delta=disallowed_delta,
@@ -356,6 +627,7 @@ def _project_line(
     disallowed_expense_codes: set[str],
     task_role_overrides: dict[str, str],
     role_rates: dict[str, float],
+    compliant_hours: float | None = None,
 ) -> CarrierCompliantProjectionLine:
     guideline_refs: list[str] = []
     compliant_staffing_role = _compliant_staffing_role(line, task_role_overrides)
@@ -390,9 +662,30 @@ def _project_line(
         if staffing_rule_rate is not None
         else None
     )
-    compliant_fees = (
+    compliant_fees_full = (
         round(line.estimated_hours * compliant_rate, 2) if compliant_rate is not None else None
     )
+    # Task-hour cap is attributed before rate caps: scale the rate-shaped compliant
+    # fees down to the capped compliant hours. The reduction is a distinct,
+    # additive attribution and never overlaps the rate/staffing deltas below.
+    effective_compliant_hours = line.estimated_hours if compliant_hours is None else compliant_hours
+    task_hour_cap_applied = (
+        line.estimated_hours > 0 and effective_compliant_hours < line.estimated_hours
+    )
+    compliant_fees = compliant_fees_full
+    task_hour_cap_delta_signed = 0.0
+    if task_hour_cap_applied and compliant_fees_full is not None:
+        ratio = effective_compliant_hours / line.estimated_hours
+        compliant_fees = round(compliant_fees_full * ratio, 2)
+        task_hour_cap_delta_signed = round(compliant_fees_full - compliant_fees, 2)
+        guideline_refs.append(
+            _guideline_ref(
+                guideline_id,
+                carrier_id,
+                f"task_role_hour_caps/{line.task_id}/{line.staffing_role}",
+            )
+        )
+    task_hour_cap_delta = max(0.0, task_hour_cap_delta_signed)
     proposed_expenses = line.estimated_expenses
     compliant_expenses = proposed_expenses
     expense_cap_applied = False
@@ -435,13 +728,13 @@ def _project_line(
     )
     rate_cap_delta_signed = (
         _signed_delta(
-            staffing_rule_fees if staffing_rule_applied else proposed_fees, compliant_fees
+            staffing_rule_fees if staffing_rule_applied else proposed_fees, compliant_fees_full
         )
         if rate_cap_applied
         else 0.0
     )
     rate_cap_delta = (
-        _delta(staffing_rule_fees if staffing_rule_applied else proposed_fees, compliant_fees)
+        _delta(staffing_rule_fees if staffing_rule_applied else proposed_fees, compliant_fees_full)
         if rate_cap_applied
         else 0.0
     )
@@ -454,9 +747,13 @@ def _project_line(
     expense_cap_delta = (
         0.0 if disallowed else max(0.0, round(proposed_expenses - compliant_expenses, 2))
     )
-    capped = rate_cap_applied or expense_cap_applied
+    capped = rate_cap_applied or expense_cap_applied or task_hour_cap_applied
     review_issue_codes: list[str] = []
     note_parts = []
+    if task_hour_cap_applied:
+        note_parts.append(
+            f"task-hour capped from {line.estimated_hours} to {effective_compliant_hours} hours"
+        )
     if staffing_rule_applied:
         if staffing_rule_rate is None:
             note_parts.append(
@@ -480,6 +777,7 @@ def _project_line(
     note = "; ".join(note_parts) if note_parts else "no guideline adjustment"
 
     return CarrierCompliantProjectionLine(
+        line_id=line.line_id,
         phase_id=line.phase_id,
         task_id=line.task_id,
         external_code_candidate=line.external_code_candidate,
@@ -487,6 +785,10 @@ def _project_line(
         staffing_role=line.staffing_role,
         compliant_staffing_role=compliant_staffing_role,
         proposed_hours=line.estimated_hours,
+        compliant_hours=effective_compliant_hours,
+        task_hour_cap_applied=task_hour_cap_applied,
+        task_hour_cap_delta=task_hour_cap_delta,
+        task_hour_cap_delta_signed=task_hour_cap_delta_signed,
         proposed_rate=proposed_rate,
         staffing_rule_rate=staffing_rule_rate,
         compliant_rate=compliant_rate,
