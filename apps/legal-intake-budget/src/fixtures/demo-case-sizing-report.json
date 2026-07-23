@@ -1,0 +1,137 @@
+{
+  "schema_version": "0.1",
+  "case_sizing_report_id": "casesizing-bf2ac2445b7e6625",
+  "case_type": "premises_liability",
+  "sized_work_plan": {
+    "schema_version": "0.1",
+    "case_type": "premises_liability",
+    "base_work_plan_total_minor_units": 350000,
+    "sized_work_plan_total_minor_units": 1118750,
+    "effects": [
+      {
+        "driver_id": "party_count",
+        "driver_value": "2",
+        "effect_form": "multiplier",
+        "factor": 1.25,
+        "amount_minor_units": 0,
+        "gate_open": null,
+        "before_minor_units": 350000,
+        "after_minor_units": 437500,
+        "note": "party_count=2 -> x1.25"
+      },
+      {
+        "driver_id": "injury_severity",
+        "driver_value": "surgical",
+        "effect_form": "multiplier",
+        "factor": 1.4,
+        "amount_minor_units": 0,
+        "gate_open": null,
+        "before_minor_units": 437500,
+        "after_minor_units": 612500,
+        "note": "injury_severity=surgical -> x1.4"
+      },
+      {
+        "driver_id": "liability_clarity",
+        "driver_value": "disputed",
+        "effect_form": "multiplier",
+        "factor": 1.5,
+        "amount_minor_units": 0,
+        "gate_open": null,
+        "before_minor_units": 612500,
+        "after_minor_units": 918750,
+        "note": "liability_clarity=disputed -> x1.5"
+      },
+      {
+        "driver_id": "venue",
+        "driver_value": "state_default",
+        "effect_form": "additive",
+        "factor": null,
+        "amount_minor_units": 0,
+        "gate_open": null,
+        "before_minor_units": 918750,
+        "after_minor_units": 918750,
+        "note": "venue=state_default -> +0"
+      },
+      {
+        "driver_id": "exposure_band",
+        "driver_value": "medium",
+        "effect_form": "gate",
+        "factor": null,
+        "amount_minor_units": 200000,
+        "gate_open": true,
+        "before_minor_units": 918750,
+        "after_minor_units": 1118750,
+        "note": "exposure_band=medium -> gate open"
+      }
+    ],
+    "drivers_applied": [
+      "party_count",
+      "injury_severity",
+      "liability_clarity",
+      "venue",
+      "exposure_band"
+    ],
+    "currency": "USD",
+    "candidate_only": true,
+    "non_authoritative": true
+  },
+  "proportionality": {
+    "schema_version": "0.1",
+    "case_type": "premises_liability",
+    "work_plan_total_minor_units": 1118750,
+    "exposure_minor_units": 1000000,
+    "ratio": 1.11875,
+    "band_max_ratio": 0.4,
+    "status": "blocked_disproportionate_budget",
+    "human_override_required": true,
+    "override_reason": null,
+    "recommended_plan": "settle_lean_plan",
+    "candidate_only": true,
+    "non_authoritative": true
+  },
+  "settlement_posture_analysis": {
+    "schema_version": "0.1",
+    "postures": [
+      {
+        "posture": "settle_now",
+        "indemnity_minor_units": 250000,
+        "defense_minor_units": 40000,
+        "expected_total_cost_of_risk_minor_units": 290000,
+        "formula": "S + defense(settle_now)"
+      },
+      {
+        "posture": "defend_then_settle",
+        "indemnity_minor_units": 300000,
+        "defense_minor_units": 180000,
+        "expected_total_cost_of_risk_minor_units": 480000,
+        "formula": "S' + defense(defend_then_settle)"
+      },
+      {
+        "posture": "try",
+        "indemnity_minor_units": 550000,
+        "defense_minor_units": 520000,
+        "expected_total_cost_of_risk_minor_units": 1070000,
+        "formula": "(1 - p) * E + defense(try)  [p is a declared assumption]"
+      }
+    ],
+    "recommended_posture": "settle_now",
+    "recommended_budget_envelope_minor_units": 40000,
+    "recommended_expected_cost_of_risk_minor_units": 290000,
+    "currency": "USD",
+    "win_probability_is_declared_assumption": true,
+    "candidate_only": true,
+    "non_authoritative": true,
+    "not_authorized_for_client_submission": true
+  },
+  "currency": "USD",
+  "data_scope": "synthetic_only",
+  "candidate_only": true,
+  "non_authoritative": true,
+  "not_authorized_for_client_submission": true,
+  "required_next_gates": [
+    "human_review_before_any_budget_authorization",
+    "human_review_of_recommended_settlement_posture",
+    "orchestrator_owned_submission_contract"
+  ],
+  "generated_at": "2026-07-23T00:00:00Z"
+}

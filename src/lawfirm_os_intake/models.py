@@ -9299,6 +9299,63 @@ class CaseSizingReport(StrictModel):
         return self
 
 
+class FirmExcelBudgetTaskRow(StrictModel):
+    utbms_task_code: str
+    task_name: str
+    original_amount_minor_units: int = Field(ge=0)
+    billed_amount_minor_units: int = Field(ge=0)
+    new_amount_minor_units: int = Field(ge=0)
+
+
+class FirmExcelBudgetPhase(StrictModel):
+    utbms_phase_code: str
+    phase_name: str
+    tasks: list[FirmExcelBudgetTaskRow] = Field(default_factory=list)
+
+
+class FirmExcelBudgetExport(StrictModel):
+    """Structured firm-Excel budget export (dollars-per-UTBMS-task only).
+
+    The role/rate/hours decomposition stays internal to the engine; only dollars
+    per task are exported. Candidate-only, synthetic-only; not a client submission.
+    """
+
+    schema_version: str = "0.1"
+    export_id: str
+    matter_label: str = "SYNTHETIC MATTER (candidate, not a real client)"
+    currency: str = "USD"
+    phases: list[FirmExcelBudgetPhase] = Field(default_factory=list)
+    original_total_minor_units: int | None = None
+    billed_total_minor_units: int | None = None
+    new_total_minor_units: int | None = None
+    documented_deviations: list[str] = Field(default_factory=list)
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    not_authorized_for_client_submission: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _totals_recomputed_fail_closed(self) -> "FirmExcelBudgetExport":
+        computed = {
+            "original_total_minor_units": sum(
+                task.original_amount_minor_units for phase in self.phases for task in phase.tasks
+            ),
+            "billed_total_minor_units": sum(
+                task.billed_amount_minor_units for phase in self.phases for task in phase.tasks
+            ),
+            "new_total_minor_units": sum(
+                task.new_amount_minor_units for phase in self.phases for task in phase.tasks
+            ),
+        }
+        for name, value in computed.items():
+            current = getattr(self, name)
+            if current is None:
+                setattr(self, name, value)
+            elif current != value:
+                raise ValueError(f"firm excel export {name} does not equal the sum of task rows")
+        return self
+
+
 class CarrierCompliantProjectionBasis(StrictModel):
     guideline_id: str
     guideline_ref: str

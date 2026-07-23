@@ -9,6 +9,7 @@ import demoOCGRuleIRAdoption from "./fixtures/demo-ocg-rule-ir-adoption-report.j
 import demoBudgetLearningLoop from "./fixtures/demo-budget-learning-loop-report.json";
 import demoCrossRepoContractProof from "./fixtures/demo-cross-repo-contract-proof-report.json";
 import demoPilotReviewStory from "./fixtures/demo-pilot-review-story-report.json";
+import demoCaseSizing from "./fixtures/demo-case-sizing-report.json";
 import demoLaborEmploymentBlockedDriverReview from "./fixtures/demo-labor-employment-blocked-driver-impact-review-report.json";
 import demoLaborEmploymentBudgetLearningFixtures from "./fixtures/demo-labor-employment-budget-learning-fixtures-report.json";
 import demoLaborEmploymentBudgetOutcomeReplayBuilderBinding from "./fixtures/demo-labor-employment-budget-outcome-replay-builder-binding-report.json";
@@ -4454,6 +4455,79 @@ function LaborEmploymentFixtureDrilldownPanel({
   );
 }
 
+function CaseSizingPanel({ report }: { report: typeof demoCaseSizing }) {
+  const money = (minor: number) => formatMoney(minor / 100);
+  const prop = report.proportionality;
+  const analysis = report.settlement_posture_analysis;
+  return (
+    <section className="panel" aria-labelledby="case-sizing-title">
+      <div className="panel-heading">
+        <div>
+          <h2 id="case-sizing-title">Case Sizing, Proportionality & Settlement Posture</h2>
+          <code>{report.case_sizing_report_id}</code>
+        </div>
+        <span
+          className={
+            prop.status === "within_band" ? "state state-passed" : "state state-blocked"
+          }
+        >
+          {prop.status}
+        </span>
+      </div>
+      <p className="candidate-note">
+        Synthetic candidate sizing/economics only. Win probability is a declared assumption, not a
+        model output. Not a budget authorization or client submission.
+      </p>
+      <div className="bundle-source">
+        <span>Sized Work Plan</span>
+        <code>{money(report.sized_work_plan.sized_work_plan_total_minor_units)}</code>
+        <span>Exposure</span>
+        <code>{money(prop.exposure_minor_units)}</code>
+        <span>Budget / Exposure</span>
+        <code>
+          {prop.ratio.toFixed(2)} (band {prop.band_max_ratio.toFixed(2)})
+        </code>
+        <span>Recommended Plan</span>
+        <code>{prop.recommended_plan.replaceAll("_", " ")}</code>
+      </div>
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Posture</th>
+              <th>Indemnity</th>
+              <th>Defense</th>
+              <th>Expected Cost of Risk</th>
+            </tr>
+          </thead>
+          <tbody>
+            {analysis.postures.map((posture) => (
+              <tr
+                key={posture.posture}
+                className={
+                  posture.posture === analysis.recommended_posture ? "state-present" : undefined
+                }
+              >
+                <td>
+                  <strong>{posture.posture.replaceAll("_", " ")}</strong>
+                  {posture.posture === analysis.recommended_posture ? " (recommended)" : ""}
+                </td>
+                <td>{money(posture.indemnity_minor_units)}</td>
+                <td>{money(posture.defense_minor_units)}</td>
+                <td>{money(posture.expected_total_cost_of_risk_minor_units)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="bundle-source">
+        <span>Recommended Budget Envelope</span>
+        <code>{money(analysis.recommended_budget_envelope_minor_units)}</code>
+      </div>
+    </section>
+  );
+}
+
 function App() {
   const blockedCount = manifest.artifacts.filter(
     (artifact) => artifact.status === "blocked" || artifact.gateState === "blocked",
@@ -4517,6 +4591,7 @@ function App() {
       <SyntheticBudgetConfigurationWorkbenchPanel report={syntheticBudgetConfigurationWorkbench} />
       <BudgetSandboxPanel budgetInput={syntheticBudgetInputWorkbench} />
       <SyntheticGuidelineProjectionWorkbenchPanel report={syntheticGuidelineProjectionWorkbench} />
+      <CaseSizingPanel report={demoCaseSizing} />
       <SyntheticRejectionAppealWorkbenchPanel report={syntheticRejectionAppealWorkbench} />
       <SyntheticActualsWorkbenchPanel report={syntheticActualsWorkbench} />
       <PilotReviewStoryPanel report={pilotReviewStory} />

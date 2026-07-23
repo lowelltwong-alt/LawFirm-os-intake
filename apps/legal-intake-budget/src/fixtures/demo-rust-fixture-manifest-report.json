@@ -1,7 +1,7 @@
 {
   "budget_submission_authorized": false,
   "candidate_only": true,
-  "checked_json_file_count": 38,
+  "checked_json_file_count": 39,
   "external_writes_performed": false,
   "failure_count": 0,
   "failures": [],
@@ -33,6 +33,20 @@
       "sha256": "sha256:8f0b8a5378fe2a222c3fcd50f1835d5f978f8e967e322efbf24eb5a736474867",
       "status": "budget_learning_loop_ready_for_review",
       "synthetic_only": true,
+      "top_level_type": "object"
+    },
+    {
+      "byte_count": 4232,
+      "candidate_only": true,
+      "id_fields": [
+        {
+          "field": "case_sizing_report_id",
+          "value": "casesizing-bf2ac2445b7e6625"
+        }
+      ],
+      "path": "demo-case-sizing-report.json",
+      "schema_version": "0.1",
+      "sha256": "sha256:42568b11e06baf6e2b044919518bc8bc5d6f1706d13c2517314bf149d3f53bcb",
       "top_level_type": "object"
     },
     {
@@ -933,11 +947,11 @@
   ],
   "lake_write_performed": false,
   "local_json_only": true,
-  "manifest_sha256": "sha256:fd758ce86f59225b76c5fb4ed9bcc7c5123fb0a24f79aeb5a4472ed9e6c393cb",
+  "manifest_sha256": "sha256:1bad6a1b92538d9f146ca2e08008c18e9123c8abaf505e9cd8b5a54059d0647a",
   "matter_opening_authorized": false,
   "non_authoritative": true,
   "parse_error_count": 0,
-  "parsed_json_file_count": 38,
+  "parsed_json_file_count": 39,
   "root": "apps\\legal-intake-budget\\src\\fixtures",
   "scanner": "fixture-manifest-scanner",
   "schema_version": "0.1",
@@ -956,5 +970,5 @@
   "sqlite_write_performed": false,
   "status": "passed",
   "synthetic_only": true,
-  "total_byte_count": 1288248
+  "total_byte_count": 1292480
 }
