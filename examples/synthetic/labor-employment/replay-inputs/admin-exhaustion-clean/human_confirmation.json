@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1",
+  "confirmation_id": "le-confirmation-admin-exhaustion-clean.v0_1",
+  "preflight_packet_id": "le-preflight-admin-exhaustion-clean.v0_1",
+  "status": "confirmed",
+  "supersedes_confirmation_id": null,
+  "confirmed_inbound_event": "prospective_matter_intake",
+  "confirmed_matter_family": "administrative_exhaustion_agency_record",
+  "confirmed_representation_posture": "defense",
+  "confirmed_parties": [
+    {
+      "name": "Elena Park",
+      "confirmed_role": "adverse_party",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-admin-exhaustion-cover-email-001",
+          "segment_id": "seg_e473eee8949041d0af091477c59c18a9",
+          "start_offset": 160,
+          "end_offset": 560,
+          "sha256": "sha256:47c00148eea9e258f59b155cde55007dc8290c30769c5c3ab0e90a4a2929e942"
+        }
+      ]
+    },
+    {
+      "name": "Meridian Market LLC",
+      "confirmed_role": "prospective_represented_client",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-admin-exhaustion-cover-email-001",
+          "segment_id": "seg_e473eee8949041d0af091477c59c18a9",
+          "start_offset": 160,
+          "end_offset": 560,
+          "sha256": "sha256:47c00148eea9e258f59b155cde55007dc8290c30769c5c3ab0e90a4a2929e942"
+        }
+      ]
+    }
+  ],
+  "confirmed_jurisdiction": null,
+  "confirmed_deadlines": [],
+  "reviewer_id": "synthetic-human-review-fixture",
+  "reviewed_at": "2026-07-20T12:00:00Z",
+  "notes": "Synthetic POC confirmation fixture only (le-replay-input-generator.v0_1); administrative-exhaustion / agency-record defense. Not a real human review, conflict clearance, engagement decision, matter opening, or budget approval.",
+  "decision_evidence_refs": [
+    {
+      "source_id": "syn-le-admin-exhaustion-cover-email-001",
+      "segment_id": "seg_a710de2836ba4bc2b044f26131cdfd53",
+      "start_offset": 0,
+      "end_offset": 49,
+      "sha256": "sha256:af5fc0703df56d72300c93a655258153efba3cf1396af86860a127d8dce8da7a"
+    }
+  ]
+}

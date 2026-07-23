@@ -203,6 +203,10 @@ def build_synthetic_guideline_projection_workbench_report(
 ) -> SyntheticGuidelineProjectionWorkbenchReport:
     root = Path(repo_root)
     report_generated_at = generated_at or now_iso()
+    # Bind every declared replay source to one immutable snapshot captured before the
+    # build reads them, so a mid-build mutation is caught fail-closed at the end.
+    source_paths = [root / source_ref for _, _, source_ref in SOURCE_REFS]
+    source_bytes_before = {path: path.read_bytes() for path in source_paths if path.is_file()}
     inbound = root / SOURCE_REFS[0][2]
     confirmation_path = root / SOURCE_REFS[1][2]
     profile = load_profile(root / SOURCE_REFS[2][2])
@@ -286,6 +290,10 @@ def build_synthetic_guideline_projection_workbench_report(
         }
     )
     source_manifest = _source_manifest(root)
+    source_inputs_unchanged = all(
+        path.is_file() and path.read_bytes() == content
+        for path, content in source_bytes_before.items()
+    )
     checks = [
         _check(
             "pinned_synthetic_source_hashes_match",
@@ -360,6 +368,12 @@ def build_synthetic_guideline_projection_workbench_report(
                 for view in views
             ),
             "This artifact is synthetic review evidence, never a carrier approval or submission.",
+        ),
+        _check(
+            "source_inputs_unchanged_during_build",
+            source_inputs_unchanged,
+            "Every declared replay source must remain byte-identical while the projection builds.",
+            *[item[2] for item in SOURCE_REFS],
         ),
     ]
     failed_count = sum(check.status == "failed" for check in checks)

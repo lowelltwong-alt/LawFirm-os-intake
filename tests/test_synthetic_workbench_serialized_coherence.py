@@ -160,3 +160,68 @@ def test_guideline_model_rejects_null_pricing_in_priced_projection(repo_root):
 @pytest.mark.parametrize(("value", "expected"), [(2.675, 2.68), (-2.675, -2.68)])
 def test_workbench_money_rounding_is_explicit_half_up(value, expected):
     assert _round_money(value) == expected
+
+
+def test_actuals_model_recomputes_headline_total_variance_amount(repo_root):
+    payload = deepcopy(_fixture(repo_root, "demo-synthetic-actuals-workbench-report.json"))
+    payload["comparison"]["total_variance_amount"] = 1.0
+
+    with pytest.raises(ValueError, match="total variance does not reconcile"):
+        SyntheticActualsWorkbenchReport.model_validate(payload)
+
+
+def test_actuals_model_recomputes_headline_total_variance_percent(repo_root):
+    payload = deepcopy(_fixture(repo_root, "demo-synthetic-actuals-workbench-report.json"))
+    payload["comparison"]["total_variance_percent"] = 0.1
+
+    with pytest.raises(ValueError, match="total variance does not reconcile"):
+        SyntheticActualsWorkbenchReport.model_validate(payload)
+
+
+def test_actuals_model_recomputes_displayed_row_variance(repo_root):
+    payload = deepcopy(_fixture(repo_root, "demo-synthetic-actuals-workbench-report.json"))
+    payload["comparison"]["phase_comparisons"][0]["variance_amount"] = 999999.0
+
+    with pytest.raises(ValueError, match="row variance does not reconcile"):
+        SyntheticActualsWorkbenchReport.model_validate(payload)
+
+
+def test_budget_input_model_reconciles_report_total_to_lines(repo_root):
+    payload = deepcopy(_fixture(repo_root, "demo-synthetic-budget-input-workbench-report.json"))
+    payload["total_proposed_budget"] += 45909.0
+
+    with pytest.raises(ValueError, match="totals do not reconcile"):
+        SyntheticBudgetInputWorkbenchReport.model_validate(payload)
+
+
+def test_budget_input_model_reconciles_subtotals_to_lines(repo_root):
+    payload = deepcopy(_fixture(repo_root, "demo-synthetic-budget-input-workbench-report.json"))
+    payload["subtotal_fees"] += 1.0
+
+    with pytest.raises(ValueError, match="totals do not reconcile"):
+        SyntheticBudgetInputWorkbenchReport.model_validate(payload)
+
+
+def test_actuals_report_id_binds_serialized_comparison(repo_root):
+    # Swapping fees<->expenses within a row preserves the row total and both report
+    # totals, so no arithmetic check catches it; the report-id integrity backstop must.
+    payload = deepcopy(_fixture(repo_root, "demo-synthetic-actuals-workbench-report.json"))
+    row = payload["comparison"]["phase_comparisons"][0]
+    row["actual_fees"] = (row["actual_fees"] or 0) + 100
+    row["actual_expenses"] = (row["actual_expenses"] or 0) - 100
+
+    with pytest.raises(ValueError, match="report id does not bind"):
+        SyntheticActualsWorkbenchReport.model_validate(payload)
+
+
+def test_guideline_model_binds_gross_partition_to_projection(repo_root):
+    # Inflating gross_reductions and gross_increases by the same amount preserves their
+    # difference (net_delta) but misstates the gross movement; bind both to the projection.
+    payload = deepcopy(
+        _fixture(repo_root, "demo-synthetic-guideline-projection-workbench-report.json")
+    )
+    payload["views"][0]["gross_reductions"] += 5000
+    payload["views"][0]["gross_increases"] += 5000
+
+    with pytest.raises(ValueError, match="gross partition does not match"):
+        SyntheticGuidelineProjectionWorkbenchReport.model_validate(payload)

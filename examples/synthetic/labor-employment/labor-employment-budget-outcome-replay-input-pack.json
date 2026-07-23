@@ -106,6 +106,66 @@
       "notes": "Synthetic class/collective/PAGA phase/code actuals fixture for deterministic variance review and reviewed learning-gate pressure."
     },
     {
+      "entry_id": "le-replay-input-retaliation-actuals-budget.v0_1",
+      "learning_fixture_id": "le-learning-retaliation-messy-thread.v0_1",
+      "loop_type": "actuals_variance",
+      "required_input_artifact": "legal_budget_proposal.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/retaliation-wrongful-termination-messy-thread/legal_budget_proposal.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic L&E retaliation/wrongful-termination budget proposal for actuals replay (generator le-replay-input-generator.v0_1).",
+      "confirmation_ref": "examples/synthetic/labor-employment/replay-inputs/retaliation-wrongful-termination-messy-thread/human_confirmation.json",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-retaliation-wrongful-termination-messy-thread.source-bundle.json"
+    },
+    {
+      "entry_id": "le-replay-input-retaliation-actuals-source.v0_1",
+      "learning_fixture_id": "le-learning-retaliation-messy-thread.v0_1",
+      "loop_type": "actuals_variance",
+      "required_input_artifact": "budget_actuals_source.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/retaliation-wrongful-termination-messy-thread/budget_actuals_source.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic L&E retaliation phase/code actuals fixture for deterministic variance review."
+    },
+    {
+      "entry_id": "le-replay-input-admin-exhaustion-actuals-budget.v0_1",
+      "learning_fixture_id": "le-learning-admin-exhaustion-clean.v0_1",
+      "loop_type": "actuals_variance",
+      "required_input_artifact": "legal_budget_proposal.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/admin-exhaustion-clean/legal_budget_proposal.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic L&E administrative-exhaustion budget proposal for actuals replay (generator le-replay-input-generator.v0_1).",
+      "confirmation_ref": "examples/synthetic/labor-employment/replay-inputs/admin-exhaustion-clean/human_confirmation.json",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-admin-exhaustion-clean.source-bundle.json"
+    },
+    {
+      "entry_id": "le-replay-input-admin-exhaustion-actuals-source.v0_1",
+      "learning_fixture_id": "le-learning-admin-exhaustion-clean.v0_1",
+      "loop_type": "actuals_variance",
+      "required_input_artifact": "budget_actuals_source.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/admin-exhaustion-clean/budget_actuals_source.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic L&E administrative-exhaustion phase/code actuals fixture for deterministic variance review."
+    },
+    {
+      "entry_id": "le-replay-input-restrictive-covenant-carrier-budget.v0_1",
+      "learning_fixture_id": "le-learning-restrictive-covenant-messy-thread.v0_1",
+      "loop_type": "carrier_rejection_capture",
+      "required_input_artifact": "legal_budget_proposal.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/restrictive-covenant-messy-thread/legal_budget_proposal.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic L&E restrictive-covenant/trade-secret budget proposal binds carrier rejection placeholders (generator le-replay-input-generator.v0_1).",
+      "confirmation_ref": "examples/synthetic/labor-employment/replay-inputs/restrictive-covenant-messy-thread/human_confirmation.json",
+      "source_bundle_ref": "examples/synthetic/labor-employment/executable-fixtures/le-restrictive-covenant-messy-thread.source-bundle.json"
+    },
+    {
+      "entry_id": "le-replay-input-restrictive-covenant-carrier-bundle.v0_1",
+      "learning_fixture_id": "le-learning-restrictive-covenant-messy-thread.v0_1",
+      "loop_type": "carrier_rejection_capture",
+      "required_input_artifact": "carrier_rejection_capture_source_bundle.json",
+      "input_ref": "examples/synthetic/labor-employment/replay-inputs/restrictive-covenant-messy-thread/carrier_rejection_capture_source_bundle.json",
+      "input_role": "builder_input",
+      "notes": "Synthetic L&E restrictive-covenant carrier rejection notice for deterministic dry-run capture."
+    },
+    {
       "entry_id": "le-replay-input-epli-actuals-budget.v0_1",
       "learning_fixture_id": "le-learning-epli-carrier-clean.v0_1",
       "loop_type": "actuals_variance",

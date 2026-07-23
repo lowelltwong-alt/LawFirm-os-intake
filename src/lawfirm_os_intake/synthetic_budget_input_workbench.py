@@ -98,20 +98,32 @@ def _context_lanes(root: Path) -> list[SyntheticBudgetInputWorkbenchContextLane]
 
 
 def build_synthetic_budget_input_workbench_report(
-    *, repo_root: str | Path, generated_at: str | None = None
+    *,
+    repo_root: str | Path,
+    generated_at: str | None = None,
+    budget_ref: str = BUDGET_PROPOSAL_REF,
 ) -> SyntheticBudgetInputWorkbenchReport:
     root = Path(repo_root)
     return _build_synthetic_budget_input_workbench_report(
-        budget_path=root / BUDGET_PROPOSAL_REF,
+        budget_path=root / budget_ref,
         repo_root=root,
         generated_at=generated_at,
+        budget_ref=budget_ref,
     )
 
 
 def _build_synthetic_budget_input_workbench_report(
-    *, budget_path: Path, repo_root: Path, generated_at: str | None = None
+    *,
+    budget_path: Path,
+    repo_root: Path,
+    generated_at: str | None = None,
+    budget_ref: str = BUDGET_PROPOSAL_REF,
 ) -> SyntheticBudgetInputWorkbenchReport:
-    """Build from a supplied proposal path for hostile-fixture tests only."""
+    """Build from a supplied proposal path.
+
+    ``budget_ref`` selects which governed synthetic proposal family is exposed;
+    it defaults to the pinned EPLI proposal. Also used by hostile-fixture tests.
+    """
 
     source_paths = [
         budget_path,
@@ -165,19 +177,19 @@ def _build_synthetic_budget_input_workbench_report(
             and budget.display_banner.get("candidate_only") is True
             and budget.not_authorized_for_client_submission is True,
             "The pinned proposal must declare synthetic candidate-only and non-submittable status.",
-            BUDGET_PROPOSAL_REF,
+            budget_ref,
         ),
         _check(
             "line_fee_math_reconciles",
             line_fee_math,
             "Each priced line must equal estimated hours multiplied by its displayed hourly rate.",
-            BUDGET_PROPOSAL_REF,
+            budget_ref,
         ),
         _check(
             "line_total_math_reconciles",
             line_total_math,
             "Every line total must equal its displayed fees plus expenses.",
-            BUDGET_PROPOSAL_REF,
+            budget_ref,
         ),
         _check(
             "proposal_totals_reconcile",
@@ -185,7 +197,7 @@ def _build_synthetic_budget_input_workbench_report(
             and expense_total == budget.subtotal_expenses
             and total == budget.total_proposed_budget,
             "Displayed line totals must reconcile exactly to proposal subtotals and total.",
-            BUDGET_PROPOSAL_REF,
+            budget_ref,
         ),
         _check(
             "all_rates_synthetic",
@@ -193,13 +205,13 @@ def _build_synthetic_budget_input_workbench_report(
                 line.rate_is_synthetic and line.rate_source == "synthetic_profile" for line in lines
             ),
             "This fixed replay accepts only declared synthetic_profile rates.",
-            BUDGET_PROPOSAL_REF,
+            budget_ref,
         ),
         _check(
             "estimate_basis_refs_present",
             all(line.estimate_basis and line.estimate_basis_refs for line in lines),
             "Every displayed budget line requires an estimate basis and at least one basis reference.",
-            BUDGET_PROPOSAL_REF,
+            budget_ref,
         ),
         _check(
             "excluded_context_lanes_not_included_in_math",
@@ -216,14 +228,14 @@ def _build_synthetic_budget_input_workbench_report(
                 for lane in _context_lanes(repo_root)
             ),
             "Every declared input or excluded context lane must resolve to a local source reference and hash.",
-            BUDGET_PROPOSAL_REF,
+            budget_ref,
             *[source_ref for _, _, source_ref, _ in CONTEXT_SOURCES],
         ),
         _check(
             "source_inputs_unchanged_during_build",
             source_inputs_unchanged,
             "Pinned proposal and context inputs must remain byte-identical while the workbench builds.",
-            BUDGET_PROPOSAL_REF,
+            budget_ref,
             *[source_ref for _, _, source_ref, _ in CONTEXT_SOURCES],
         ),
     ]
@@ -243,7 +255,7 @@ def _build_synthetic_budget_input_workbench_report(
             else "blocked_by_synthetic_budget_input_workbench"
         ),
         budget_proposal_id=budget.budget_proposal_id,
-        budget_proposal_ref=BUDGET_PROPOSAL_REF,
+        budget_proposal_ref=budget_ref,
         budget_proposal_sha256=digest_text(budget_text),
         preflight_packet_id=budget.preflight_packet_id,
         confirmation_id=budget.confirmation_id,

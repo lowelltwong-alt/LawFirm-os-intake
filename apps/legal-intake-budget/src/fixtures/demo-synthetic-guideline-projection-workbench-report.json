@@ -2278,6 +2278,18 @@
       "status": "passed",
       "message": "This artifact is synthetic review evidence, never a carrier approval or submission.",
       "evidence_refs": []
+    },
+    {
+      "check_id": "source_inputs_unchanged_during_build",
+      "status": "passed",
+      "message": "Every declared replay source must remain byte-identical while the projection builds.",
+      "evidence_refs": [
+        "examples/synthetic/inbound/carrier-assignment-medmal.json",
+        "examples/synthetic/confirmations/carrier-assignment-medmal.confirmation-template.json",
+        "context/synthetic-profiles/insurance-defense.yaml",
+        "config/synthetic-carrier-guideline.yaml",
+        "config/synthetic-carrier-rate-card.yaml"
+      ]
     }
   ],
   "failed_check_count": 0,

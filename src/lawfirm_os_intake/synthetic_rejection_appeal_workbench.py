@@ -97,6 +97,11 @@ def build_synthetic_rejection_appeal_workbench_report(
     root = Path(repo_root)
     generated = generated_at or now_iso()
     budget_path, bundle_path = root / BUDGET_REF, root / BUNDLE_REF
+    # Capture the frozen replay pair once, before the workflow reads them, so a
+    # mid-build mutation of either source is caught fail-closed at the end.
+    source_bytes_before = {
+        path: path.read_bytes() for path in (budget_path, bundle_path) if path.is_file()
+    }
     with TemporaryDirectory(prefix="lawfirm-os-intake-rejection-") as temporary:
         capture, capture_dir = run_carrier_rejection_capture(
             budget_path, bundle_path, Path(temporary) / "capture"
@@ -220,6 +225,17 @@ def build_synthetic_rejection_appeal_workbench_report(
             and not ledger.lake_write_performed
             and not ledger.external_writes_performed,
             "The workbench cannot submit appeals or write to the Lake.",
+        ),
+        _check(
+            "source_inputs_unchanged_during_build",
+            all(
+                path.is_file() and path.read_bytes() == content
+                for path, content in source_bytes_before.items()
+            ),
+            "The frozen synthetic proposal and rejection bundle must remain byte-identical "
+            "while the workbench builds.",
+            BUDGET_REF,
+            BUNDLE_REF,
         ),
     ]
     failed = sum(item.status == "failed" for item in checks)

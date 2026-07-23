@@ -910,6 +910,7 @@ export type SyntheticRateCardWorkbenchRow = {
   state: string;
   title: string;
   hourly_rate: number;
+  named_timekeeper_override: boolean;
 };
 
 export type SyntheticRateCardWorkbenchStateSummary = {

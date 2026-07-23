@@ -6,6 +6,8 @@ import shutil
 import lawfirm_os_intake.synthetic_actuals_workbench as actuals_workbench
 import lawfirm_os_intake.synthetic_budget_configuration_workbench as configuration_workbench
 import lawfirm_os_intake.synthetic_budget_input_workbench as input_workbench
+import lawfirm_os_intake.synthetic_guideline_projection_workbench as guideline_workbench
+import lawfirm_os_intake.synthetic_rejection_appeal_workbench as rejection_workbench
 from lawfirm_os_intake.synthetic_actuals_workbench import (
     ACTUALS_SOURCE_REF,
     BUDGET_PROPOSAL_REF as ACTUALS_BUDGET_REF,
@@ -168,6 +170,72 @@ def test_budget_configuration_workbench_blocks_source_mutation_during_build(
     )
 
     assert report.status == "blocked_by_synthetic_budget_configuration_workbench"
+    assert "source_inputs_unchanged_during_build" in {
+        check.check_id for check in report.checks if check.status == "failed"
+    }
+
+
+def test_guideline_projection_workbench_blocks_source_mutation_during_build(
+    tmp_path, repo_root, monkeypatch
+):
+    candidate_root = tmp_path / "guideline-candidate"
+    _copy_sources(repo_root, candidate_root, [source_ref for _, _, source_ref in SOURCE_REFS])
+    # The frozen replay needs the reviewed digest manifest present in the candidate root.
+    _copy_sources(
+        repo_root,
+        candidate_root,
+        [guideline_workbench.PINNED_SOURCE_MANIFEST_REF],
+    )
+    original_projection = guideline_workbench.build_carrier_compliant_projection
+
+    def project_then_mutate(*args, **kwargs):
+        projection = original_projection(*args, **kwargs)
+        guideline_path = candidate_root / "config/synthetic-carrier-guideline.yaml"
+        guideline_path.write_text(
+            guideline_path.read_text(encoding="utf-8") + "\n", encoding="utf-8"
+        )
+        return projection
+
+    monkeypatch.setattr(
+        guideline_workbench, "build_carrier_compliant_projection", project_then_mutate
+    )
+    report = guideline_workbench.build_synthetic_guideline_projection_workbench_report(
+        repo_root=candidate_root, generated_at=FIXED_TIME
+    )
+
+    assert report.status == "blocked_by_synthetic_guideline_projection_workbench"
+    assert "source_inputs_unchanged_during_build" in {
+        check.check_id for check in report.checks if check.status == "failed"
+    }
+
+
+def test_rejection_appeal_workbench_blocks_source_mutation_during_build(
+    tmp_path, repo_root, monkeypatch
+):
+    candidate_root = tmp_path / "rejection-candidate"
+    _copy_sources(
+        repo_root,
+        candidate_root,
+        [
+            REJECTION_BUDGET_REF,
+            BUNDLE_REF,
+            rejection_workbench.PINNED_SOURCE_MANIFEST_REF,
+        ],
+    )
+    original_capture = rejection_workbench.run_carrier_rejection_capture
+
+    def capture_then_mutate(*args, **kwargs):
+        result = original_capture(*args, **kwargs)
+        bundle_path = candidate_root / BUNDLE_REF
+        bundle_path.write_text(bundle_path.read_text(encoding="utf-8") + "\n", encoding="utf-8")
+        return result
+
+    monkeypatch.setattr(rejection_workbench, "run_carrier_rejection_capture", capture_then_mutate)
+    report = rejection_workbench.build_synthetic_rejection_appeal_workbench_report(
+        repo_root=candidate_root, generated_at=FIXED_TIME
+    )
+
+    assert report.status == "blocked_by_synthetic_rejection_appeal_workbench"
     assert "source_inputs_unchanged_during_build" in {
         check.check_id for check in report.checks if check.status == "failed"
     }

@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1",
+  "confirmation_id": "le-confirmation-restrictive-covenant-messy-thread.v0_1",
+  "preflight_packet_id": "le-preflight-restrictive-covenant-messy-thread.v0_1",
+  "status": "confirmed",
+  "supersedes_confirmation_id": null,
+  "confirmed_inbound_event": "prospective_matter_intake",
+  "confirmed_matter_family": "restrictive_covenant_trade_secret",
+  "confirmed_representation_posture": "defense",
+  "confirmed_parties": [
+    {
+      "name": "Avery Stone",
+      "confirmed_role": "adverse_party",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-restrictive-covenant-messy-thread-001",
+          "segment_id": "seg_8d6fc92ec4864d7583014f6dc6ccefc7",
+          "start_offset": 182,
+          "end_offset": 1324,
+          "sha256": "sha256:66fcefbd7acef9f5435a52a12fadba891d7a787ea201b5d576f22a6bcdc67725"
+        }
+      ]
+    },
+    {
+      "name": "Northstar SensorWorks LLC",
+      "confirmed_role": "prospective_represented_client",
+      "aliases": [],
+      "evidence_refs": [
+        {
+          "source_id": "syn-le-restrictive-covenant-messy-thread-001",
+          "segment_id": "seg_8d6fc92ec4864d7583014f6dc6ccefc7",
+          "start_offset": 182,
+          "end_offset": 1324,
+          "sha256": "sha256:66fcefbd7acef9f5435a52a12fadba891d7a787ea201b5d576f22a6bcdc67725"
+        }
+      ]
+    }
+  ],
+  "confirmed_jurisdiction": null,
+  "confirmed_deadlines": [],
+  "reviewer_id": "synthetic-human-review-fixture",
+  "reviewed_at": "2026-07-20T12:00:00Z",
+  "notes": "Synthetic POC confirmation fixture only (le-replay-input-generator.v0_1); restrictive-covenant / trade-secret enforcement. Not a real human review, conflict clearance, engagement decision, matter opening, or budget approval.",
+  "decision_evidence_refs": [
+    {
+      "source_id": "syn-le-restrictive-covenant-messy-thread-001",
+      "segment_id": "seg_c012a16bead4463e84dd637d650f1c3c",
+      "start_offset": 0,
+      "end_offset": 52,
+      "sha256": "sha256:8b832b69307ec2573eb8f1adbb1aba9bc674a8362ecb85ea1f6f833843e1d032"
+    }
+  ]
+}

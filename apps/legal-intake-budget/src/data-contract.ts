@@ -296,6 +296,12 @@ export function assertSyntheticRateCardWorkbenchReport(
     failures.push("synthetic_rate_card_workbench_row_count_mismatch");
   }
   if (
+    report.named_timekeeper_override_count !==
+    report.rows.filter((row) => row.named_timekeeper_override).length
+  ) {
+    failures.push("synthetic_rate_card_workbench_override_count_mismatch");
+  }
+  if (
     report.carrier_count !== new Set(report.rows.map((row) => row.carrier_id)).size ||
     report.state_count !== new Set(report.rows.map((row) => row.state)).size ||
     report.title_count !== new Set(report.rows.map((row) => row.title)).size
@@ -432,6 +438,49 @@ export function assertSyntheticActualsWorkbenchReport(
     codeActual !== report.code_actual_total)
   ) {
     failures.push("synthetic_actuals_workbench_alternate_views_not_reconciled");
+  }
+  const rowVarianceInvalid = [
+    ...report.comparison.phase_comparisons,
+    ...report.comparison.code_comparisons,
+  ].some((row) => {
+    if (row.variance_amount === null) {
+      return row.variance_percent !== null;
+    }
+    if (row.actual_total === null) {
+      return true;
+    }
+    const rowBudgeted = row.budgeted_total ?? 0;
+    const expectedVariance = roundMoney(row.actual_total - rowBudgeted);
+    const expectedPercent =
+      rowBudgeted === 0 && row.actual_total > 0
+        ? null
+        : rowBudgeted
+          ? roundMoney((expectedVariance / rowBudgeted) * 100)
+          : null;
+    return row.variance_amount !== expectedVariance || row.variance_percent !== expectedPercent;
+  });
+  if (rowVarianceInvalid) {
+    failures.push("synthetic_actuals_workbench_row_variance_not_reconciled");
+  }
+  const totalActual = report.comparison.total_actual;
+  if (totalActual === null) {
+    if (
+      report.comparison.total_variance_amount !== null ||
+      report.comparison.total_variance_percent !== null
+    ) {
+      failures.push("synthetic_actuals_workbench_total_variance_not_reconciled");
+    }
+  } else {
+    const expectedTotalVariance = roundMoney(totalActual - (report.comparison.total_budgeted ?? 0));
+    const expectedTotalPercent = report.comparison.total_budgeted
+      ? roundMoney((expectedTotalVariance / report.comparison.total_budgeted) * 100)
+      : null;
+    if (
+      report.comparison.total_variance_amount !== expectedTotalVariance ||
+      report.comparison.total_variance_percent !== expectedTotalPercent
+    ) {
+      failures.push("synthetic_actuals_workbench_total_variance_not_reconciled");
+    }
   }
   if (
     report.comparison.comparison_budget_state === "human_revised_candidate" &&
