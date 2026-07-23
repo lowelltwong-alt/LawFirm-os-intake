@@ -10166,6 +10166,146 @@ class MLLearnabilityProbeReport(StrictModel):
         return self
 
 
+# --- LW4: improvement capture + hardening + delivery (END) -------------------
+#
+# Track metric deltas across revisions with monotonic-improvement status
+# (regressions become typed review events, never auto-blocked, never collapsed to a
+# single scalar - P5); prove every new serialized artifact fails closed on tamper
+# (hostile sweep); and enumerate the delivery packet (capabilities, boundaries,
+# synthetic status, firm-data recalibration lane, deferred full-XGBoost note, and
+# the case_pipeline-vs-firm_checkpoint composition seam - P7).
+
+
+class LearningCaptureReport(StrictModel):
+    """Monotonic-improvement tracking over the capture ledger, fail-closed."""
+
+    schema_version: str = "0.1"
+    capture_report_id: str
+    entry_count: int = Field(ge=0)
+    deltas: list[SyntheticEvalMetricDelta] = Field(default_factory=list)
+    comparable_delta_count: int = Field(ge=0)
+    not_comparable_delta_count: int = Field(ge=0)
+    improvement_count: int = Field(ge=0)
+    regression_count: int = Field(ge=0)
+    unchanged_count: int = Field(ge=0)
+    monotonic_improvement: bool
+    regressions_requiring_review: list[str] = Field(default_factory=list)
+    content_digest: str
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    silent_learning_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def _capture_reconciled_fail_closed(self) -> "LearningCaptureReport":
+        if len(self.deltas) != self.comparable_delta_count + self.not_comparable_delta_count:
+            raise ValueError("capture delta counts do not sum to the delta list length")
+        comparable = [d for d in self.deltas if d.comparability == "comparable"]
+        not_comparable = [d for d in self.deltas if d.comparability == "not_comparable"]
+        if len(comparable) != self.comparable_delta_count:
+            raise ValueError("comparable_delta_count mismatch")
+        if len(not_comparable) != self.not_comparable_delta_count:
+            raise ValueError("not_comparable_delta_count mismatch")
+        improved = sum(1 for d in comparable if d.status == "improved")
+        regressed = sum(1 for d in comparable if d.status == "metric_regression_requires_review")
+        unchanged = sum(1 for d in comparable if d.status == "unchanged")
+        if (
+            self.improvement_count != improved
+            or self.regression_count != regressed
+            or self.unchanged_count != unchanged
+        ):
+            raise ValueError("capture improvement/regression/unchanged counts mismatch")
+        # Monotonic improvement means no comparable regression; a regression is
+        # surfaced for review, never auto-blocked or silently dropped (P5).
+        if self.monotonic_improvement != (regressed == 0):
+            raise ValueError("monotonic_improvement flag must mean zero comparable regressions")
+        expected_review = [
+            f"{d.from_entry_id}->{d.to_entry_id}"
+            for d in comparable
+            if d.status == "metric_regression_requires_review"
+        ]
+        if sorted(self.regressions_requiring_review) != sorted(expected_review):
+            raise ValueError("regressions_requiring_review does not match the regressed deltas")
+        return self
+
+
+class HostileSweepArtifactResult(StrictModel):
+    artifact_id: str
+    tampered_field: str
+    rejected_on_tamper: bool
+
+    @model_validator(mode="after")
+    def _must_reject(self) -> "HostileSweepArtifactResult":
+        if not self.rejected_on_tamper:
+            raise ValueError(f"artifact {self.artifact_id} did not fail closed on tamper")
+        return self
+
+
+class LearningLoopHostileSweepReport(StrictModel):
+    """Every new serialized artifact must fail closed on a tampered field."""
+
+    schema_version: str = "0.1"
+    sweep_report_id: str
+    artifacts: list[HostileSweepArtifactResult] = Field(default_factory=list)
+    all_rejected: bool
+    candidate_only: Literal[True] = True
+    generated_at: str
+
+    @model_validator(mode="after")
+    def _sweep_fail_closed(self) -> "LearningLoopHostileSweepReport":
+        if not self.artifacts:
+            raise ValueError("hostile sweep must cover at least one artifact")
+        rejected = all(a.rejected_on_tamper for a in self.artifacts)
+        if self.all_rejected != rejected:
+            raise ValueError("all_rejected flag does not match the artifact results")
+        if not self.all_rejected:
+            raise ValueError("hostile sweep failed: an artifact did not fail closed")
+        return self
+
+
+class LearningLoopDeliveryPacket(StrictModel):
+    """End-of-program delivery packet for the Synthetic Learning-Loop marathon."""
+
+    schema_version: str = "0.1"
+    packet_id: str
+    program: str = "synthetic-learning-loop-marathon"
+    waves_delivered: list[str] = Field(default_factory=list)
+    capabilities: list[str] = Field(default_factory=list)
+    boundaries: list[str] = Field(default_factory=list)
+    hostile_sweep_artifacts: list[str] = Field(default_factory=list)
+    firm_data_recalibration_lane: list[str] = Field(default_factory=list)
+    open_human_gates: list[str] = Field(default_factory=list)
+    composition_seam_note: str
+    deferred_full_xgboost_note: str
+    synthetic_status: Literal["synthetic_only_candidate"] = "synthetic_only_candidate"
+    ml_status: Literal["shadow_only_no_promotion"] = "shadow_only_no_promotion"
+    dollars_status: Literal["deterministic_from_governed_rates"] = (
+        "deterministic_from_governed_rates"
+    )
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    not_authorized_for_client_submission: Literal[True] = True
+    generated_at: str
+
+    @model_validator(mode="after")
+    def _delivery_fail_closed(self) -> "LearningLoopDeliveryPacket":
+        if not (
+            self.capabilities
+            and self.boundaries
+            and self.firm_data_recalibration_lane
+            and self.deferred_full_xgboost_note
+        ):
+            raise ValueError(
+                "delivery packet requires capabilities, boundaries, a recalibration lane, "
+                "and the deferred full-XGBoost note"
+            )
+        if not self.hostile_sweep_artifacts:
+            raise ValueError("delivery packet must list the hostile-swept artifacts")
+        if not self.composition_seam_note:
+            raise ValueError("delivery packet must record the composition seam note")
+        return self
+
+
 class FirmCheckpointCaseDisposition(StrictModel):
     """Firm disposition for one checkpoint case. Real firm review is a human gate;
     synthetic placeholders are explicitly labeled and never real validation."""
