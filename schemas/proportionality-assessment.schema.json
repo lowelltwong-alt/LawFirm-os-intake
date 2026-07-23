@@ -1,0 +1,90 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "case_type": {
+      "title": "Case Type",
+      "type": "string"
+    },
+    "work_plan_total_minor_units": {
+      "minimum": 0,
+      "title": "Work Plan Total Minor Units",
+      "type": "integer"
+    },
+    "exposure_minor_units": {
+      "exclusiveMinimum": 0,
+      "title": "Exposure Minor Units",
+      "type": "integer"
+    },
+    "ratio": {
+      "minimum": 0,
+      "title": "Ratio",
+      "type": "number"
+    },
+    "band_max_ratio": {
+      "exclusiveMinimum": 0,
+      "title": "Band Max Ratio",
+      "type": "number"
+    },
+    "status": {
+      "enum": [
+        "within_band",
+        "blocked_disproportionate_budget"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "human_override_required": {
+      "title": "Human Override Required",
+      "type": "boolean"
+    },
+    "override_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Override Reason"
+    },
+    "recommended_plan": {
+      "enum": [
+        "full_work_plan",
+        "settle_lean_plan"
+      ],
+      "title": "Recommended Plan",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "case_type",
+    "work_plan_total_minor_units",
+    "exposure_minor_units",
+    "ratio",
+    "band_max_ratio",
+    "status",
+    "human_override_required",
+    "recommended_plan"
+  ],
+  "title": "ProportionalityAssessment",
+  "type": "object"
+}

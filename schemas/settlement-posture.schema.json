@@ -1,0 +1,42 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "posture": {
+      "enum": [
+        "settle_now",
+        "defend_then_settle",
+        "try"
+      ],
+      "title": "Posture",
+      "type": "string"
+    },
+    "indemnity_minor_units": {
+      "minimum": 0,
+      "title": "Indemnity Minor Units",
+      "type": "integer"
+    },
+    "defense_minor_units": {
+      "minimum": 0,
+      "title": "Defense Minor Units",
+      "type": "integer"
+    },
+    "expected_total_cost_of_risk_minor_units": {
+      "minimum": 0,
+      "title": "Expected Total Cost Of Risk Minor Units",
+      "type": "integer"
+    },
+    "formula": {
+      "title": "Formula",
+      "type": "string"
+    }
+  },
+  "required": [
+    "posture",
+    "indemnity_minor_units",
+    "defense_minor_units",
+    "expected_total_cost_of_risk_minor_units",
+    "formula"
+  ],
+  "title": "SettlementPosture",
+  "type": "object"
+}

@@ -1,0 +1,140 @@
+{
+  "$defs": {
+    "CaseSizingEffect": {
+      "additionalProperties": false,
+      "description": "One driver effect on the work-plan total, in exact integer minor units.",
+      "properties": {
+        "driver_id": {
+          "title": "Driver Id",
+          "type": "string"
+        },
+        "driver_value": {
+          "title": "Driver Value",
+          "type": "string"
+        },
+        "effect_form": {
+          "enum": [
+            "multiplier",
+            "additive",
+            "gate"
+          ],
+          "title": "Effect Form",
+          "type": "string"
+        },
+        "factor": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Factor"
+        },
+        "amount_minor_units": {
+          "default": 0,
+          "title": "Amount Minor Units",
+          "type": "integer"
+        },
+        "gate_open": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gate Open"
+        },
+        "before_minor_units": {
+          "minimum": 0,
+          "title": "Before Minor Units",
+          "type": "integer"
+        },
+        "after_minor_units": {
+          "minimum": 0,
+          "title": "After Minor Units",
+          "type": "integer"
+        },
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "driver_id",
+        "driver_value",
+        "effect_form",
+        "before_minor_units",
+        "after_minor_units"
+      ],
+      "title": "CaseSizingEffect",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "case_type": {
+      "title": "Case Type",
+      "type": "string"
+    },
+    "base_work_plan_total_minor_units": {
+      "minimum": 0,
+      "title": "Base Work Plan Total Minor Units",
+      "type": "integer"
+    },
+    "sized_work_plan_total_minor_units": {
+      "minimum": 0,
+      "title": "Sized Work Plan Total Minor Units",
+      "type": "integer"
+    },
+    "effects": {
+      "items": {
+        "$ref": "#/$defs/CaseSizingEffect"
+      },
+      "title": "Effects",
+      "type": "array"
+    },
+    "drivers_applied": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Drivers Applied",
+      "type": "array"
+    },
+    "currency": {
+      "default": "USD",
+      "title": "Currency",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "case_type",
+    "base_work_plan_total_minor_units",
+    "sized_work_plan_total_minor_units"
+  ],
+  "title": "SizedWorkPlan",
+  "type": "object"
+}
