@@ -485,6 +485,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     OCGProposedRuleKind,
     OCGRuleKindExtensionProposal,
     SiblingConformanceReport,
+    DeliveryPacket,
+    EconomicRegimeCatalog,
+    EconomicRegimeProfile,
     SyntheticRateCardWorkbenchStateSummary,
     ValidationSuiteEvidenceReport,
     ValidationSuiteStepEvidence,
@@ -639,6 +642,9 @@ MODELS = {
     "ocg-proposed-rule-kind.schema.json": OCGProposedRuleKind,
     "ocg-rule-kind-extension-proposal.schema.json": OCGRuleKindExtensionProposal,
     "sibling-conformance-report.schema.json": SiblingConformanceReport,
+    "delivery-packet.schema.json": DeliveryPacket,
+    "economic-regime-catalog.schema.json": EconomicRegimeCatalog,
+    "economic-regime-profile.schema.json": EconomicRegimeProfile,
     "synthetic-rate-card-workbench-state-summary.schema.json": (
         SyntheticRateCardWorkbenchStateSummary
     ),
