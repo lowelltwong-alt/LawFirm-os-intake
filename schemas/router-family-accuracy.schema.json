@@ -1,0 +1,33 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "family": {
+      "title": "Family",
+      "type": "string"
+    },
+    "routed_total": {
+      "minimum": 0,
+      "title": "Routed Total",
+      "type": "integer"
+    },
+    "routed_correct": {
+      "minimum": 0,
+      "title": "Routed Correct",
+      "type": "integer"
+    },
+    "accuracy": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Accuracy",
+      "type": "number"
+    }
+  },
+  "required": [
+    "family",
+    "routed_total",
+    "routed_correct",
+    "accuracy"
+  ],
+  "title": "RouterFamilyAccuracy",
+  "type": "object"
+}

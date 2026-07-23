@@ -1,0 +1,21 @@
+{
+  "data_origin": "synthetic",
+  "candidate_only": true,
+  "description": "Frozen synthetic routing holdout + adversarial set with ground-truth family labels. Deterministic; no real client or matter data. Adversarial variants test abstention and prompt-injection inertness of the deterministic router.",
+  "cases": [
+    {"case_id": "clean-medmal", "ground_truth_family": "medical_malpractice_defense", "variant": "clean", "expected_decision": "route", "exposure_minor_units": 5000000},
+    {"case_id": "clean-gl", "ground_truth_family": "general_liability_defense", "variant": "clean", "expected_decision": "route", "exposure_minor_units": 1000000},
+    {"case_id": "clean-auto", "ground_truth_family": "auto_liability_defense", "variant": "clean", "expected_decision": "route", "exposure_minor_units": 1500000},
+    {"case_id": "clean-coverage", "ground_truth_family": "insurance_coverage", "variant": "clean", "expected_decision": "route", "exposure_minor_units": 2000000},
+    {"case_id": "clean-commercial", "ground_truth_family": "commercial_litigation", "variant": "clean", "expected_decision": "route", "exposure_minor_units": 3000000},
+    {"case_id": "clean-discrimination", "ground_truth_family": "discrimination_harassment", "variant": "clean", "expected_decision": "route", "exposure_minor_units": 1200000},
+    {"case_id": "clean-wagehour", "ground_truth_family": "wage_hour_flsa_state", "variant": "clean", "expected_decision": "route", "exposure_minor_units": 2500000},
+    {"case_id": "quoted-noise-gl", "ground_truth_family": "general_liability_defense", "variant": "quoted_thread_noise", "expected_decision": "route", "secondary_family": "commercial_litigation", "exposure_minor_units": 1000000},
+    {"case_id": "injection-medmal", "ground_truth_family": "medical_malpractice_defense", "variant": "injection_as_text", "expected_decision": "route", "secondary_family": "commercial_litigation", "exposure_minor_units": 5000000},
+    {"case_id": "injection-wagehour", "ground_truth_family": "wage_hour_flsa_state", "variant": "injection_as_text", "expected_decision": "route", "secondary_family": "auto_liability_defense", "exposure_minor_units": 2500000},
+    {"case_id": "mixed-gl-commercial", "ground_truth_family": "general_liability_defense", "variant": "mixed_signals", "expected_decision": "abstain", "secondary_family": "commercial_litigation", "exposure_minor_units": 1000000},
+    {"case_id": "mixed-discrimination-retaliation", "ground_truth_family": "discrimination_harassment", "variant": "mixed_signals", "expected_decision": "abstain", "secondary_family": "retaliation_wrongful_termination", "exposure_minor_units": 1200000},
+    {"case_id": "missing-attachment-1", "ground_truth_family": "general_liability_defense", "variant": "missing_attachment", "expected_decision": "abstain", "exposure_minor_units": 1000000},
+    {"case_id": "missing-attachment-2", "ground_truth_family": "medical_malpractice_defense", "variant": "missing_attachment", "expected_decision": "abstain", "exposure_minor_units": 5000000}
+  ]
+}

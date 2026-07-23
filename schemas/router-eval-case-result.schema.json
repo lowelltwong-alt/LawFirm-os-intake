@@ -1,0 +1,76 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {
+      "title": "Case Id",
+      "type": "string"
+    },
+    "ground_truth_family": {
+      "title": "Ground Truth Family",
+      "type": "string"
+    },
+    "variant": {
+      "title": "Variant",
+      "type": "string"
+    },
+    "expected_decision": {
+      "enum": [
+        "route",
+        "abstain"
+      ],
+      "title": "Expected Decision",
+      "type": "string"
+    },
+    "predicted_decision": {
+      "enum": [
+        "route",
+        "abstain"
+      ],
+      "title": "Predicted Decision",
+      "type": "string"
+    },
+    "predicted_family": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Predicted Family"
+    },
+    "decision_reason": {
+      "title": "Decision Reason",
+      "type": "string"
+    },
+    "correct": {
+      "title": "Correct",
+      "type": "boolean"
+    },
+    "injection_inert": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Injection Inert"
+    }
+  },
+  "required": [
+    "case_id",
+    "ground_truth_family",
+    "variant",
+    "expected_decision",
+    "predicted_decision",
+    "decision_reason",
+    "correct"
+  ],
+  "title": "RouterEvalCaseResult",
+  "type": "object"
+}
