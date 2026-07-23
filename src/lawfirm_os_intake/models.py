@@ -9805,6 +9805,236 @@ class SyntheticCorpusManifest(StrictModel):
         return self
 
 
+# --- LW2: batch capture + evaluation loop ------------------------------------
+#
+# Run the deterministic pipeline stages over the frozen corpus and report metrics
+# that are recomputed fail-closed and STRATIFIED by difficulty (P1): saturated
+# (100%) clear strata are marked non-informative so they cannot masquerade as
+# improvement. Metrics carry explicit semantics fields
+# (metric_semantics="recovers_generator_truth_on_synthetic",
+# real_world_accuracy_claim=False) so no run is mistaken for a calibration claim.
+# Budget plausibility uses a declared reference-class band policy loaded
+# fail-closed; a missing band is not_evaluable, never a silent pass (P4). Each run
+# is appended to a versioned capture ledger recording every axis version+digest;
+# deltas are computed only between single-axis-differing runs and regressions are
+# typed for review, never auto-blocked or collapsed to a scalar (P5).
+
+
+class RoutingDifficultyStratum(StrictModel):
+    difficulty: Literal["clear", "moderate", "hard"]
+    case_count: int = Field(ge=0)
+    expected_route_count: int = Field(ge=0)
+    routed_correct_count: int = Field(ge=0)
+    expected_abstain_count: int = Field(ge=0)
+    correct_abstain_count: int = Field(ge=0)
+    routing_accuracy: float = Field(ge=0, le=1)
+    abstention_recall: float = Field(ge=0, le=1)
+    saturated_non_informative: bool
+
+    @model_validator(mode="after")
+    def _stratum_recomputed_fail_closed(self) -> "RoutingDifficultyStratum":
+        if self.routed_correct_count > self.expected_route_count:
+            raise ValueError("routed_correct cannot exceed expected_route")
+        if self.correct_abstain_count > self.expected_abstain_count:
+            raise ValueError("correct_abstain cannot exceed expected_abstain")
+        expected_acc = (
+            round(self.routed_correct_count / self.expected_route_count, 6)
+            if self.expected_route_count
+            else 1.0
+        )
+        if round(self.routing_accuracy, 6) != expected_acc:
+            raise ValueError("routing_accuracy does not match routed_correct/expected_route")
+        expected_recall = (
+            round(self.correct_abstain_count / self.expected_abstain_count, 6)
+            if self.expected_abstain_count
+            else 1.0
+        )
+        if round(self.abstention_recall, 6) != expected_recall:
+            raise ValueError("abstention_recall does not match correct_abstain/expected_abstain")
+        # A stratum is non-informative only when it is fully saturated (both
+        # routing and abstention perfect) so it cannot look like an improvement.
+        saturated = self.routing_accuracy == 1.0 and self.abstention_recall == 1.0
+        if self.saturated_non_informative != saturated:
+            raise ValueError("saturated_non_informative flag does not match perfect metrics")
+        return self
+
+
+class DriverEffectInvariantResult(StrictModel):
+    invariant_id: str
+    description: str
+    checked_pairs: int = Field(ge=0)
+    violations: int = Field(ge=0)
+    passed: bool
+
+    @model_validator(mode="after")
+    def _invariant_fail_closed(self) -> "DriverEffectInvariantResult":
+        if self.violations > self.checked_pairs:
+            raise ValueError("driver invariant violations cannot exceed checked pairs")
+        if self.passed != (self.violations == 0):
+            raise ValueError("driver invariant passed flag must mean zero violations")
+        return self
+
+
+class BudgetPlausibilityResult(StrictModel):
+    evaluated_count: int = Field(ge=0)
+    within_band_count: int = Field(ge=0)
+    out_of_band_count: int = Field(ge=0)
+    not_evaluable_count: int = Field(ge=0)
+    plausibility_rate: float = Field(ge=0, le=1)
+
+    @model_validator(mode="after")
+    def _plausibility_fail_closed(self) -> "BudgetPlausibilityResult":
+        if self.within_band_count + self.out_of_band_count != self.evaluated_count:
+            raise ValueError("within + out_of_band must equal evaluated_count")
+        expected = (
+            round(self.within_band_count / self.evaluated_count, 6) if self.evaluated_count else 1.0
+        )
+        if round(self.plausibility_rate, 6) != expected:
+            raise ValueError("plausibility_rate does not match within_band/evaluated")
+        return self
+
+
+class SyntheticPipelineEvalReport(StrictModel):
+    """Recomputed-fail-closed metrics over the frozen corpus. Not a calibration."""
+
+    schema_version: str = "0.1"
+    eval_report_id: str
+    corpus_id: str
+    corpus_digest: str
+    corpus_seed: int = Field(ge=0)
+    generator_version: str
+    eval_version: str
+    case_count: int = Field(ge=0)
+    overall_routing_accuracy: float = Field(ge=0, le=1)
+    overall_abstention_recall: float = Field(ge=0, le=1)
+    routing_by_difficulty: list[RoutingDifficultyStratum] = Field(default_factory=list)
+    driver_effect_invariants: list[DriverEffectInvariantResult] = Field(default_factory=list)
+    budget_plausibility: BudgetPlausibilityResult
+    content_digest: str
+    metric_semantics: Literal["recovers_generator_truth_on_synthetic"] = (
+        "recovers_generator_truth_on_synthetic"
+    )
+    real_world_accuracy_claim: Literal[False] = False
+    calibration_claim: Literal[False] = False
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    no_ml_used: Literal[True] = True
+    generated_at: str
+
+    @model_validator(mode="after")
+    def _report_recomputed_fail_closed(self) -> "SyntheticPipelineEvalReport":
+        if self.case_count != sum(s.case_count for s in self.routing_by_difficulty):
+            raise ValueError("eval case_count does not match stratum case counts")
+        total_route = sum(s.expected_route_count for s in self.routing_by_difficulty)
+        total_route_hit = sum(s.routed_correct_count for s in self.routing_by_difficulty)
+        total_abstain = sum(s.expected_abstain_count for s in self.routing_by_difficulty)
+        total_abstain_hit = sum(s.correct_abstain_count for s in self.routing_by_difficulty)
+        expected_acc = round(total_route_hit / total_route, 6) if total_route else 1.0
+        if round(self.overall_routing_accuracy, 6) != expected_acc:
+            raise ValueError("overall_routing_accuracy does not match strata")
+        expected_recall = round(total_abstain_hit / total_abstain, 6) if total_abstain else 1.0
+        if round(self.overall_abstention_recall, 6) != expected_recall:
+            raise ValueError("overall_abstention_recall does not match strata")
+        return self
+
+
+class SyntheticEvalCaptureLedgerEntry(StrictModel):
+    """One append-only capture-ledger row; carries every axis version+digest."""
+
+    schema_version: str = "0.1"
+    entry_id: str
+    eval_report_id: str
+    corpus_id: str
+    # Every comparison axis, so a delta is only computed between single-axis
+    # differences (P5); a multi-axis difference is typed not_comparable.
+    corpus_seed: int = Field(ge=0)
+    corpus_digest: str
+    generator_version: str
+    eval_version: str
+    code_ref: str
+    overall_routing_accuracy: float = Field(ge=0, le=1)
+    overall_abstention_recall: float = Field(ge=0, le=1)
+    budget_plausibility_rate: float = Field(ge=0, le=1)
+    driver_invariants_passed: int = Field(ge=0)
+    driver_invariants_total: int = Field(ge=0)
+    content_digest: str
+    candidate_only: Literal[True] = True
+    generated_at: str
+
+
+class SyntheticEvalMetricDelta(StrictModel):
+    """A single-axis metric delta between two capture-ledger entries."""
+
+    schema_version: str = "0.1"
+    from_entry_id: str
+    to_entry_id: str
+    changed_axis: Literal[
+        "corpus_seed",
+        "corpus_digest",
+        "generator_version",
+        "eval_version",
+        "code_ref",
+    ]
+    comparability: Literal["comparable", "not_comparable"]
+    routing_accuracy_delta: float | None = None
+    abstention_recall_delta: float | None = None
+    budget_plausibility_delta: float | None = None
+    regression_flags: list[str] = Field(default_factory=list)
+    status: Literal["improved", "unchanged", "metric_regression_requires_review", "not_comparable"]
+    candidate_only: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _delta_fail_closed(self) -> "SyntheticEvalMetricDelta":
+        if self.comparability == "not_comparable":
+            if self.status != "not_comparable":
+                raise ValueError("a not_comparable delta must have not_comparable status")
+            if any(
+                value is not None
+                for value in (
+                    self.routing_accuracy_delta,
+                    self.abstention_recall_delta,
+                    self.budget_plausibility_delta,
+                )
+            ):
+                raise ValueError("a not_comparable delta cannot carry metric deltas")
+            return self
+        if (
+            self.routing_accuracy_delta is None
+            or self.abstention_recall_delta is None
+            or self.budget_plausibility_delta is None
+        ):
+            raise ValueError("a comparable delta must carry all metric deltas")
+        regressed = [
+            name
+            for name, value in (
+                ("routing_accuracy", self.routing_accuracy_delta),
+                ("abstention_recall", self.abstention_recall_delta),
+                ("budget_plausibility", self.budget_plausibility_delta),
+            )
+            if value < 0
+        ]
+        if sorted(self.regression_flags) != sorted(regressed):
+            raise ValueError("regression_flags do not match the negative metric deltas")
+        improved = any(
+            value > 0
+            for value in (
+                self.routing_accuracy_delta,
+                self.abstention_recall_delta,
+                self.budget_plausibility_delta,
+            )
+        )
+        if regressed:
+            expected = "metric_regression_requires_review"
+        elif improved:
+            expected = "improved"
+        else:
+            expected = "unchanged"
+        if self.status != expected:
+            raise ValueError(f"delta status {self.status} disagrees with deltas {regressed}")
+        return self
+
+
 class FirmCheckpointCaseDisposition(StrictModel):
     """Firm disposition for one checkpoint case. Real firm review is a human gate;
     synthetic placeholders are explicitly labeled and never real validation."""

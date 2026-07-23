@@ -455,6 +455,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     SyntheticCasePipelineSpec,
     SyntheticConfigurationRegenerationBindingReport,
     SyntheticCorpusManifest,
+    SyntheticEvalCaptureLedgerEntry,
+    SyntheticEvalMetricDelta,
+    SyntheticPipelineEvalReport,
     SyntheticConfigurationRegenerationCheck,
     SyntheticGuidelineProjectionWorkbenchCheck,
     SyntheticGuidelineProjectionWorkbenchReport,
@@ -1255,6 +1258,9 @@ MODELS = {
     "synthetic-case-pipeline-result.schema.json": SyntheticCasePipelineResult,
     "generated-synthetic-case.schema.json": GeneratedSyntheticCase,
     "synthetic-corpus-manifest.schema.json": SyntheticCorpusManifest,
+    "synthetic-pipeline-eval-report.schema.json": SyntheticPipelineEvalReport,
+    "synthetic-eval-capture-ledger-entry.schema.json": SyntheticEvalCaptureLedgerEntry,
+    "synthetic-eval-metric-delta.schema.json": SyntheticEvalMetricDelta,
 }
 
 

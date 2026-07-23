@@ -1,0 +1,282 @@
+{
+  "$defs": {
+    "BudgetPlausibilityResult": {
+      "additionalProperties": false,
+      "properties": {
+        "evaluated_count": {
+          "minimum": 0,
+          "title": "Evaluated Count",
+          "type": "integer"
+        },
+        "within_band_count": {
+          "minimum": 0,
+          "title": "Within Band Count",
+          "type": "integer"
+        },
+        "out_of_band_count": {
+          "minimum": 0,
+          "title": "Out Of Band Count",
+          "type": "integer"
+        },
+        "not_evaluable_count": {
+          "minimum": 0,
+          "title": "Not Evaluable Count",
+          "type": "integer"
+        },
+        "plausibility_rate": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Plausibility Rate",
+          "type": "number"
+        }
+      },
+      "required": [
+        "evaluated_count",
+        "within_band_count",
+        "out_of_band_count",
+        "not_evaluable_count",
+        "plausibility_rate"
+      ],
+      "title": "BudgetPlausibilityResult",
+      "type": "object"
+    },
+    "DriverEffectInvariantResult": {
+      "additionalProperties": false,
+      "properties": {
+        "invariant_id": {
+          "title": "Invariant Id",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "checked_pairs": {
+          "minimum": 0,
+          "title": "Checked Pairs",
+          "type": "integer"
+        },
+        "violations": {
+          "minimum": 0,
+          "title": "Violations",
+          "type": "integer"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "invariant_id",
+        "description",
+        "checked_pairs",
+        "violations",
+        "passed"
+      ],
+      "title": "DriverEffectInvariantResult",
+      "type": "object"
+    },
+    "RoutingDifficultyStratum": {
+      "additionalProperties": false,
+      "properties": {
+        "difficulty": {
+          "enum": [
+            "clear",
+            "moderate",
+            "hard"
+          ],
+          "title": "Difficulty",
+          "type": "string"
+        },
+        "case_count": {
+          "minimum": 0,
+          "title": "Case Count",
+          "type": "integer"
+        },
+        "expected_route_count": {
+          "minimum": 0,
+          "title": "Expected Route Count",
+          "type": "integer"
+        },
+        "routed_correct_count": {
+          "minimum": 0,
+          "title": "Routed Correct Count",
+          "type": "integer"
+        },
+        "expected_abstain_count": {
+          "minimum": 0,
+          "title": "Expected Abstain Count",
+          "type": "integer"
+        },
+        "correct_abstain_count": {
+          "minimum": 0,
+          "title": "Correct Abstain Count",
+          "type": "integer"
+        },
+        "routing_accuracy": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Routing Accuracy",
+          "type": "number"
+        },
+        "abstention_recall": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Abstention Recall",
+          "type": "number"
+        },
+        "saturated_non_informative": {
+          "title": "Saturated Non Informative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "difficulty",
+        "case_count",
+        "expected_route_count",
+        "routed_correct_count",
+        "expected_abstain_count",
+        "correct_abstain_count",
+        "routing_accuracy",
+        "abstention_recall",
+        "saturated_non_informative"
+      ],
+      "title": "RoutingDifficultyStratum",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Recomputed-fail-closed metrics over the frozen corpus. Not a calibration.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "eval_report_id": {
+      "title": "Eval Report Id",
+      "type": "string"
+    },
+    "corpus_id": {
+      "title": "Corpus Id",
+      "type": "string"
+    },
+    "corpus_digest": {
+      "title": "Corpus Digest",
+      "type": "string"
+    },
+    "corpus_seed": {
+      "minimum": 0,
+      "title": "Corpus Seed",
+      "type": "integer"
+    },
+    "generator_version": {
+      "title": "Generator Version",
+      "type": "string"
+    },
+    "eval_version": {
+      "title": "Eval Version",
+      "type": "string"
+    },
+    "case_count": {
+      "minimum": 0,
+      "title": "Case Count",
+      "type": "integer"
+    },
+    "overall_routing_accuracy": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Overall Routing Accuracy",
+      "type": "number"
+    },
+    "overall_abstention_recall": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Overall Abstention Recall",
+      "type": "number"
+    },
+    "routing_by_difficulty": {
+      "items": {
+        "$ref": "#/$defs/RoutingDifficultyStratum"
+      },
+      "title": "Routing By Difficulty",
+      "type": "array"
+    },
+    "driver_effect_invariants": {
+      "items": {
+        "$ref": "#/$defs/DriverEffectInvariantResult"
+      },
+      "title": "Driver Effect Invariants",
+      "type": "array"
+    },
+    "budget_plausibility": {
+      "$ref": "#/$defs/BudgetPlausibilityResult"
+    },
+    "content_digest": {
+      "title": "Content Digest",
+      "type": "string"
+    },
+    "metric_semantics": {
+      "const": "recovers_generator_truth_on_synthetic",
+      "default": "recovers_generator_truth_on_synthetic",
+      "title": "Metric Semantics",
+      "type": "string"
+    },
+    "real_world_accuracy_claim": {
+      "const": false,
+      "default": false,
+      "title": "Real World Accuracy Claim",
+      "type": "boolean"
+    },
+    "calibration_claim": {
+      "const": false,
+      "default": false,
+      "title": "Calibration Claim",
+      "type": "boolean"
+    },
+    "data_scope": {
+      "const": "synthetic_only",
+      "default": "synthetic_only",
+      "title": "Data Scope",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "no_ml_used": {
+      "const": true,
+      "default": true,
+      "title": "No Ml Used",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "eval_report_id",
+    "corpus_id",
+    "corpus_digest",
+    "corpus_seed",
+    "generator_version",
+    "eval_version",
+    "case_count",
+    "overall_routing_accuracy",
+    "overall_abstention_recall",
+    "budget_plausibility",
+    "content_digest",
+    "generated_at"
+  ],
+  "title": "SyntheticPipelineEvalReport",
+  "type": "object"
+}
