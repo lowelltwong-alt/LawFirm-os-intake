@@ -471,6 +471,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     SettlementPostureAnalysis,
     SettlementPostureInput,
     SizedWorkPlan,
+    FirmExcelBudgetExport,
+    FirmExcelBudgetPhase,
+    FirmExcelBudgetTaskRow,
     SyntheticRateCardWorkbenchStateSummary,
     ValidationSuiteEvidenceReport,
     ValidationSuiteStepEvidence,
@@ -611,6 +614,9 @@ MODELS = {
     "settlement-posture-analysis.schema.json": SettlementPostureAnalysis,
     "settlement-posture-input.schema.json": SettlementPostureInput,
     "sized-work-plan.schema.json": SizedWorkPlan,
+    "firm-excel-budget-export.schema.json": FirmExcelBudgetExport,
+    "firm-excel-budget-phase.schema.json": FirmExcelBudgetPhase,
+    "firm-excel-budget-task-row.schema.json": FirmExcelBudgetTaskRow,
     "synthetic-rate-card-workbench-state-summary.schema.json": (
         SyntheticRateCardWorkbenchStateSummary
     ),

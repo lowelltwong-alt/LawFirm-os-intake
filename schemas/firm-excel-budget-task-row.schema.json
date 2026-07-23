@@ -1,0 +1,37 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "utbms_task_code": {
+      "title": "Utbms Task Code",
+      "type": "string"
+    },
+    "task_name": {
+      "title": "Task Name",
+      "type": "string"
+    },
+    "original_amount_minor_units": {
+      "minimum": 0,
+      "title": "Original Amount Minor Units",
+      "type": "integer"
+    },
+    "billed_amount_minor_units": {
+      "minimum": 0,
+      "title": "Billed Amount Minor Units",
+      "type": "integer"
+    },
+    "new_amount_minor_units": {
+      "minimum": 0,
+      "title": "New Amount Minor Units",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "utbms_task_code",
+    "task_name",
+    "original_amount_minor_units",
+    "billed_amount_minor_units",
+    "new_amount_minor_units"
+  ],
+  "title": "FirmExcelBudgetTaskRow",
+  "type": "object"
+}
