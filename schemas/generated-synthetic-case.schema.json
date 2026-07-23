@@ -1,0 +1,157 @@
+{
+  "$defs": {
+    "GeneratedCorpusLine": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "source_instruction_risk": {
+          "default": false,
+          "title": "Source Instruction Risk",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "GeneratedCorpusLine",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "One labeled synthetic case; ground truth known by construction.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "case_id": {
+      "title": "Case Id",
+      "type": "string"
+    },
+    "seed_index": {
+      "minimum": 0,
+      "title": "Seed Index",
+      "type": "integer"
+    },
+    "ground_truth_family": {
+      "title": "Ground Truth Family",
+      "type": "string"
+    },
+    "difficulty": {
+      "enum": [
+        "clear",
+        "moderate",
+        "hard"
+      ],
+      "title": "Difficulty",
+      "type": "string"
+    },
+    "variant": {
+      "enum": [
+        "clean",
+        "mixed_signals",
+        "quoted_thread_noise",
+        "missing_attachment",
+        "injection_as_text"
+      ],
+      "title": "Variant",
+      "type": "string"
+    },
+    "expected_decision": {
+      "enum": [
+        "route",
+        "abstain"
+      ],
+      "title": "Expected Decision",
+      "type": "string"
+    },
+    "case_type": {
+      "title": "Case Type",
+      "type": "string"
+    },
+    "ground_truth_drivers": {
+      "additionalProperties": true,
+      "title": "Ground Truth Drivers",
+      "type": "object"
+    },
+    "exposure_minor_units": {
+      "minimum": 0,
+      "title": "Exposure Minor Units",
+      "type": "integer"
+    },
+    "base_work_plan_total_minor_units": {
+      "minimum": 0,
+      "title": "Base Work Plan Total Minor Units",
+      "type": "integer"
+    },
+    "reference_class_band_id": {
+      "title": "Reference Class Band Id",
+      "type": "string"
+    },
+    "signal_terms_used": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Signal Terms Used",
+      "type": "array"
+    },
+    "distractor_terms_used": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Distractor Terms Used",
+      "type": "array"
+    },
+    "rendered_lines": {
+      "items": {
+        "$ref": "#/$defs/GeneratedCorpusLine"
+      },
+      "title": "Rendered Lines",
+      "type": "array"
+    },
+    "holdout_split": {
+      "enum": [
+        "train",
+        "holdout"
+      ],
+      "title": "Holdout Split",
+      "type": "string"
+    },
+    "content_digest": {
+      "title": "Content Digest",
+      "type": "string"
+    },
+    "data_origin": {
+      "const": "synthetic",
+      "default": "synthetic",
+      "title": "Data Origin",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "case_id",
+    "seed_index",
+    "ground_truth_family",
+    "difficulty",
+    "variant",
+    "expected_decision",
+    "case_type",
+    "exposure_minor_units",
+    "base_work_plan_total_minor_units",
+    "reference_class_band_id",
+    "holdout_split",
+    "content_digest"
+  ],
+  "title": "GeneratedSyntheticCase",
+  "type": "object"
+}

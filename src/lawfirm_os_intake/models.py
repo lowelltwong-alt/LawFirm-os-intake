@@ -11,6 +11,13 @@ class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+def _digest_str_list(values: list[str]) -> str:
+    """Canonical sha256 digest of a list of strings (order as given)."""
+
+    encoded = json.dumps(values, separators=(",", ":"), ensure_ascii=True)
+    return "sha256:" + sha256(encoded.encode("utf-8")).hexdigest()
+
+
 class SourceItem(StrictModel):
     source_id: str
     source_type: Literal[
@@ -9653,6 +9660,148 @@ class SyntheticCasePipelineResult(StrictModel):
             raise ValueError(f"pipeline status {self.status} disagrees with joints {blocked}")
         if sorted(self.blocking_reasons) != sorted(blocked):
             raise ValueError("pipeline blocking_reasons do not match the blocked joints")
+        return self
+
+
+# --- LW1: scaled synthetic corpus generator (World-Builder-lite) -------------
+#
+# A deterministic seeded batch generator of labeled intake cases with ground-truth
+# case-spec (family, drivers, exposure, expected reference-class band) across
+# diversity axes + doc-noise variants. A declared DIFFICULTY model (signal
+# density, distractor-family terms, doc-noise) prevents tautological accuracy
+# (P1): the router does not trivially recover the label at higher difficulty.
+# The train/holdout split is assigned deterministically at generation time (seeded
+# hash of case_id) and digest-frozen in the manifest (P2), so a later ML probe
+# cannot leak across it. Regeneration is byte-identical (P9). Money is exact
+# integer minor units (P11). Candidate-only, synthetic-only.
+
+CorpusDifficulty = Literal["clear", "moderate", "hard"]
+CorpusVariant = Literal[
+    "clean",
+    "mixed_signals",
+    "quoted_thread_noise",
+    "missing_attachment",
+    "injection_as_text",
+]
+CorpusHoldoutSplit = Literal["train", "holdout"]
+
+
+class GeneratedCorpusLine(StrictModel):
+    text: str
+    source_instruction_risk: bool = False
+
+
+class GeneratedSyntheticCase(StrictModel):
+    """One labeled synthetic case; ground truth known by construction."""
+
+    schema_version: str = "0.1"
+    case_id: str
+    seed_index: int = Field(ge=0)
+    ground_truth_family: str
+    difficulty: CorpusDifficulty
+    variant: CorpusVariant
+    expected_decision: Literal["route", "abstain"]
+    case_type: str
+    ground_truth_drivers: dict[str, Any] = Field(default_factory=dict)
+    exposure_minor_units: int = Field(ge=0)
+    base_work_plan_total_minor_units: int = Field(ge=0)
+    reference_class_band_id: str
+    signal_terms_used: list[str] = Field(default_factory=list)
+    distractor_terms_used: list[str] = Field(default_factory=list)
+    rendered_lines: list[GeneratedCorpusLine] = Field(default_factory=list)
+    holdout_split: CorpusHoldoutSplit
+    content_digest: str
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _case_label_integrity(self) -> "GeneratedSyntheticCase":
+        # Label-integrity: a clear case must actually carry at least one genuine
+        # signal term; the injection line must be flagged as instruction risk and
+        # carry no genuine signal terms; abstain-by-construction variants must not
+        # claim a route decision.
+        if not self.rendered_lines:
+            raise ValueError("generated case must render at least one document line")
+        if self.difficulty == "clear" and not self.signal_terms_used:
+            raise ValueError("a clear case must use at least one genuine signal term")
+        if self.variant == "injection_as_text":
+            if not any(line.source_instruction_risk for line in self.rendered_lines):
+                raise ValueError("an injection case must flag the injected line as risk")
+        else:
+            if any(line.source_instruction_risk for line in self.rendered_lines):
+                raise ValueError("only the injection variant may carry an instruction-risk line")
+        if self.variant == "missing_attachment" and self.expected_decision != "abstain":
+            raise ValueError("a missing-attachment case must expect abstention")
+        # The distractor terms must not overlap the genuine signal terms (a
+        # distractor that is also a genuine term is not a distractor).
+        if set(self.signal_terms_used) & set(self.distractor_terms_used):
+            raise ValueError("distractor terms must be disjoint from genuine signal terms")
+        return self
+
+
+class SyntheticCorpusCaseRef(StrictModel):
+    case_id: str
+    ground_truth_family: str
+    difficulty: CorpusDifficulty
+    variant: CorpusVariant
+    holdout_split: CorpusHoldoutSplit
+    content_digest: str
+
+
+class SyntheticCorpusManifest(StrictModel):
+    """Frozen manifest of a generated corpus: digests + the holdout split.
+
+    The corpus digest is over the sorted per-case digests; the holdout-split
+    digest is over the sorted (case_id, split) pairs. A regenerated corpus with
+    the same seed/version reproduces both digests byte-identically.
+    """
+
+    schema_version: str = "0.1"
+    corpus_id: str
+    generator_version: str
+    corpus_seed: int = Field(ge=0)
+    case_count: int = Field(ge=0)
+    holdout_count: int = Field(ge=0)
+    train_count: int = Field(ge=0)
+    family_counts: dict[str, int] = Field(default_factory=dict)
+    difficulty_counts: dict[str, int] = Field(default_factory=dict)
+    variant_counts: dict[str, int] = Field(default_factory=dict)
+    cases: list[SyntheticCorpusCaseRef] = Field(default_factory=list)
+    corpus_digest: str
+    holdout_split_digest: str
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    generated_at: str
+
+    @model_validator(mode="after")
+    def _manifest_reconciled_fail_closed(self) -> "SyntheticCorpusManifest":
+        if self.case_count != len(self.cases):
+            raise ValueError("corpus manifest case_count mismatch")
+        holdout = sum(1 for case in self.cases if case.holdout_split == "holdout")
+        train = sum(1 for case in self.cases if case.holdout_split == "train")
+        if self.holdout_count != holdout or self.train_count != train:
+            raise ValueError("corpus manifest holdout/train counts mismatch")
+        if self.holdout_count + self.train_count != self.case_count:
+            raise ValueError("corpus manifest split counts do not sum to case_count")
+        for name, counts in (
+            ("family", self.family_counts),
+            ("difficulty", self.difficulty_counts),
+            ("variant", self.variant_counts),
+        ):
+            if sum(counts.values()) != self.case_count:
+                raise ValueError(f"corpus manifest {name}_counts do not sum to case_count")
+        case_ids = [case.case_id for case in self.cases]
+        if len(case_ids) != len(set(case_ids)):
+            raise ValueError("corpus manifest case_ids must be unique")
+        expected_corpus = _digest_str_list(sorted(case.content_digest for case in self.cases))
+        if self.corpus_digest != expected_corpus:
+            raise ValueError("corpus_digest does not equal the digest of sorted case digests")
+        expected_split = _digest_str_list(
+            sorted(f"{case.case_id}:{case.holdout_split}" for case in self.cases)
+        )
+        if self.holdout_split_digest != expected_split:
+            raise ValueError("holdout_split_digest does not equal the digest of the split pairs")
         return self
 
 

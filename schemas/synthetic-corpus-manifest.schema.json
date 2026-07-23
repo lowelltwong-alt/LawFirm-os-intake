@@ -1,0 +1,167 @@
+{
+  "$defs": {
+    "SyntheticCorpusCaseRef": {
+      "additionalProperties": false,
+      "properties": {
+        "case_id": {
+          "title": "Case Id",
+          "type": "string"
+        },
+        "ground_truth_family": {
+          "title": "Ground Truth Family",
+          "type": "string"
+        },
+        "difficulty": {
+          "enum": [
+            "clear",
+            "moderate",
+            "hard"
+          ],
+          "title": "Difficulty",
+          "type": "string"
+        },
+        "variant": {
+          "enum": [
+            "clean",
+            "mixed_signals",
+            "quoted_thread_noise",
+            "missing_attachment",
+            "injection_as_text"
+          ],
+          "title": "Variant",
+          "type": "string"
+        },
+        "holdout_split": {
+          "enum": [
+            "train",
+            "holdout"
+          ],
+          "title": "Holdout Split",
+          "type": "string"
+        },
+        "content_digest": {
+          "title": "Content Digest",
+          "type": "string"
+        }
+      },
+      "required": [
+        "case_id",
+        "ground_truth_family",
+        "difficulty",
+        "variant",
+        "holdout_split",
+        "content_digest"
+      ],
+      "title": "SyntheticCorpusCaseRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Frozen manifest of a generated corpus: digests + the holdout split.\n\nThe corpus digest is over the sorted per-case digests; the holdout-split\ndigest is over the sorted (case_id, split) pairs. A regenerated corpus with\nthe same seed/version reproduces both digests byte-identically.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "corpus_id": {
+      "title": "Corpus Id",
+      "type": "string"
+    },
+    "generator_version": {
+      "title": "Generator Version",
+      "type": "string"
+    },
+    "corpus_seed": {
+      "minimum": 0,
+      "title": "Corpus Seed",
+      "type": "integer"
+    },
+    "case_count": {
+      "minimum": 0,
+      "title": "Case Count",
+      "type": "integer"
+    },
+    "holdout_count": {
+      "minimum": 0,
+      "title": "Holdout Count",
+      "type": "integer"
+    },
+    "train_count": {
+      "minimum": 0,
+      "title": "Train Count",
+      "type": "integer"
+    },
+    "family_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Family Counts",
+      "type": "object"
+    },
+    "difficulty_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Difficulty Counts",
+      "type": "object"
+    },
+    "variant_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Variant Counts",
+      "type": "object"
+    },
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/SyntheticCorpusCaseRef"
+      },
+      "title": "Cases",
+      "type": "array"
+    },
+    "corpus_digest": {
+      "title": "Corpus Digest",
+      "type": "string"
+    },
+    "holdout_split_digest": {
+      "title": "Holdout Split Digest",
+      "type": "string"
+    },
+    "data_origin": {
+      "const": "synthetic",
+      "default": "synthetic",
+      "title": "Data Origin",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "corpus_id",
+    "generator_version",
+    "corpus_seed",
+    "case_count",
+    "holdout_count",
+    "train_count",
+    "corpus_digest",
+    "holdout_split_digest",
+    "generated_at"
+  ],
+  "title": "SyntheticCorpusManifest",
+  "type": "object"
+}
