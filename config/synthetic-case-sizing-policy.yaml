@@ -1,0 +1,69 @@
+case_sizing_policy_id: synthetic-case-sizing-policy
+version: "0.1"
+status: candidate
+data_origin: synthetic
+candidate_only: true
+contains_real_firm_data: false
+
+# SYNTHETIC ONLY. Invented sizing factors and proportionality bands. Not real firm
+# economics, benchmarks, or authority. The sizing math is deterministic; win
+# probability used in settlement economics is a declared assumption elsewhere,
+# never inferred here.
+
+drivers:
+  - driver_id: party_count
+    driver_class: parties
+    measurement: confirmed represented + adverse party count (provenance-bound)
+    effect_surface: [L110, L310, L330]
+    effect_form: multiplier
+    unit: parties
+  - driver_id: injury_severity
+    driver_class: damages
+    measurement: confirmed injury / harm severity band
+    effect_surface: [L130, L340, L420, E119]
+    effect_form: multiplier
+  - driver_id: liability_clarity
+    driver_class: liability
+    measurement: confirmed liability clarity band
+    effect_surface: [L120, L240]
+    effect_form: multiplier
+  - driver_id: venue
+    driver_class: forum
+    measurement: confirmed venue / court (mandated-conference block)
+    effect_surface: [L440, L450]
+    effect_form: additive
+  - driver_id: exposure_band
+    driver_class: exposure
+    measurement: declared exposure band (gates trial-phase inclusion)
+    effect_surface: [trial_phase]
+    effect_form: gate
+
+factors:
+  party_count:
+    per_additional_party_surcharge: 0.25
+  injury_severity:
+    soft_tissue: 1.0
+    surgical: 1.4
+    catastrophic: 2.0
+  liability_clarity:
+    clear: 1.0
+    comparative: 1.2
+    disputed: 1.5
+
+additives:
+  venue:
+    state_default: 0
+    plaintiff_favorable: 50000
+
+gates:
+  exposure_band:
+    trial_block_minor_units: 200000
+    open_bands: [medium, high]
+
+proportionality_bands:
+  premises_liability:
+    max_budget_to_exposure_ratio: 0.4
+  epli:
+    max_budget_to_exposure_ratio: 0.6
+  labor_employment:
+    max_budget_to_exposure_ratio: 0.6

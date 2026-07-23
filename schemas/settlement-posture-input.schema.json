@@ -1,0 +1,58 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "exposure_minor_units": {
+      "exclusiveMinimum": 0,
+      "title": "Exposure Minor Units",
+      "type": "integer"
+    },
+    "settlement_value_minor_units": {
+      "minimum": 0,
+      "title": "Settlement Value Minor Units",
+      "type": "integer"
+    },
+    "settlement_value_after_defense_minor_units": {
+      "minimum": 0,
+      "title": "Settlement Value After Defense Minor Units",
+      "type": "integer"
+    },
+    "win_probability_percent": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Win Probability Percent",
+      "type": "number"
+    },
+    "defense_cost_settle_now_minor_units": {
+      "minimum": 0,
+      "title": "Defense Cost Settle Now Minor Units",
+      "type": "integer"
+    },
+    "defense_cost_defend_settle_minor_units": {
+      "minimum": 0,
+      "title": "Defense Cost Defend Settle Minor Units",
+      "type": "integer"
+    },
+    "defense_cost_try_minor_units": {
+      "minimum": 0,
+      "title": "Defense Cost Try Minor Units",
+      "type": "integer"
+    },
+    "win_probability_is_declared_assumption": {
+      "const": true,
+      "default": true,
+      "title": "Win Probability Is Declared Assumption",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "exposure_minor_units",
+    "settlement_value_minor_units",
+    "settlement_value_after_defense_minor_units",
+    "win_probability_percent",
+    "defense_cost_settle_now_minor_units",
+    "defense_cost_defend_settle_minor_units",
+    "defense_cost_try_minor_units"
+  ],
+  "title": "SettlementPostureInput",
+  "type": "object"
+}

@@ -1,0 +1,106 @@
+{
+  "$defs": {
+    "CaseCostDriverSpec": {
+      "additionalProperties": false,
+      "description": "Contract for one case cost driver: how a provenance-bound intake fact maps\nto a budget effect surface and effect form. Candidate-only.",
+      "properties": {
+        "driver_id": {
+          "title": "Driver Id",
+          "type": "string"
+        },
+        "driver_class": {
+          "title": "Driver Class",
+          "type": "string"
+        },
+        "measurement": {
+          "title": "Measurement",
+          "type": "string"
+        },
+        "effect_surface": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Effect Surface",
+          "type": "array"
+        },
+        "effect_form": {
+          "enum": [
+            "multiplier",
+            "additive",
+            "gate"
+          ],
+          "title": "Effect Form",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "driver_id",
+        "driver_class",
+        "measurement",
+        "effect_surface",
+        "effect_form"
+      ],
+      "title": "CaseCostDriverSpec",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "catalog_id": {
+      "title": "Catalog Id",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "data_scope": {
+      "const": "synthetic_only",
+      "default": "synthetic_only",
+      "title": "Data Scope",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "drivers": {
+      "items": {
+        "$ref": "#/$defs/CaseCostDriverSpec"
+      },
+      "title": "Drivers",
+      "type": "array"
+    }
+  },
+  "required": [
+    "catalog_id",
+    "version",
+    "drivers"
+  ],
+  "title": "CaseCostDriverCatalog",
+  "type": "object"
+}

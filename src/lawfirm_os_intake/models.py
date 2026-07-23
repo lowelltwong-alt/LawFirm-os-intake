@@ -9100,6 +9100,205 @@ class ProjectionReport(StrictModel):
         return self
 
 
+class CaseCostDriverSpec(StrictModel):
+    """Contract for one case cost driver: how a provenance-bound intake fact maps
+    to a budget effect surface and effect form. Candidate-only."""
+
+    driver_id: str
+    driver_class: str
+    measurement: str
+    effect_surface: list[str]
+    effect_form: Literal["multiplier", "additive", "gate"]
+    unit: str | None = None
+    note: str = ""
+
+
+class CaseCostDriverCatalog(StrictModel):
+    schema_version: str = "0.1"
+    catalog_id: str
+    version: str
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+    drivers: list[CaseCostDriverSpec]
+
+
+class CaseSizingEffect(StrictModel):
+    """One driver effect on the work-plan total, in exact integer minor units."""
+
+    driver_id: str
+    driver_value: str
+    effect_form: Literal["multiplier", "additive", "gate"]
+    factor: float | None = None
+    amount_minor_units: int = 0
+    gate_open: bool | None = None
+    before_minor_units: int = Field(ge=0)
+    after_minor_units: int = Field(ge=0)
+    note: str = ""
+
+    @model_validator(mode="after")
+    def _effect_arithmetic_is_exact(self) -> "CaseSizingEffect":
+        if self.effect_form == "multiplier":
+            if self.factor is None or self.factor < 0:
+                raise ValueError("multiplier effect requires a non-negative factor")
+            if self.after_minor_units != round(self.before_minor_units * self.factor):
+                raise ValueError("case sizing multiplier effect after != round(before * factor)")
+        elif self.effect_form == "additive":
+            if self.after_minor_units != self.before_minor_units + self.amount_minor_units:
+                raise ValueError("case sizing additive effect after != before + amount")
+        else:
+            if self.gate_open is None:
+                raise ValueError("gate effect requires gate_open")
+            added = self.amount_minor_units if self.gate_open else 0
+            if not self.gate_open and self.amount_minor_units != 0:
+                raise ValueError("a closed gate must add zero")
+            if self.after_minor_units != self.before_minor_units + added:
+                raise ValueError("case sizing gate effect after mismatch")
+        return self
+
+
+class SizedWorkPlan(StrictModel):
+    schema_version: str = "0.1"
+    case_type: str
+    base_work_plan_total_minor_units: int = Field(ge=0)
+    sized_work_plan_total_minor_units: int = Field(ge=0)
+    effects: list[CaseSizingEffect] = Field(default_factory=list)
+    drivers_applied: list[str] = Field(default_factory=list)
+    currency: str = "USD"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _sized_recomputed_fail_closed(self) -> "SizedWorkPlan":
+        running = self.base_work_plan_total_minor_units
+        for effect in self.effects:
+            if effect.before_minor_units != running:
+                raise ValueError("case sizing effect chain is not contiguous")
+            running = effect.after_minor_units
+        if self.sized_work_plan_total_minor_units != running:
+            raise ValueError("sized work plan total does not equal the composed effects")
+        return self
+
+
+class ProportionalityAssessment(StrictModel):
+    schema_version: str = "0.1"
+    case_type: str
+    work_plan_total_minor_units: int = Field(ge=0)
+    exposure_minor_units: int = Field(gt=0)
+    ratio: float = Field(ge=0)
+    band_max_ratio: float = Field(gt=0)
+    status: Literal["within_band", "blocked_disproportionate_budget"]
+    human_override_required: bool
+    override_reason: str | None = None
+    recommended_plan: Literal["full_work_plan", "settle_lean_plan"]
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _proportionality_fail_closed(self) -> "ProportionalityAssessment":
+        expected_ratio = round(self.work_plan_total_minor_units / self.exposure_minor_units, 6)
+        if round(self.ratio, 6) != expected_ratio:
+            raise ValueError("proportionality ratio does not equal work_plan / exposure")
+        disproportionate = self.ratio > self.band_max_ratio
+        expected_status = "blocked_disproportionate_budget" if disproportionate else "within_band"
+        if self.status != expected_status:
+            raise ValueError("proportionality status does not match ratio vs band")
+        if disproportionate:
+            if not self.human_override_required:
+                raise ValueError("disproportionate budget must require a human override")
+            if self.recommended_plan != "settle_lean_plan":
+                raise ValueError("disproportionate default recommendation must be settle_lean_plan")
+        else:
+            if self.human_override_required:
+                raise ValueError("within-band assessment must not require an override")
+            if self.recommended_plan != "full_work_plan":
+                raise ValueError("within-band recommendation must be full_work_plan")
+        return self
+
+
+class SettlementPostureInput(StrictModel):
+    exposure_minor_units: int = Field(gt=0)
+    settlement_value_minor_units: int = Field(ge=0)
+    settlement_value_after_defense_minor_units: int = Field(ge=0)
+    win_probability_percent: float = Field(ge=0, le=100)
+    defense_cost_settle_now_minor_units: int = Field(ge=0)
+    defense_cost_defend_settle_minor_units: int = Field(ge=0)
+    defense_cost_try_minor_units: int = Field(ge=0)
+    win_probability_is_declared_assumption: Literal[True] = True
+
+
+class SettlementPosture(StrictModel):
+    posture: Literal["settle_now", "defend_then_settle", "try"]
+    indemnity_minor_units: int = Field(ge=0)
+    defense_minor_units: int = Field(ge=0)
+    expected_total_cost_of_risk_minor_units: int = Field(ge=0)
+    formula: str
+
+    @model_validator(mode="after")
+    def _cost_is_indemnity_plus_defense(self) -> "SettlementPosture":
+        if self.expected_total_cost_of_risk_minor_units != (
+            self.indemnity_minor_units + self.defense_minor_units
+        ):
+            raise ValueError("posture cost of risk != indemnity + defense")
+        return self
+
+
+class SettlementPostureAnalysis(StrictModel):
+    schema_version: str = "0.1"
+    postures: list[SettlementPosture]
+    recommended_posture: Literal["settle_now", "defend_then_settle", "try"]
+    recommended_budget_envelope_minor_units: int = Field(ge=0)
+    recommended_expected_cost_of_risk_minor_units: int = Field(ge=0)
+    currency: str = "USD"
+    win_probability_is_declared_assumption: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    not_authorized_for_client_submission: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _ranked_and_recommended_fail_closed(self) -> "SettlementPostureAnalysis":
+        if not self.postures:
+            raise ValueError("settlement analysis requires postures")
+        costs = [posture.expected_total_cost_of_risk_minor_units for posture in self.postures]
+        if costs != sorted(costs):
+            raise ValueError("settlement postures must be ranked by ascending cost of risk")
+        best = self.postures[0]
+        if self.recommended_posture != best.posture:
+            raise ValueError("recommended posture must be the minimum-cost-of-risk posture")
+        if self.recommended_budget_envelope_minor_units != best.defense_minor_units:
+            raise ValueError("recommended envelope must be the recommended posture defense cost")
+        if self.recommended_expected_cost_of_risk_minor_units != (
+            best.expected_total_cost_of_risk_minor_units
+        ):
+            raise ValueError("recommended cost of risk must be the recommended posture total")
+        return self
+
+
+class CaseSizingReport(StrictModel):
+    schema_version: str = "0.1"
+    case_sizing_report_id: str
+    case_type: str
+    sized_work_plan: SizedWorkPlan
+    proportionality: ProportionalityAssessment
+    settlement_posture_analysis: SettlementPostureAnalysis
+    currency: str = "USD"
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    not_authorized_for_client_submission: Literal[True] = True
+    required_next_gates: list[str] = Field(default_factory=list)
+    generated_at: str
+
+    @model_validator(mode="after")
+    def _work_plan_preserved_separately(self) -> "CaseSizingReport":
+        # The immutable sized work-plan total is what proportionality is measured
+        # against; it is never overwritten by settlement/reimbursement economics.
+        if self.proportionality.work_plan_total_minor_units != (
+            self.sized_work_plan.sized_work_plan_total_minor_units
+        ):
+            raise ValueError("proportionality must assess the sized work-plan total")
+        return self
+
+
 class CarrierCompliantProjectionBasis(StrictModel):
     guideline_id: str
     guideline_ref: str

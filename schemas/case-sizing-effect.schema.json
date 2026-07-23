@@ -1,0 +1,76 @@
+{
+  "additionalProperties": false,
+  "description": "One driver effect on the work-plan total, in exact integer minor units.",
+  "properties": {
+    "driver_id": {
+      "title": "Driver Id",
+      "type": "string"
+    },
+    "driver_value": {
+      "title": "Driver Value",
+      "type": "string"
+    },
+    "effect_form": {
+      "enum": [
+        "multiplier",
+        "additive",
+        "gate"
+      ],
+      "title": "Effect Form",
+      "type": "string"
+    },
+    "factor": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Factor"
+    },
+    "amount_minor_units": {
+      "default": 0,
+      "title": "Amount Minor Units",
+      "type": "integer"
+    },
+    "gate_open": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Gate Open"
+    },
+    "before_minor_units": {
+      "minimum": 0,
+      "title": "Before Minor Units",
+      "type": "integer"
+    },
+    "after_minor_units": {
+      "minimum": 0,
+      "title": "After Minor Units",
+      "type": "integer"
+    },
+    "note": {
+      "default": "",
+      "title": "Note",
+      "type": "string"
+    }
+  },
+  "required": [
+    "driver_id",
+    "driver_value",
+    "effect_form",
+    "before_minor_units",
+    "after_minor_units"
+  ],
+  "title": "CaseSizingEffect",
+  "type": "object"
+}

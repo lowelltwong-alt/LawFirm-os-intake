@@ -1,0 +1,422 @@
+{
+  "$defs": {
+    "CaseSizingEffect": {
+      "additionalProperties": false,
+      "description": "One driver effect on the work-plan total, in exact integer minor units.",
+      "properties": {
+        "driver_id": {
+          "title": "Driver Id",
+          "type": "string"
+        },
+        "driver_value": {
+          "title": "Driver Value",
+          "type": "string"
+        },
+        "effect_form": {
+          "enum": [
+            "multiplier",
+            "additive",
+            "gate"
+          ],
+          "title": "Effect Form",
+          "type": "string"
+        },
+        "factor": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Factor"
+        },
+        "amount_minor_units": {
+          "default": 0,
+          "title": "Amount Minor Units",
+          "type": "integer"
+        },
+        "gate_open": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gate Open"
+        },
+        "before_minor_units": {
+          "minimum": 0,
+          "title": "Before Minor Units",
+          "type": "integer"
+        },
+        "after_minor_units": {
+          "minimum": 0,
+          "title": "After Minor Units",
+          "type": "integer"
+        },
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "driver_id",
+        "driver_value",
+        "effect_form",
+        "before_minor_units",
+        "after_minor_units"
+      ],
+      "title": "CaseSizingEffect",
+      "type": "object"
+    },
+    "ProportionalityAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "case_type": {
+          "title": "Case Type",
+          "type": "string"
+        },
+        "work_plan_total_minor_units": {
+          "minimum": 0,
+          "title": "Work Plan Total Minor Units",
+          "type": "integer"
+        },
+        "exposure_minor_units": {
+          "exclusiveMinimum": 0,
+          "title": "Exposure Minor Units",
+          "type": "integer"
+        },
+        "ratio": {
+          "minimum": 0,
+          "title": "Ratio",
+          "type": "number"
+        },
+        "band_max_ratio": {
+          "exclusiveMinimum": 0,
+          "title": "Band Max Ratio",
+          "type": "number"
+        },
+        "status": {
+          "enum": [
+            "within_band",
+            "blocked_disproportionate_budget"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "human_override_required": {
+          "title": "Human Override Required",
+          "type": "boolean"
+        },
+        "override_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Override Reason"
+        },
+        "recommended_plan": {
+          "enum": [
+            "full_work_plan",
+            "settle_lean_plan"
+          ],
+          "title": "Recommended Plan",
+          "type": "string"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "case_type",
+        "work_plan_total_minor_units",
+        "exposure_minor_units",
+        "ratio",
+        "band_max_ratio",
+        "status",
+        "human_override_required",
+        "recommended_plan"
+      ],
+      "title": "ProportionalityAssessment",
+      "type": "object"
+    },
+    "SettlementPosture": {
+      "additionalProperties": false,
+      "properties": {
+        "posture": {
+          "enum": [
+            "settle_now",
+            "defend_then_settle",
+            "try"
+          ],
+          "title": "Posture",
+          "type": "string"
+        },
+        "indemnity_minor_units": {
+          "minimum": 0,
+          "title": "Indemnity Minor Units",
+          "type": "integer"
+        },
+        "defense_minor_units": {
+          "minimum": 0,
+          "title": "Defense Minor Units",
+          "type": "integer"
+        },
+        "expected_total_cost_of_risk_minor_units": {
+          "minimum": 0,
+          "title": "Expected Total Cost Of Risk Minor Units",
+          "type": "integer"
+        },
+        "formula": {
+          "title": "Formula",
+          "type": "string"
+        }
+      },
+      "required": [
+        "posture",
+        "indemnity_minor_units",
+        "defense_minor_units",
+        "expected_total_cost_of_risk_minor_units",
+        "formula"
+      ],
+      "title": "SettlementPosture",
+      "type": "object"
+    },
+    "SettlementPostureAnalysis": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "postures": {
+          "items": {
+            "$ref": "#/$defs/SettlementPosture"
+          },
+          "title": "Postures",
+          "type": "array"
+        },
+        "recommended_posture": {
+          "enum": [
+            "settle_now",
+            "defend_then_settle",
+            "try"
+          ],
+          "title": "Recommended Posture",
+          "type": "string"
+        },
+        "recommended_budget_envelope_minor_units": {
+          "minimum": 0,
+          "title": "Recommended Budget Envelope Minor Units",
+          "type": "integer"
+        },
+        "recommended_expected_cost_of_risk_minor_units": {
+          "minimum": 0,
+          "title": "Recommended Expected Cost Of Risk Minor Units",
+          "type": "integer"
+        },
+        "currency": {
+          "default": "USD",
+          "title": "Currency",
+          "type": "string"
+        },
+        "win_probability_is_declared_assumption": {
+          "const": true,
+          "default": true,
+          "title": "Win Probability Is Declared Assumption",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        },
+        "not_authorized_for_client_submission": {
+          "const": true,
+          "default": true,
+          "title": "Not Authorized For Client Submission",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "postures",
+        "recommended_posture",
+        "recommended_budget_envelope_minor_units",
+        "recommended_expected_cost_of_risk_minor_units"
+      ],
+      "title": "SettlementPostureAnalysis",
+      "type": "object"
+    },
+    "SizedWorkPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "case_type": {
+          "title": "Case Type",
+          "type": "string"
+        },
+        "base_work_plan_total_minor_units": {
+          "minimum": 0,
+          "title": "Base Work Plan Total Minor Units",
+          "type": "integer"
+        },
+        "sized_work_plan_total_minor_units": {
+          "minimum": 0,
+          "title": "Sized Work Plan Total Minor Units",
+          "type": "integer"
+        },
+        "effects": {
+          "items": {
+            "$ref": "#/$defs/CaseSizingEffect"
+          },
+          "title": "Effects",
+          "type": "array"
+        },
+        "drivers_applied": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Drivers Applied",
+          "type": "array"
+        },
+        "currency": {
+          "default": "USD",
+          "title": "Currency",
+          "type": "string"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "non_authoritative": {
+          "const": true,
+          "default": true,
+          "title": "Non Authoritative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "case_type",
+        "base_work_plan_total_minor_units",
+        "sized_work_plan_total_minor_units"
+      ],
+      "title": "SizedWorkPlan",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "case_sizing_report_id": {
+      "title": "Case Sizing Report Id",
+      "type": "string"
+    },
+    "case_type": {
+      "title": "Case Type",
+      "type": "string"
+    },
+    "sized_work_plan": {
+      "$ref": "#/$defs/SizedWorkPlan"
+    },
+    "proportionality": {
+      "$ref": "#/$defs/ProportionalityAssessment"
+    },
+    "settlement_posture_analysis": {
+      "$ref": "#/$defs/SettlementPostureAnalysis"
+    },
+    "currency": {
+      "default": "USD",
+      "title": "Currency",
+      "type": "string"
+    },
+    "data_scope": {
+      "const": "synthetic_only",
+      "default": "synthetic_only",
+      "title": "Data Scope",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "not_authorized_for_client_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Client Submission",
+      "type": "boolean"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "case_sizing_report_id",
+    "case_type",
+    "sized_work_plan",
+    "proportionality",
+    "settlement_posture_analysis",
+    "generated_at"
+  ],
+  "title": "CaseSizingReport",
+  "type": "object"
+}
