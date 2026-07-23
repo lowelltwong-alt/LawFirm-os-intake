@@ -1,0 +1,230 @@
+{
+  "$defs": {
+    "RouterEvalCaseResult": {
+      "additionalProperties": false,
+      "properties": {
+        "case_id": {
+          "title": "Case Id",
+          "type": "string"
+        },
+        "ground_truth_family": {
+          "title": "Ground Truth Family",
+          "type": "string"
+        },
+        "variant": {
+          "title": "Variant",
+          "type": "string"
+        },
+        "expected_decision": {
+          "enum": [
+            "route",
+            "abstain"
+          ],
+          "title": "Expected Decision",
+          "type": "string"
+        },
+        "predicted_decision": {
+          "enum": [
+            "route",
+            "abstain"
+          ],
+          "title": "Predicted Decision",
+          "type": "string"
+        },
+        "predicted_family": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Predicted Family"
+        },
+        "decision_reason": {
+          "title": "Decision Reason",
+          "type": "string"
+        },
+        "correct": {
+          "title": "Correct",
+          "type": "boolean"
+        },
+        "injection_inert": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Injection Inert"
+        }
+      },
+      "required": [
+        "case_id",
+        "ground_truth_family",
+        "variant",
+        "expected_decision",
+        "predicted_decision",
+        "decision_reason",
+        "correct"
+      ],
+      "title": "RouterEvalCaseResult",
+      "type": "object"
+    },
+    "RouterFamilyAccuracy": {
+      "additionalProperties": false,
+      "properties": {
+        "family": {
+          "title": "Family",
+          "type": "string"
+        },
+        "routed_total": {
+          "minimum": 0,
+          "title": "Routed Total",
+          "type": "integer"
+        },
+        "routed_correct": {
+          "minimum": 0,
+          "title": "Routed Correct",
+          "type": "integer"
+        },
+        "accuracy": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Accuracy",
+          "type": "number"
+        }
+      },
+      "required": [
+        "family",
+        "routed_total",
+        "routed_correct",
+        "accuracy"
+      ],
+      "title": "RouterFamilyAccuracy",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Deterministic router evaluation: per-family accuracy + abstention correctness.\n\nNo ML router is used; this evaluates the existing deterministic\nmatter_family_candidates -> confirmation flow against known-truth synthetic\nlabels. Candidate-only review evidence.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "report_id": {
+      "title": "Report Id",
+      "type": "string"
+    },
+    "case_count": {
+      "minimum": 0,
+      "title": "Case Count",
+      "type": "integer"
+    },
+    "correct_count": {
+      "minimum": 0,
+      "title": "Correct Count",
+      "type": "integer"
+    },
+    "overall_accuracy": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Overall Accuracy",
+      "type": "number"
+    },
+    "per_family_accuracy": {
+      "items": {
+        "$ref": "#/$defs/RouterFamilyAccuracy"
+      },
+      "title": "Per Family Accuracy",
+      "type": "array"
+    },
+    "expected_route_count": {
+      "minimum": 0,
+      "title": "Expected Route Count",
+      "type": "integer"
+    },
+    "routed_when_expected_count": {
+      "minimum": 0,
+      "title": "Routed When Expected Count",
+      "type": "integer"
+    },
+    "expected_abstain_count": {
+      "minimum": 0,
+      "title": "Expected Abstain Count",
+      "type": "integer"
+    },
+    "correct_abstain_count": {
+      "minimum": 0,
+      "title": "Correct Abstain Count",
+      "type": "integer"
+    },
+    "over_abstain_count": {
+      "minimum": 0,
+      "title": "Over Abstain Count",
+      "type": "integer"
+    },
+    "abstention_recall": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Abstention Recall",
+      "type": "number"
+    },
+    "case_results": {
+      "items": {
+        "$ref": "#/$defs/RouterEvalCaseResult"
+      },
+      "title": "Case Results",
+      "type": "array"
+    },
+    "data_scope": {
+      "const": "synthetic_only",
+      "default": "synthetic_only",
+      "title": "Data Scope",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "no_ml_router_used": {
+      "const": true,
+      "default": true,
+      "title": "No Ml Router Used",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "report_id",
+    "case_count",
+    "correct_count",
+    "overall_accuracy",
+    "expected_route_count",
+    "routed_when_expected_count",
+    "expected_abstain_count",
+    "correct_abstain_count",
+    "over_abstain_count",
+    "abstention_recall",
+    "generated_at"
+  ],
+  "title": "RouterEvaluationReport",
+  "type": "object"
+}

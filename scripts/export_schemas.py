@@ -474,6 +474,10 @@ from lawfirm_os_intake.models import (  # noqa: E402
     FirmExcelBudgetExport,
     FirmExcelBudgetPhase,
     FirmExcelBudgetTaskRow,
+    RouterEvalCaseResult,
+    RouterEvalCaseSpec,
+    RouterEvaluationReport,
+    RouterFamilyAccuracy,
     SyntheticRateCardWorkbenchStateSummary,
     ValidationSuiteEvidenceReport,
     ValidationSuiteStepEvidence,
@@ -617,6 +621,10 @@ MODELS = {
     "firm-excel-budget-export.schema.json": FirmExcelBudgetExport,
     "firm-excel-budget-phase.schema.json": FirmExcelBudgetPhase,
     "firm-excel-budget-task-row.schema.json": FirmExcelBudgetTaskRow,
+    "router-eval-case-result.schema.json": RouterEvalCaseResult,
+    "router-eval-case-spec.schema.json": RouterEvalCaseSpec,
+    "router-evaluation-report.schema.json": RouterEvaluationReport,
+    "router-family-accuracy.schema.json": RouterFamilyAccuracy,
     "synthetic-rate-card-workbench-state-summary.schema.json": (
         SyntheticRateCardWorkbenchStateSummary
     ),

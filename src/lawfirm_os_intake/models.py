@@ -9356,6 +9356,101 @@ class FirmExcelBudgetExport(StrictModel):
         return self
 
 
+class RouterEvalCaseSpec(StrictModel):
+    """A labeled synthetic routing case (ground truth known by construction)."""
+
+    case_id: str
+    ground_truth_family: str
+    variant: Literal[
+        "clean",
+        "mixed_signals",
+        "quoted_thread_noise",
+        "missing_attachment",
+        "injection_as_text",
+    ]
+    expected_decision: Literal["route", "abstain"]
+    secondary_family: str | None = None
+    exposure_minor_units: int = Field(default=0, ge=0)
+    drivers: dict[str, Any] = Field(default_factory=dict)
+
+
+class RouterEvalCaseResult(StrictModel):
+    case_id: str
+    ground_truth_family: str
+    variant: str
+    expected_decision: Literal["route", "abstain"]
+    predicted_decision: Literal["route", "abstain"]
+    predicted_family: str | None = None
+    decision_reason: str
+    correct: bool
+    injection_inert: bool | None = None
+
+
+class RouterFamilyAccuracy(StrictModel):
+    family: str
+    routed_total: int = Field(ge=0)
+    routed_correct: int = Field(ge=0)
+    accuracy: float = Field(ge=0, le=1)
+
+
+class RouterEvaluationReport(StrictModel):
+    """Deterministic router evaluation: per-family accuracy + abstention correctness.
+
+    No ML router is used; this evaluates the existing deterministic
+    matter_family_candidates -> confirmation flow against known-truth synthetic
+    labels. Candidate-only review evidence.
+    """
+
+    schema_version: str = "0.1"
+    report_id: str
+    case_count: int = Field(ge=0)
+    correct_count: int = Field(ge=0)
+    overall_accuracy: float = Field(ge=0, le=1)
+    per_family_accuracy: list[RouterFamilyAccuracy] = Field(default_factory=list)
+    expected_route_count: int = Field(ge=0)
+    routed_when_expected_count: int = Field(ge=0)
+    expected_abstain_count: int = Field(ge=0)
+    correct_abstain_count: int = Field(ge=0)
+    over_abstain_count: int = Field(ge=0)
+    abstention_recall: float = Field(ge=0, le=1)
+    case_results: list[RouterEvalCaseResult] = Field(default_factory=list)
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    no_ml_router_used: Literal[True] = True
+    generated_at: str
+
+    @model_validator(mode="after")
+    def _metrics_recomputed_fail_closed(self) -> "RouterEvaluationReport":
+        if self.case_count != len(self.case_results):
+            raise ValueError("router eval case_count mismatch")
+        correct = sum(1 for case in self.case_results if case.correct)
+        if self.correct_count != correct:
+            raise ValueError("router eval correct_count mismatch")
+        expected_overall = round(correct / self.case_count, 6) if self.case_count else 0.0
+        if round(self.overall_accuracy, 6) != expected_overall:
+            raise ValueError("router eval overall_accuracy mismatch")
+        expected_abstain = [c for c in self.case_results if c.expected_decision == "abstain"]
+        expected_route = [c for c in self.case_results if c.expected_decision == "route"]
+        correct_abstain = sum(1 for c in expected_abstain if c.predicted_decision == "abstain")
+        over_abstain = sum(1 for c in expected_route if c.predicted_decision == "abstain")
+        routed_when_expected = sum(1 for c in expected_route if c.predicted_decision == "route")
+        if (
+            self.expected_abstain_count != len(expected_abstain)
+            or self.correct_abstain_count != correct_abstain
+            or self.over_abstain_count != over_abstain
+            or self.expected_route_count != len(expected_route)
+            or self.routed_when_expected_count != routed_when_expected
+        ):
+            raise ValueError("router eval abstention counts mismatch")
+        expected_recall = (
+            round(correct_abstain / len(expected_abstain), 6) if expected_abstain else 1.0
+        )
+        if round(self.abstention_recall, 6) != expected_recall:
+            raise ValueError("router eval abstention_recall mismatch")
+        return self
+
+
 class CarrierCompliantProjectionBasis(StrictModel):
     guideline_id: str
     guideline_ref: str

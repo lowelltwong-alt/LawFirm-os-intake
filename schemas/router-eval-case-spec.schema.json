@@ -1,0 +1,64 @@
+{
+  "additionalProperties": false,
+  "description": "A labeled synthetic routing case (ground truth known by construction).",
+  "properties": {
+    "case_id": {
+      "title": "Case Id",
+      "type": "string"
+    },
+    "ground_truth_family": {
+      "title": "Ground Truth Family",
+      "type": "string"
+    },
+    "variant": {
+      "enum": [
+        "clean",
+        "mixed_signals",
+        "quoted_thread_noise",
+        "missing_attachment",
+        "injection_as_text"
+      ],
+      "title": "Variant",
+      "type": "string"
+    },
+    "expected_decision": {
+      "enum": [
+        "route",
+        "abstain"
+      ],
+      "title": "Expected Decision",
+      "type": "string"
+    },
+    "secondary_family": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Secondary Family"
+    },
+    "exposure_minor_units": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Exposure Minor Units",
+      "type": "integer"
+    },
+    "drivers": {
+      "additionalProperties": true,
+      "title": "Drivers",
+      "type": "object"
+    }
+  },
+  "required": [
+    "case_id",
+    "ground_truth_family",
+    "variant",
+    "expected_decision"
+  ],
+  "title": "RouterEvalCaseSpec",
+  "type": "object"
+}
