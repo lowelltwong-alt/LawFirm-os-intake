@@ -9451,6 +9451,211 @@ class RouterEvaluationReport(StrictModel):
         return self
 
 
+# --- LW0: end-to-end deterministic synthetic case pipeline -------------------
+#
+# One typed result reconciling every stage of intake -> route -> confirm (from
+# generator ground truth) -> budget -> carrier projection -> case sizing ->
+# firm-Excel export. Every joint is typed and every serialized derived money
+# value is exact integer minor units, recomputed fail-closed. A None stage
+# (abstained route, unselected pack, missing band) may NEVER serialize as a
+# success status. Candidate-only, synthetic-only; never a client submission.
+
+
+class SyntheticCasePipelineSpec(StrictModel):
+    """A labeled synthetic pipeline case (generator ground truth known)."""
+
+    case_id: str
+    inbound_ref: str
+    confirmation_template_ref: str
+    profile_ref: str
+    ground_truth_family: str
+    case_type: str
+    base_work_plan_total_minor_units: int = Field(ge=0)
+    sizing_drivers: dict[str, Any] = Field(default_factory=dict)
+    posture_input: SettlementPostureInput
+    data_origin: Literal["synthetic"] = "synthetic"
+    candidate_only: Literal[True] = True
+
+
+class PipelineRouteStage(StrictModel):
+    status: Literal["routed", "abstained"]
+    ground_truth_family: str
+    routed_family: str | None = None
+    decision_reason: str
+    matched_ground_truth: bool
+
+    @model_validator(mode="after")
+    def _route_joint_fail_closed(self) -> "PipelineRouteStage":
+        if self.status == "abstained":
+            if self.routed_family is not None:
+                raise ValueError("an abstained route cannot carry a routed_family")
+            if self.matched_ground_truth:
+                raise ValueError("an abstained route cannot match ground truth")
+        else:
+            if self.routed_family is None:
+                raise ValueError("a routed decision must carry a routed_family")
+            expected = self.routed_family == self.ground_truth_family
+            if self.matched_ground_truth != expected:
+                raise ValueError("route matched_ground_truth does not match routed_family")
+        return self
+
+
+class PipelineConfirmStage(StrictModel):
+    # The pipeline confirms the matter family from GENERATOR GROUND TRUTH, never
+    # from human review. Human confirmation remains the production authority and is
+    # not what this synthetic harness performs.
+    confirmation_source: Literal["generator_ground_truth"] = "generator_ground_truth"
+    confirmed_matter_family: str
+    ground_truth_family: str
+    matched_ground_truth: bool
+    is_human_review: Literal[False] = False
+
+    @model_validator(mode="after")
+    def _confirm_matches_ground_truth(self) -> "PipelineConfirmStage":
+        expected = self.confirmed_matter_family == self.ground_truth_family
+        if self.matched_ground_truth != expected:
+            raise ValueError("confirm matched_ground_truth does not match confirmed family")
+        if not self.matched_ground_truth:
+            raise ValueError("pipeline confirmation must equal the generator ground-truth family")
+        return self
+
+
+class PipelineBudgetStage(StrictModel):
+    status: Literal["priced", "blocked_no_price"]
+    # Deterministic dollars from governed rates, exact integer minor units. This is
+    # the immutable work-plan total; it is never overwritten by reimbursement math.
+    work_plan_total_minor_units: int | None = Field(default=None, ge=0)
+    projection_status: Literal["projected", "blocked_no_pack"]
+    # A SEPARATE reimbursement figure; kept distinct from the work-plan total.
+    guideline_adjusted_reimbursement_minor_units: int | None = Field(default=None, ge=0)
+
+    @model_validator(mode="after")
+    def _budget_joint_fail_closed(self) -> "PipelineBudgetStage":
+        if self.status == "priced":
+            if self.work_plan_total_minor_units is None:
+                raise ValueError("a priced budget must carry a work_plan_total")
+        else:
+            if self.work_plan_total_minor_units is not None:
+                raise ValueError("an unpriced budget cannot carry a work_plan_total")
+        if self.projection_status == "blocked_no_pack":
+            if self.guideline_adjusted_reimbursement_minor_units is not None:
+                raise ValueError("a blocked projection cannot carry a reimbursement total")
+        return self
+
+
+class PipelineSizingStage(StrictModel):
+    status: Literal["sized", "blocked_no_band"]
+    case_type: str
+    case_sizing_report_id: str | None = None
+    sized_work_plan_total_minor_units: int | None = Field(default=None, ge=0)
+    proportionality_status: Literal["within_band", "blocked_disproportionate_budget"] | None = None
+
+    @model_validator(mode="after")
+    def _sizing_joint_fail_closed(self) -> "PipelineSizingStage":
+        if self.status == "sized":
+            if (
+                self.case_sizing_report_id is None
+                or self.sized_work_plan_total_minor_units is None
+                or self.proportionality_status is None
+            ):
+                raise ValueError("a sized stage must carry report id, total, and proportionality")
+        else:
+            if (
+                self.sized_work_plan_total_minor_units is not None
+                or self.proportionality_status is not None
+            ):
+                raise ValueError("a blocked_no_band sizing stage cannot carry sized results")
+        return self
+
+
+class PipelineExportStage(StrictModel):
+    status: Literal["exported", "not_exported"]
+    firm_excel_export_id: str | None = None
+    firm_excel_original_total_minor_units: int | None = Field(default=None, ge=0)
+
+    @model_validator(mode="after")
+    def _export_joint_fail_closed(self) -> "PipelineExportStage":
+        if self.status == "exported":
+            if (
+                self.firm_excel_export_id is None
+                or self.firm_excel_original_total_minor_units is None
+            ):
+                raise ValueError("an exported stage must carry an export id and total")
+        else:
+            if self.firm_excel_original_total_minor_units is not None:
+                raise ValueError("a not_exported stage cannot carry an export total")
+        return self
+
+
+class SyntheticCasePipelineResult(StrictModel):
+    """One typed result reconciling every pipeline stage, fail-closed."""
+
+    schema_version: str = "0.1"
+    pipeline_result_id: str
+    case_id: str
+    ground_truth_family: str
+    route: PipelineRouteStage
+    confirm: PipelineConfirmStage
+    budget: PipelineBudgetStage
+    sizing: PipelineSizingStage
+    export: PipelineExportStage
+    # Overall status is the reconciled terminal state of the chain.
+    status: Literal["completed", "blocked"]
+    blocking_reasons: list[str] = Field(default_factory=list)
+    content_digest: str
+    currency: str = "USD"
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    not_authorized_for_client_submission: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    generated_at: str
+
+    @model_validator(mode="after")
+    def _pipeline_reconciled_fail_closed(self) -> "SyntheticCasePipelineResult":
+        if self.route.ground_truth_family != self.ground_truth_family:
+            raise ValueError("route ground_truth_family does not match the result")
+        if self.confirm.ground_truth_family != self.ground_truth_family:
+            raise ValueError("confirm ground_truth_family does not match the result")
+        if self.sizing.case_type is None:  # pragma: no cover - typed non-null
+            raise ValueError("sizing stage must carry a case_type")
+
+        # Cross-stage money reconciliation (P11): the firm-Excel export renders the
+        # deterministic work-plan dollars unchanged; its total must equal the
+        # budget work-plan total in exact minor units. The immutable work-plan
+        # total is never overwritten by the separate reimbursement figure.
+        if self.export.status == "exported":
+            if self.budget.status != "priced":
+                raise ValueError("an export cannot exist without a priced budget")
+            if (
+                self.export.firm_excel_original_total_minor_units
+                != self.budget.work_plan_total_minor_units
+            ):
+                raise ValueError(
+                    "firm-Excel export total must equal the deterministic work-plan total"
+                )
+
+        # A completed chain requires every stage to have succeeded; any blocked
+        # joint yields a typed blocked status with recorded reasons (fail-closed).
+        blocked: list[str] = []
+        if self.route.status != "routed":
+            blocked.append(f"route:{self.route.decision_reason}")
+        if self.budget.status != "priced":
+            blocked.append("budget:blocked_no_price")
+        if self.budget.projection_status != "projected":
+            blocked.append("projection:blocked_no_pack")
+        if self.sizing.status != "sized":
+            blocked.append("sizing:blocked_no_band")
+        if self.export.status != "exported":
+            blocked.append("export:not_exported")
+        expected_status = "completed" if not blocked else "blocked"
+        if self.status != expected_status:
+            raise ValueError(f"pipeline status {self.status} disagrees with joints {blocked}")
+        if sorted(self.blocking_reasons) != sorted(blocked):
+            raise ValueError("pipeline blocking_reasons do not match the blocked joints")
+        return self
+
+
 class FirmCheckpointCaseDisposition(StrictModel):
     """Firm disposition for one checkpoint case. Real firm review is a human gate;
     synthetic placeholders are explicitly labeled and never real validation."""

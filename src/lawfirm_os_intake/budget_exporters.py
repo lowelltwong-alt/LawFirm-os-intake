@@ -279,16 +279,12 @@ def read_firm_excel_task_totals(path: str | Path) -> dict:
 _DEFAULT_BUDGET_REF = "examples/synthetic/labor-employment/replay-inputs/epli-carrier-clean/legal_budget_proposal.json"
 
 
-def firm_excel_export_from_projection_report(
-    *, repo_root: str | Path, budget_ref: str = _DEFAULT_BUDGET_REF
-) -> FirmExcelBudgetExport:
-    """Map a synthetic budget model to the firm-Excel export (dollars per task).
+def firm_excel_export_from_budget(budget: BudgetProposal) -> FirmExcelBudgetExport:
+    """Map an in-memory synthetic budget model to the firm-Excel export.
 
     Role/rate/hours stay internal; only dollars per UTBMS phase/task are exported.
+    Every task total is exact integer minor units.
     """
-
-    root = Path(repo_root)
-    budget = BudgetProposal.model_validate(load_json(root / budget_ref))
 
     phases: dict[str, FirmExcelBudgetPhase] = {}
     task_totals: dict[tuple[str, str], int] = {}
@@ -334,3 +330,13 @@ def firm_excel_export_from_projection_report(
         phases=[phases[phase_id] for phase_id in phase_order],
         documented_deviations=list(_TEMPLATE_DEVIATIONS),
     )
+
+
+def firm_excel_export_from_projection_report(
+    *, repo_root: str | Path, budget_ref: str = _DEFAULT_BUDGET_REF
+) -> FirmExcelBudgetExport:
+    """Load a serialized synthetic budget model and map it to the firm-Excel export."""
+
+    root = Path(repo_root)
+    budget = BudgetProposal.model_validate(load_json(root / budget_ref))
+    return firm_excel_export_from_budget(budget)

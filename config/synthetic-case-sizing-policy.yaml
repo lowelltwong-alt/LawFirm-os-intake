@@ -67,3 +67,5 @@ proportionality_bands:
     max_budget_to_exposure_ratio: 0.6
   labor_employment:
     max_budget_to_exposure_ratio: 0.6
+  medical_malpractice:
+    max_budget_to_exposure_ratio: 0.6

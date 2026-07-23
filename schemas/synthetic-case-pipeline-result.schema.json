@@ -1,0 +1,354 @@
+{
+  "$defs": {
+    "PipelineBudgetStage": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "priced",
+            "blocked_no_price"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "work_plan_total_minor_units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Work Plan Total Minor Units"
+        },
+        "projection_status": {
+          "enum": [
+            "projected",
+            "blocked_no_pack"
+          ],
+          "title": "Projection Status",
+          "type": "string"
+        },
+        "guideline_adjusted_reimbursement_minor_units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guideline Adjusted Reimbursement Minor Units"
+        }
+      },
+      "required": [
+        "status",
+        "projection_status"
+      ],
+      "title": "PipelineBudgetStage",
+      "type": "object"
+    },
+    "PipelineConfirmStage": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_source": {
+          "const": "generator_ground_truth",
+          "default": "generator_ground_truth",
+          "title": "Confirmation Source",
+          "type": "string"
+        },
+        "confirmed_matter_family": {
+          "title": "Confirmed Matter Family",
+          "type": "string"
+        },
+        "ground_truth_family": {
+          "title": "Ground Truth Family",
+          "type": "string"
+        },
+        "matched_ground_truth": {
+          "title": "Matched Ground Truth",
+          "type": "boolean"
+        },
+        "is_human_review": {
+          "const": false,
+          "default": false,
+          "title": "Is Human Review",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "confirmed_matter_family",
+        "ground_truth_family",
+        "matched_ground_truth"
+      ],
+      "title": "PipelineConfirmStage",
+      "type": "object"
+    },
+    "PipelineExportStage": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "exported",
+            "not_exported"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "firm_excel_export_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firm Excel Export Id"
+        },
+        "firm_excel_original_total_minor_units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firm Excel Original Total Minor Units"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "PipelineExportStage",
+      "type": "object"
+    },
+    "PipelineRouteStage": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "routed",
+            "abstained"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "ground_truth_family": {
+          "title": "Ground Truth Family",
+          "type": "string"
+        },
+        "routed_family": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Routed Family"
+        },
+        "decision_reason": {
+          "title": "Decision Reason",
+          "type": "string"
+        },
+        "matched_ground_truth": {
+          "title": "Matched Ground Truth",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "status",
+        "ground_truth_family",
+        "decision_reason",
+        "matched_ground_truth"
+      ],
+      "title": "PipelineRouteStage",
+      "type": "object"
+    },
+    "PipelineSizingStage": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "sized",
+            "blocked_no_band"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "case_type": {
+          "title": "Case Type",
+          "type": "string"
+        },
+        "case_sizing_report_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Case Sizing Report Id"
+        },
+        "sized_work_plan_total_minor_units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sized Work Plan Total Minor Units"
+        },
+        "proportionality_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "within_band",
+                "blocked_disproportionate_budget"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proportionality Status"
+        }
+      },
+      "required": [
+        "status",
+        "case_type"
+      ],
+      "title": "PipelineSizingStage",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "One typed result reconciling every pipeline stage, fail-closed.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "pipeline_result_id": {
+      "title": "Pipeline Result Id",
+      "type": "string"
+    },
+    "case_id": {
+      "title": "Case Id",
+      "type": "string"
+    },
+    "ground_truth_family": {
+      "title": "Ground Truth Family",
+      "type": "string"
+    },
+    "route": {
+      "$ref": "#/$defs/PipelineRouteStage"
+    },
+    "confirm": {
+      "$ref": "#/$defs/PipelineConfirmStage"
+    },
+    "budget": {
+      "$ref": "#/$defs/PipelineBudgetStage"
+    },
+    "sizing": {
+      "$ref": "#/$defs/PipelineSizingStage"
+    },
+    "export": {
+      "$ref": "#/$defs/PipelineExportStage"
+    },
+    "status": {
+      "enum": [
+        "completed",
+        "blocked"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "blocking_reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blocking Reasons",
+      "type": "array"
+    },
+    "content_digest": {
+      "title": "Content Digest",
+      "type": "string"
+    },
+    "currency": {
+      "default": "USD",
+      "title": "Currency",
+      "type": "string"
+    },
+    "data_scope": {
+      "const": "synthetic_only",
+      "default": "synthetic_only",
+      "title": "Data Scope",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "not_authorized_for_client_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Client Submission",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "pipeline_result_id",
+    "case_id",
+    "ground_truth_family",
+    "route",
+    "confirm",
+    "budget",
+    "sizing",
+    "export",
+    "status",
+    "content_digest",
+    "generated_at"
+  ],
+  "title": "SyntheticCasePipelineResult",
+  "type": "object"
+}
