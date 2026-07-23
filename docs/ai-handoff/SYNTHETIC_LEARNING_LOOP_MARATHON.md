@@ -72,6 +72,82 @@ scaffolding. It stays inside the §21 boundary the CW marathon held throughout.
 - **LW5 — (deferred, NOT in this program)** Full XGBoost challenger behind its
   leakage/shadow-mode/deterministic-fallback/retirement gates — a future follow-on.
 
+## Red-team premortem amendment (2026-07-23, pre-execution — binding)
+
+Grounded in direct inspection of `routing_eval.py`, `benchmarks.py`,
+`calibration/leakage.py`, `reviewed_learning_gate.py`, `learning_shadow_eval_results.py`,
+`case_sizing.py`, `drivers.py`, `firm_checkpoint.py`, `guidelines.py`, and external
+research on label-leakage permutation controls and metamorphic ML testing. Each
+finding below is a **binding contract change** on the named wave.
+
+- **P1 — Tautological accuracy (binds LW1, LW2).** `routing_eval` renders doc text
+  directly from `MATTER_SIGNALS` terms — the same terms `classify_matter` scores.
+  Corpus-scale routing accuracy would be ~100% *by construction*, making every
+  captured "improvement" noise. LW1's generator MUST carry a declared difficulty
+  model (signal-density parameter, distractor-family terms, paraphrase pools not
+  drawn verbatim from `MATTER_SIGNALS`, noise variants) and emit per-case
+  `difficulty` + `signal_terms_used`. LW2 metrics MUST be stratified by difficulty,
+  carry `metric_semantics="recovers_generator_truth_on_synthetic"` and
+  `real_world_accuracy_claim=False` as literal fields, and mark any saturated
+  (100%) stratum non-informative for delta tracking.
+- **P2 — Label leakage into probe features (binds LW1, LW3).** If LW3 features are
+  read from the generator spec, the probe learns the identity function and
+  "learnability" is meaningless. LW3 MUST declare a FeatureContract (features
+  computed only from the rendered bundle / pipeline artifacts upstream of the
+  predicted target; spec label fields are prohibited inputs, enforced by validator
+  + test) and MUST ship three negative controls in-wave: (a) label-shuffle
+  permutation control — holdout performance on shuffled labels must collapse to
+  the chance band, else the wave fails closed; (b) majority-class/constant
+  baseline reported beside probe performance — learnability is claimable only
+  above baseline; (c) feature-ablation — deleting declared top features must
+  degrade performance. Holdout split is assigned deterministically at LW1
+  generation time (seeded hash of case_id), digest-frozen in the LW1 manifest;
+  LW3 verifies the digest before eval and refuses below a declared holdout floor.
+- **P3 — Privacy-proof vs label-leakage conflation (binds LW3).**
+  `calibration/leakage.py` proves privacy/dominance/reconstruction properties
+  (LOMO, k-anon, DP) — it does NOT test feature/label leakage. Both proofs are
+  required and neither substitutes for the other; the LW3 decision trace must say
+  so explicitly.
+- **P4 — `benchmarks.py` has no budget bands (rewords LW2).** `benchmarks.py` is a
+  pinned rate-benchmark replay auditor. The LW2 reference-class plausibility bands
+  MUST be a new versioned synthetic policy under `config/` (per-case-type
+  budget-to-exposure and per-phase share bands, following the case-sizing band
+  pattern), loaded fail-closed: a missing band yields `not_evaluable`, never a
+  silent pass. `benchmarks.py` is reused only for what it does (rate-source
+  sanity), not misrepresented as the band source.
+- **P5 — Goodhart / non-comparable deltas (binds LW2, LW4).** Capture-ledger
+  entries MUST record every axis version+digest (corpus seed, generator version,
+  rule/policy versions, probe version, code ref). Delta records are computed only
+  between entries differing in exactly one axis; multi-axis deltas are typed
+  `not_comparable`. "Monotonic-improvement tracking" means regressions become
+  typed `metric_regression_requires_review` events — never auto-blocked, never
+  silently dropped, never collapsed into a single scalar score.
+- **P6 — Fail-open joints (binds LW0).** `build_carrier_compliant_projection`
+  returns `None` on an unselected pack; `route_decision` abstains; a missing
+  template yields exclusions. `SyntheticCasePipelineResult` MUST type every joint
+  (`routed|abstained`, `projected|blocked_no_pack`, `sized|blocked_no_band`,
+  `exported|not_exported`) and recompute stage-consistency + exact minor-unit
+  total reconciliation in a fail-closed model validator. A `None` may never
+  serialize as success.
+- **P7 — Composition drift (binds LW0, LW4).** `firm_checkpoint._case` already
+  mini-composes route→size→export. `case_pipeline` becomes the single canonical
+  composition; `firm_checkpoint` stays the 3-case packet; the seam is recorded in
+  the LW0 decision trace and the LW4 delivery packet.
+- **P8 — Ground-truth confirmation provenance (binds LW0).** The pipeline's
+  auto-confirmation from generator truth MUST be marked
+  `confirmation_source="generator_ground_truth"` with a clearly synthetic
+  reviewer identity — it must never be mistakable for human review, which remains
+  the production authority.
+- **P9 — Determinism (binds LW1).** Seeded `random.Random` only; canonical-JSON
+  digests; sorted iteration; pinned `generated_at`; LF writes. A test regenerates
+  the corpus from the manifest and asserts byte-identical digests.
+- **P10 — Repo bloat (binds LW1).** Freeze N≈50 in-repo; larger corpora go to
+  scratch/output dirs only, reproducible from manifest parameters.
+- **P11 — Money discipline (binds all).** New serialized money is exact integer
+  minor units only; stage totals reconcile exactly; no float-derived money fields.
+- **P12 — Suite runtime (binds LW2+).** Unit tests use small N (8–12); the N≈50
+  acceptance run is a script-produced artifact, not a per-test loop.
+
 ## Verification
 
 Per wave: full gate (`validate_repo`, `export_schemas`, `ruff check`+`format`,
