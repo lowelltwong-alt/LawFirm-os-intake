@@ -478,6 +478,9 @@ from lawfirm_os_intake.models import (  # noqa: E402
     RouterEvalCaseSpec,
     RouterEvaluationReport,
     RouterFamilyAccuracy,
+    FirmCheckpointCase,
+    FirmCheckpointCaseDisposition,
+    FirmCheckpointPacket,
     SyntheticRateCardWorkbenchStateSummary,
     ValidationSuiteEvidenceReport,
     ValidationSuiteStepEvidence,
@@ -625,6 +628,9 @@ MODELS = {
     "router-eval-case-spec.schema.json": RouterEvalCaseSpec,
     "router-evaluation-report.schema.json": RouterEvaluationReport,
     "router-family-accuracy.schema.json": RouterFamilyAccuracy,
+    "firm-checkpoint-case.schema.json": FirmCheckpointCase,
+    "firm-checkpoint-case-disposition.schema.json": FirmCheckpointCaseDisposition,
+    "firm-checkpoint-packet.schema.json": FirmCheckpointPacket,
     "synthetic-rate-card-workbench-state-summary.schema.json": (
         SyntheticRateCardWorkbenchStateSummary
     ),
