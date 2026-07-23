@@ -481,6 +481,10 @@ from lawfirm_os_intake.models import (  # noqa: E402
     FirmCheckpointCase,
     FirmCheckpointCaseDisposition,
     FirmCheckpointPacket,
+    OCGContractReconciliationReport,
+    OCGProposedRuleKind,
+    OCGRuleKindExtensionProposal,
+    SiblingConformanceReport,
     SyntheticRateCardWorkbenchStateSummary,
     ValidationSuiteEvidenceReport,
     ValidationSuiteStepEvidence,
@@ -631,6 +635,10 @@ MODELS = {
     "firm-checkpoint-case.schema.json": FirmCheckpointCase,
     "firm-checkpoint-case-disposition.schema.json": FirmCheckpointCaseDisposition,
     "firm-checkpoint-packet.schema.json": FirmCheckpointPacket,
+    "ocg-contract-reconciliation-report.schema.json": OCGContractReconciliationReport,
+    "ocg-proposed-rule-kind.schema.json": OCGProposedRuleKind,
+    "ocg-rule-kind-extension-proposal.schema.json": OCGRuleKindExtensionProposal,
+    "sibling-conformance-report.schema.json": SiblingConformanceReport,
     "synthetic-rate-card-workbench-state-summary.schema.json": (
         SyntheticRateCardWorkbenchStateSummary
     ),

@@ -1,0 +1,40 @@
+{
+  "additionalProperties": false,
+  "description": "One rule kind the vertical needs that the current OCG IR does not yet express.",
+  "properties": {
+    "proposed_kind": {
+      "enum": [
+        "task_hour_allowance",
+        "ordered_attribution",
+        "applicability_envelope"
+      ],
+      "title": "Proposed Kind",
+      "type": "string"
+    },
+    "rationale": {
+      "title": "Rationale",
+      "type": "string"
+    },
+    "nearest_existing_family": {
+      "title": "Nearest Existing Family",
+      "type": "string"
+    },
+    "requires_substrate_extension": {
+      "default": true,
+      "title": "Requires Substrate Extension",
+      "type": "boolean"
+    },
+    "candidate_local_marker": {
+      "title": "Candidate Local Marker",
+      "type": "string"
+    }
+  },
+  "required": [
+    "proposed_kind",
+    "rationale",
+    "nearest_existing_family",
+    "candidate_local_marker"
+  ],
+  "title": "OCGProposedRuleKind",
+  "type": "object"
+}

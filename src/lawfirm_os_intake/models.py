@@ -9521,6 +9521,93 @@ class FirmCheckpointPacket(StrictModel):
         return self
 
 
+class OCGProposedRuleKind(StrictModel):
+    """One rule kind the vertical needs that the current OCG IR does not yet express."""
+
+    proposed_kind: Literal[
+        "task_hour_allowance",
+        "ordered_attribution",
+        "applicability_envelope",
+    ]
+    rationale: str
+    nearest_existing_family: str
+    requires_substrate_extension: bool = True
+    candidate_local_marker: str
+
+
+class OCGRuleKindExtensionProposal(StrictModel):
+    """Candidate executable extension proposal to the Substrate-owned OCG rule IR.
+
+    Intake proposes rule kinds and keeps a local adapter + fixtures; it authors no
+    canonical rule IDs and owns no canonical taxonomy. Substrate-owner review is
+    required before any promotion.
+    """
+
+    schema_version: str = "0.1"
+    proposal_id: str
+    source_owner_required: str = "LawFirm-os-semantic-substrate"
+    proposed_kinds: list[OCGProposedRuleKind] = Field(default_factory=list)
+    local_adapter_ref: str
+    authors_no_canonical_ids: Literal[True] = True
+    requires_substrate_owner_review: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _proposal_fail_closed(self) -> "OCGRuleKindExtensionProposal":
+        kinds = {kind.proposed_kind for kind in self.proposed_kinds}
+        if kinds != {"task_hour_allowance", "ordered_attribution", "applicability_envelope"}:
+            raise ValueError("extension proposal must cover exactly the three needed rule kinds")
+        return self
+
+
+class SiblingConformanceReport(StrictModel):
+    """Read-only conformance of the sibling billing-guideline-simulator vs CW1 outputs."""
+
+    schema_version: str = "0.1"
+    sibling_repo_ref: str
+    sibling_available: bool
+    status: Literal["passed", "divergences_found", "blocked_sibling_unavailable"]
+    checked_cw1_output_refs: list[str] = Field(default_factory=list)
+    divergences: list[str] = Field(default_factory=list)
+    recorded_reason: str
+    read_only: Literal[True] = True
+    sibling_is_read_only_challenger: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _conformance_fail_closed(self) -> "SiblingConformanceReport":
+        if not self.sibling_available and self.status != "blocked_sibling_unavailable":
+            raise ValueError("an unavailable sibling must record blocked_sibling_unavailable")
+        if self.status == "divergences_found" and not self.divergences:
+            raise ValueError("divergences_found requires recorded divergences")
+        return self
+
+
+class OCGContractReconciliationReport(StrictModel):
+    schema_version: str = "0.1"
+    report_id: str
+    extension_proposal: OCGRuleKindExtensionProposal
+    adapter_rule_ir_id: str
+    adapter_canonical_rule_id_violation_count: int = Field(ge=0)
+    adapter_source_owner_violation_count: int = Field(ge=0)
+    adapter_blocker_count: int = Field(ge=0)
+    sibling_conformance: SiblingConformanceReport
+    requires_substrate_owner_review: Literal[True] = True
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    generated_at: str
+
+    @model_validator(mode="after")
+    def _reconciliation_fail_closed(self) -> "OCGContractReconciliationReport":
+        # The local adapter must author no canonical IDs and honor Substrate ownership.
+        if self.adapter_canonical_rule_id_violation_count != 0:
+            raise ValueError("local adapter must author no canonical OCG rule IDs")
+        if self.adapter_source_owner_violation_count != 0:
+            raise ValueError("local adapter must declare the Substrate as source owner")
+        return self
+
+
 class CarrierCompliantProjectionBasis(StrictModel):
     guideline_id: str
     guideline_ref: str

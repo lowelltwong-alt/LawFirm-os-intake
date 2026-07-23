@@ -1,0 +1,103 @@
+{
+  "$defs": {
+    "OCGProposedRuleKind": {
+      "additionalProperties": false,
+      "description": "One rule kind the vertical needs that the current OCG IR does not yet express.",
+      "properties": {
+        "proposed_kind": {
+          "enum": [
+            "task_hour_allowance",
+            "ordered_attribution",
+            "applicability_envelope"
+          ],
+          "title": "Proposed Kind",
+          "type": "string"
+        },
+        "rationale": {
+          "title": "Rationale",
+          "type": "string"
+        },
+        "nearest_existing_family": {
+          "title": "Nearest Existing Family",
+          "type": "string"
+        },
+        "requires_substrate_extension": {
+          "default": true,
+          "title": "Requires Substrate Extension",
+          "type": "boolean"
+        },
+        "candidate_local_marker": {
+          "title": "Candidate Local Marker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "proposed_kind",
+        "rationale",
+        "nearest_existing_family",
+        "candidate_local_marker"
+      ],
+      "title": "OCGProposedRuleKind",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Candidate executable extension proposal to the Substrate-owned OCG rule IR.\n\nIntake proposes rule kinds and keeps a local adapter + fixtures; it authors no\ncanonical rule IDs and owns no canonical taxonomy. Substrate-owner review is\nrequired before any promotion.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "proposal_id": {
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "source_owner_required": {
+      "default": "LawFirm-os-semantic-substrate",
+      "title": "Source Owner Required",
+      "type": "string"
+    },
+    "proposed_kinds": {
+      "items": {
+        "$ref": "#/$defs/OCGProposedRuleKind"
+      },
+      "title": "Proposed Kinds",
+      "type": "array"
+    },
+    "local_adapter_ref": {
+      "title": "Local Adapter Ref",
+      "type": "string"
+    },
+    "authors_no_canonical_ids": {
+      "const": true,
+      "default": true,
+      "title": "Authors No Canonical Ids",
+      "type": "boolean"
+    },
+    "requires_substrate_owner_review": {
+      "const": true,
+      "default": true,
+      "title": "Requires Substrate Owner Review",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "proposal_id",
+    "local_adapter_ref"
+  ],
+  "title": "OCGRuleKindExtensionProposal",
+  "type": "object"
+}
