@@ -9608,6 +9608,76 @@ class OCGContractReconciliationReport(StrictModel):
         return self
 
 
+class EconomicRegimeProfile(StrictModel):
+    """A data-only economic regime profile selecting payer, rate source, constraint
+    pack kind, proportionality policy, staffing norm, and transport."""
+
+    regime_id: str
+    label: str
+    active: bool
+    is_stub: bool = False
+    payer: Literal["carrier", "corporate_client", "self_insured"]
+    rate_source: Literal["panel_negotiated_schedule", "firm_standard_rates"]
+    constraint_pack_kind: Literal["carrier_guideline_pack", "corporate_ocg_pack"]
+    proportionality_policy: Literal["cost_of_risk_bands", "strategic_stakes_weighting"]
+    staffing_norm: Literal["lean_panel", "leveraged_pyramid"]
+    transport: Literal["ledes_ebilling", "direct_bill"]
+    notes: str = ""
+    data_only: Literal[True] = True
+
+
+class EconomicRegimeCatalog(StrictModel):
+    schema_version: str = "0.1"
+    catalog_id: str
+    profiles: list[EconomicRegimeProfile] = Field(default_factory=list)
+    active_regime_id: str
+    corporate_ocg_as_pack_note: str
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _regime_seam_fail_closed(self) -> "EconomicRegimeCatalog":
+        active = [profile for profile in self.profiles if profile.active]
+        if len(active) != 1:
+            raise ValueError("exactly one economic regime profile may be active")
+        if active[0].regime_id != self.active_regime_id or active[0].is_stub:
+            raise ValueError("active_regime_id must name the single active, non-stub profile")
+        if not any(profile.is_stub for profile in self.profiles):
+            raise ValueError("the regime seam requires at least one stub profile (white-shoe)")
+        return self
+
+
+class DeliveryPacket(StrictModel):
+    """End-of-program delivery packet: capabilities, boundaries, synthetic status,
+    and the firm-data recalibration path. Candidate-only review evidence."""
+
+    schema_version: str = "0.1"
+    packet_id: str
+    program: str
+    capabilities: list[str] = Field(default_factory=list)
+    boundaries: list[str] = Field(default_factory=list)
+    hostile_sweep_artifacts: list[str] = Field(default_factory=list)
+    firm_data_recalibration_path: list[str] = Field(default_factory=list)
+    open_human_gates: list[str] = Field(default_factory=list)
+    active_regime_id: str
+    synthetic_status: Literal["synthetic_only_candidate"] = "synthetic_only_candidate"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    not_authorized_for_client_submission: Literal[True] = True
+    generated_at: str
+
+    @model_validator(mode="after")
+    def _delivery_fail_closed(self) -> "DeliveryPacket":
+        if not (self.capabilities and self.boundaries and self.firm_data_recalibration_path):
+            raise ValueError(
+                "delivery packet requires capabilities, boundaries, and a recalibration path"
+            )
+        if not self.hostile_sweep_artifacts:
+            raise ValueError("delivery packet must list the hostile-swept artifacts")
+        return self
+
+
 class CarrierCompliantProjectionBasis(StrictModel):
     guideline_id: str
     guideline_ref: str

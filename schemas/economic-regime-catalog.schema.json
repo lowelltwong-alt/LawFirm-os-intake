@@ -1,0 +1,152 @@
+{
+  "$defs": {
+    "EconomicRegimeProfile": {
+      "additionalProperties": false,
+      "description": "A data-only economic regime profile selecting payer, rate source, constraint\npack kind, proportionality policy, staffing norm, and transport.",
+      "properties": {
+        "regime_id": {
+          "title": "Regime Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "active": {
+          "title": "Active",
+          "type": "boolean"
+        },
+        "is_stub": {
+          "default": false,
+          "title": "Is Stub",
+          "type": "boolean"
+        },
+        "payer": {
+          "enum": [
+            "carrier",
+            "corporate_client",
+            "self_insured"
+          ],
+          "title": "Payer",
+          "type": "string"
+        },
+        "rate_source": {
+          "enum": [
+            "panel_negotiated_schedule",
+            "firm_standard_rates"
+          ],
+          "title": "Rate Source",
+          "type": "string"
+        },
+        "constraint_pack_kind": {
+          "enum": [
+            "carrier_guideline_pack",
+            "corporate_ocg_pack"
+          ],
+          "title": "Constraint Pack Kind",
+          "type": "string"
+        },
+        "proportionality_policy": {
+          "enum": [
+            "cost_of_risk_bands",
+            "strategic_stakes_weighting"
+          ],
+          "title": "Proportionality Policy",
+          "type": "string"
+        },
+        "staffing_norm": {
+          "enum": [
+            "lean_panel",
+            "leveraged_pyramid"
+          ],
+          "title": "Staffing Norm",
+          "type": "string"
+        },
+        "transport": {
+          "enum": [
+            "ledes_ebilling",
+            "direct_bill"
+          ],
+          "title": "Transport",
+          "type": "string"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        },
+        "data_only": {
+          "const": true,
+          "default": true,
+          "title": "Data Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "regime_id",
+        "label",
+        "active",
+        "payer",
+        "rate_source",
+        "constraint_pack_kind",
+        "proportionality_policy",
+        "staffing_norm",
+        "transport"
+      ],
+      "title": "EconomicRegimeProfile",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "catalog_id": {
+      "title": "Catalog Id",
+      "type": "string"
+    },
+    "profiles": {
+      "items": {
+        "$ref": "#/$defs/EconomicRegimeProfile"
+      },
+      "title": "Profiles",
+      "type": "array"
+    },
+    "active_regime_id": {
+      "title": "Active Regime Id",
+      "type": "string"
+    },
+    "corporate_ocg_as_pack_note": {
+      "title": "Corporate Ocg As Pack Note",
+      "type": "string"
+    },
+    "data_scope": {
+      "const": "synthetic_only",
+      "default": "synthetic_only",
+      "title": "Data Scope",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "catalog_id",
+    "active_regime_id",
+    "corporate_ocg_as_pack_note"
+  ],
+  "title": "EconomicRegimeCatalog",
+  "type": "object"
+}

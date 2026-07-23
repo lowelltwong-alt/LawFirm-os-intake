@@ -1,0 +1,44 @@
+catalog_id: synthetic-economic-regime-profiles
+version: "0.1"
+status: candidate
+data_origin: synthetic
+candidate_only: true
+contains_real_firm_data: false
+
+# SYNTHETIC ONLY. Data-only economic regime profiles. Insurance-defense is active
+# (the firm's market); white-shoe bespoke is a stub proving the seam. Corporate
+# OCGs are a constraint pack of the SAME rule IR as carrier guidelines, so the
+# overlay engine generalizes without new rule language.
+
+active_regime_id: insurance_defense
+corporate_ocg_as_pack_note: >-
+  Corporate-client OCGs cap rates/staffing/expenses with the same rule kinds as
+  carrier guideline packs, so a white-shoe regime consumes them as a constraint
+  pack of the existing OCG rule IR — no new rule language, packs compose N+M+K.
+
+profiles:
+  - regime_id: insurance_defense
+    label: Insurance-defense (active; the firm's market)
+    active: true
+    is_stub: false
+    payer: carrier
+    rate_source: panel_negotiated_schedule
+    constraint_pack_kind: carrier_guideline_pack
+    proportionality_policy: cost_of_risk_bands
+    staffing_norm: lean_panel
+    transport: ledes_ebilling
+    notes: v1 ships the insurance-defense regime end to end.
+  - regime_id: white_shoe_bespoke
+    label: White-shoe bespoke (stub proving the seam)
+    active: false
+    is_stub: true
+    payer: corporate_client
+    rate_source: firm_standard_rates
+    constraint_pack_kind: corporate_ocg_pack
+    proportionality_policy: strategic_stakes_weighting
+    staffing_norm: leveraged_pyramid
+    transport: direct_bill
+    notes: >-
+      Deferred, not designed around. Proves that corporate OCGs plug in as a
+      constraint pack of the same rule IR and that proportionality can switch to
+      strategic-stakes weighting with a mandatory partner-judgment gate.
