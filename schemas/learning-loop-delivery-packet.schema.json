@@ -1,0 +1,118 @@
+{
+  "additionalProperties": false,
+  "description": "End-of-program delivery packet for the Synthetic Learning-Loop marathon.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "packet_id": {
+      "title": "Packet Id",
+      "type": "string"
+    },
+    "program": {
+      "default": "synthetic-learning-loop-marathon",
+      "title": "Program",
+      "type": "string"
+    },
+    "waves_delivered": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Waves Delivered",
+      "type": "array"
+    },
+    "capabilities": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Capabilities",
+      "type": "array"
+    },
+    "boundaries": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Boundaries",
+      "type": "array"
+    },
+    "hostile_sweep_artifacts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Hostile Sweep Artifacts",
+      "type": "array"
+    },
+    "firm_data_recalibration_lane": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Firm Data Recalibration Lane",
+      "type": "array"
+    },
+    "open_human_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Open Human Gates",
+      "type": "array"
+    },
+    "composition_seam_note": {
+      "title": "Composition Seam Note",
+      "type": "string"
+    },
+    "deferred_full_xgboost_note": {
+      "title": "Deferred Full Xgboost Note",
+      "type": "string"
+    },
+    "synthetic_status": {
+      "const": "synthetic_only_candidate",
+      "default": "synthetic_only_candidate",
+      "title": "Synthetic Status",
+      "type": "string"
+    },
+    "ml_status": {
+      "const": "shadow_only_no_promotion",
+      "default": "shadow_only_no_promotion",
+      "title": "Ml Status",
+      "type": "string"
+    },
+    "dollars_status": {
+      "const": "deterministic_from_governed_rates",
+      "default": "deterministic_from_governed_rates",
+      "title": "Dollars Status",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "not_authorized_for_client_submission": {
+      "const": true,
+      "default": true,
+      "title": "Not Authorized For Client Submission",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "packet_id",
+    "composition_seam_note",
+    "deferred_full_xgboost_note",
+    "generated_at"
+  ],
+  "title": "LearningLoopDeliveryPacket",
+  "type": "object"
+}

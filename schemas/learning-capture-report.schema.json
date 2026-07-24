@@ -1,0 +1,211 @@
+{
+  "$defs": {
+    "SyntheticEvalMetricDelta": {
+      "additionalProperties": false,
+      "description": "A single-axis metric delta between two capture-ledger entries.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "from_entry_id": {
+          "title": "From Entry Id",
+          "type": "string"
+        },
+        "to_entry_id": {
+          "title": "To Entry Id",
+          "type": "string"
+        },
+        "changed_axis": {
+          "enum": [
+            "corpus_seed",
+            "corpus_digest",
+            "generator_version",
+            "eval_version",
+            "code_ref"
+          ],
+          "title": "Changed Axis",
+          "type": "string"
+        },
+        "comparability": {
+          "enum": [
+            "comparable",
+            "not_comparable"
+          ],
+          "title": "Comparability",
+          "type": "string"
+        },
+        "routing_accuracy_delta": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Routing Accuracy Delta"
+        },
+        "abstention_recall_delta": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Abstention Recall Delta"
+        },
+        "budget_plausibility_delta": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budget Plausibility Delta"
+        },
+        "regression_flags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Regression Flags",
+          "type": "array"
+        },
+        "status": {
+          "enum": [
+            "improved",
+            "unchanged",
+            "metric_regression_requires_review",
+            "not_comparable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "from_entry_id",
+        "to_entry_id",
+        "changed_axis",
+        "comparability",
+        "status"
+      ],
+      "title": "SyntheticEvalMetricDelta",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Monotonic-improvement tracking over the capture ledger, fail-closed.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "capture_report_id": {
+      "title": "Capture Report Id",
+      "type": "string"
+    },
+    "entry_count": {
+      "minimum": 0,
+      "title": "Entry Count",
+      "type": "integer"
+    },
+    "deltas": {
+      "items": {
+        "$ref": "#/$defs/SyntheticEvalMetricDelta"
+      },
+      "title": "Deltas",
+      "type": "array"
+    },
+    "comparable_delta_count": {
+      "minimum": 0,
+      "title": "Comparable Delta Count",
+      "type": "integer"
+    },
+    "not_comparable_delta_count": {
+      "minimum": 0,
+      "title": "Not Comparable Delta Count",
+      "type": "integer"
+    },
+    "improvement_count": {
+      "minimum": 0,
+      "title": "Improvement Count",
+      "type": "integer"
+    },
+    "regression_count": {
+      "minimum": 0,
+      "title": "Regression Count",
+      "type": "integer"
+    },
+    "unchanged_count": {
+      "minimum": 0,
+      "title": "Unchanged Count",
+      "type": "integer"
+    },
+    "monotonic_improvement": {
+      "title": "Monotonic Improvement",
+      "type": "boolean"
+    },
+    "regressions_requiring_review": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Regressions Requiring Review",
+      "type": "array"
+    },
+    "content_digest": {
+      "title": "Content Digest",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "capture_report_id",
+    "entry_count",
+    "comparable_delta_count",
+    "not_comparable_delta_count",
+    "improvement_count",
+    "regression_count",
+    "unchanged_count",
+    "monotonic_improvement",
+    "content_digest",
+    "generated_at"
+  ],
+  "title": "LearningCaptureReport",
+  "type": "object"
+}
