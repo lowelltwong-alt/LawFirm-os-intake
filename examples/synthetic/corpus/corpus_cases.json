@@ -16,7 +16,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 115332439,
-    "base_work_plan_total_minor_units": 954992,
+    "base_work_plan_total_minor_units": 7736900,
     "reference_class_band_id": "refclass-epli-v0",
     "signal_terms_used": [
       "discrimination",
@@ -43,7 +43,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:aea670b2f34c91ecc5a00f8af7f339263606c98ced1744f8ab76f43348ed671d",
+    "content_digest": "sha256:10e932068f7c3c3ceca36f17d4e3c68141e524d2c626a4ac57ba846edd324e22",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -64,7 +64,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 591052353,
-    "base_work_plan_total_minor_units": 974391,
+    "base_work_plan_total_minor_units": 40524800,
     "reference_class_band_id": "refclass-epli-v0",
     "signal_terms_used": [
       "discrimination",
@@ -95,7 +95,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:ffb4562d9c4c4c918fcf2423609135a5e733211e4c493c22d7bee8074391db02",
+    "content_digest": "sha256:18e8bed1c8e4d7745ebb7e666dcd4ee8f462f3ae88b69f8c5b24d181715d53c5",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -116,7 +116,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 422597395,
-    "base_work_plan_total_minor_units": 929032,
+    "base_work_plan_total_minor_units": 27512500,
     "reference_class_band_id": "refclass-epli-v0",
     "signal_terms_used": [
       "discrimination",
@@ -151,7 +151,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:4f7be7681be8302877e7f90986658a531cf60fa615871a4521efe8742524b221",
+    "content_digest": "sha256:9f531c63c695c619fa7220eaa3be223721b1dc58dc0d7b9ebd5ff7704a7b55a3",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -172,7 +172,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 125598603,
-    "base_work_plan_total_minor_units": 978059,
+    "base_work_plan_total_minor_units": 14212400,
     "reference_class_band_id": "refclass-epli-v0",
     "signal_terms_used": [
       "discrimination",
@@ -203,7 +203,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:4f389de2ccb13974f845e57236d324463d91bf3d44fee14ce94b8171bc163b90",
+    "content_digest": "sha256:b8e14e27e37bb9f9ceef3302dd6b7bee6fac888b6567ab90c9a95e4a1f721c11",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -224,7 +224,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 479567851,
-    "base_work_plan_total_minor_units": 1059819,
+    "base_work_plan_total_minor_units": 36006600,
     "reference_class_band_id": "refclass-epli-v0",
     "signal_terms_used": [
       "discrimination"
@@ -252,7 +252,7 @@
       }
     ],
     "holdout_split": "holdout",
-    "content_digest": "sha256:c1cf64d8c49e0b0d27db510dd2b5102922a3cf1ae1950e93b1865efcbf3682ac",
+    "content_digest": "sha256:0604914333b33bf4ca3820ae252cfca97ca49f085ec536664cf57626b2fd50d6",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -273,7 +273,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 167583074,
-    "base_work_plan_total_minor_units": 1273613,
+    "base_work_plan_total_minor_units": 15315900,
     "reference_class_band_id": "refclass-epli-v0",
     "signal_terms_used": [
       "discrimination"
@@ -305,7 +305,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:f66d56bf3b06e8ffc3cd67d22cc59f1f6123678ad04888bb596b73dec66204a7",
+    "content_digest": "sha256:5ede8d792e59de046f902e776f60273cbf6e2f35ca00b037ed5bec0aa8414f02",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -326,7 +326,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 212949372,
-    "base_work_plan_total_minor_units": 1128710,
+    "base_work_plan_total_minor_units": 17107800,
     "reference_class_band_id": "refclass-epli-v0",
     "signal_terms_used": [],
     "distractor_terms_used": [],
@@ -345,7 +345,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:c14b56b9d903aa8848aedba5c7c02530789f54e3cf2800f97e38a61988900d90",
+    "content_digest": "sha256:7ab2df5877366be96948a3297f692e2f741dd8940c2fa72272dfed4816ba3850",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -366,7 +366,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 375348309,
-    "base_work_plan_total_minor_units": 1049424,
+    "base_work_plan_total_minor_units": 27884000,
     "reference_class_band_id": "refclass-epli-v0",
     "signal_terms_used": [
       "discrimination"
@@ -402,7 +402,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:b93c2a11cc0a96c537375a3d7c7066de0caca84a6fdbab9b650968e31ab05d76",
+    "content_digest": "sha256:4a9f8b13ddd62779558ea87800092facc22223c38f689d2938b35619bdd80d15",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -423,7 +423,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 450494596,
-    "base_work_plan_total_minor_units": 998068,
+    "base_work_plan_total_minor_units": 31701400,
     "reference_class_band_id": "refclass-epli-v0",
     "signal_terms_used": [
       "discrimination"
@@ -455,7 +455,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:fa76f0de5c9a603aaabd6d6cf390348c2b7ed501026797571ea43a52e04d2a5b",
+    "content_digest": "sha256:06e3862f7814a035cf2b9ff8f247d0f6363682d52d288d2068fafe1ff4ab7eb6",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -476,7 +476,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 175343539,
-    "base_work_plan_total_minor_units": 964627,
+    "base_work_plan_total_minor_units": 11891600,
     "reference_class_band_id": "refclass-epli-v0",
     "signal_terms_used": [
       "discrimination",
@@ -504,7 +504,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:0923599ff83b9a408a9f896568489321de2a039bcff325c15f49413081a76cba",
+    "content_digest": "sha256:fb4a2378c543188443cb4f0670b1fe5cce9dbea3c77e02ec20968e3b8071de1f",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -525,7 +525,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 538657112,
-    "base_work_plan_total_minor_units": 960417,
+    "base_work_plan_total_minor_units": 36358100,
     "reference_class_band_id": "refclass-epli-v0",
     "signal_terms_used": [
       "discrimination",
@@ -557,7 +557,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:7c4e0a82343e2f1e5ea0176b1730b1af3327236a859f7648c73e9cbf8a81ff4e",
+    "content_digest": "sha256:3a77f68d7673930130b8b2b8b2c23ed4dfcad817f113c305cafcdd6fde5fcf6c",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -578,7 +578,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 481217697,
-    "base_work_plan_total_minor_units": 956247,
+    "base_work_plan_total_minor_units": 52626800,
     "reference_class_band_id": "refclass-epli-v0",
     "signal_terms_used": [
       "discrimination",
@@ -614,7 +614,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:f4da4662f40a05966b256e3cce8dfb5b9fd917e142f5f7efa8a067c77e580c0a",
+    "content_digest": "sha256:f2e4fa7bed5784b2cfeb00a5186317fe73d720af62e9f74776a40386aa591ea6",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -635,7 +635,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 106643101,
-    "base_work_plan_total_minor_units": 1005248,
+    "base_work_plan_total_minor_units": 7562900,
     "reference_class_band_id": "refclass-epli-v0",
     "signal_terms_used": [
       "discrimination",
@@ -667,7 +667,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:0cf6529bd5139c9f0ef1dda330df3ca12340b51ca869c73521e213c16ad4e0a3",
+    "content_digest": "sha256:dc56252b8121445655e91333659b1bd675b8dea165bd90650515f0e0501d3a37",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -688,7 +688,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 89460039,
-    "base_work_plan_total_minor_units": 487608,
+    "base_work_plan_total_minor_units": 9727300,
     "reference_class_band_id": "refclass-premises-v0",
     "signal_terms_used": [
       "premises",
@@ -715,7 +715,7 @@
       }
     ],
     "holdout_split": "holdout",
-    "content_digest": "sha256:1bbc0829834116bf02114a9d7c7e72e9f3d56316bc32c40e996a027734238954",
+    "content_digest": "sha256:b6ef48c3a737cf681f64ec6264f194d58e292b61a6aa749bb9efdb417f90eb4b",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -736,7 +736,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 75462151,
-    "base_work_plan_total_minor_units": 518258,
+    "base_work_plan_total_minor_units": 4275100,
     "reference_class_band_id": "refclass-premises-v0",
     "signal_terms_used": [
       "premises",
@@ -767,7 +767,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:927e6d7f2e6eeb36e0a64fadc34d2c00d9d98401da8c2769db53de04389293a0",
+    "content_digest": "sha256:33f74a8367430ae92f7683227d3d2dc5ad09232a50b52b5064adc602b35ed69a",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -788,7 +788,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 214672936,
-    "base_work_plan_total_minor_units": 707464,
+    "base_work_plan_total_minor_units": 15260500,
     "reference_class_band_id": "refclass-premises-v0",
     "signal_terms_used": [
       "premises",
@@ -823,7 +823,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:28dec84bb62de2a31eb26fc1afbcec602f24a214b812a90b73c7cc4ef7e2098c",
+    "content_digest": "sha256:e0c99f51860c340057b23cfd29932b59cca62c1b68cc9da082fdea061d5a7bd4",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -844,7 +844,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 141237938,
-    "base_work_plan_total_minor_units": 455965,
+    "base_work_plan_total_minor_units": 12472200,
     "reference_class_band_id": "refclass-premises-v0",
     "signal_terms_used": [
       "premises",
@@ -875,7 +875,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:924d0235aacadd908978655624baebbd164d69ab7e0c553d51a92d8f351f1e37",
+    "content_digest": "sha256:b58314efe120ed84c730939a7b37243ae447cae63482d4b760c253af14699c0a",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -896,7 +896,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 168296497,
-    "base_work_plan_total_minor_units": 752238,
+    "base_work_plan_total_minor_units": 12538600,
     "reference_class_band_id": "refclass-premises-v0",
     "signal_terms_used": [
       "premises"
@@ -924,7 +924,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:b6781ca8be4ecb4a952102ab197b7e10645796784314db49a85752dd2cdb4c9e",
+    "content_digest": "sha256:f4b1ef86569d8ee9022773077bcdbd73b3335a1d2cb1c0b1dc0ea2e8975929d6",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -945,7 +945,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 108007268,
-    "base_work_plan_total_minor_units": 887121,
+    "base_work_plan_total_minor_units": 9158400,
     "reference_class_band_id": "refclass-premises-v0",
     "signal_terms_used": [
       "premises"
@@ -977,7 +977,7 @@
       }
     ],
     "holdout_split": "holdout",
-    "content_digest": "sha256:2cd5749557798747b142ea08e816be4c97be67513a59574d1f7cec87b10fe95f",
+    "content_digest": "sha256:4e908f776e8ca8536ba1b1e49fd95229129e14c74e853180aabddaf3e11c9fd0",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -998,7 +998,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 252523734,
-    "base_work_plan_total_minor_units": 592076,
+    "base_work_plan_total_minor_units": 28742700,
     "reference_class_band_id": "refclass-premises-v0",
     "signal_terms_used": [],
     "distractor_terms_used": [],
@@ -1017,7 +1017,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:705ba348810f46d74da9dc089b435e50e941aca2007033648ff01daefe9eb8c9",
+    "content_digest": "sha256:a1712725470dff3928f39e5fb6f6b22b4ce2965a43b511e8b79cef7dac3a563a",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1038,7 +1038,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 162367994,
-    "base_work_plan_total_minor_units": 890305,
+    "base_work_plan_total_minor_units": 13807200,
     "reference_class_band_id": "refclass-premises-v0",
     "signal_terms_used": [
       "premises"
@@ -1074,7 +1074,7 @@
       }
     ],
     "holdout_split": "holdout",
-    "content_digest": "sha256:4891e0d88d705faa904328910200f64f173ad65984baf42a15c21624a502427b",
+    "content_digest": "sha256:fdc2d4044fee1e352a50935df56c82083e19eac8e2871ade84af4844cb3977ca",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1095,7 +1095,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 280603026,
-    "base_work_plan_total_minor_units": 379919,
+    "base_work_plan_total_minor_units": 12935100,
     "reference_class_band_id": "refclass-premises-v0",
     "signal_terms_used": [
       "premises"
@@ -1127,7 +1127,7 @@
       }
     ],
     "holdout_split": "holdout",
-    "content_digest": "sha256:1d0471c8874c74900f9c976220c51b51b8c91ef619024957f38e2f174be58825",
+    "content_digest": "sha256:a2052ffaa93791a48763a33c3edee2a89531a13767dd9b6507835b78fa88e00e",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1148,7 +1148,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 99070959,
-    "base_work_plan_total_minor_units": 691300,
+    "base_work_plan_total_minor_units": 6920500,
     "reference_class_band_id": "refclass-premises-v0",
     "signal_terms_used": [
       "premises",
@@ -1176,7 +1176,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:93857642bbc4ac44f89e3a50151f4af6e90033f665617980b402ac4f8a161e60",
+    "content_digest": "sha256:d5139526739f7fe6d5a6974001b863ba0a4a8e8b882ba1bf9375461ade9ae5f8",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1197,7 +1197,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 124228230,
-    "base_work_plan_total_minor_units": 506584,
+    "base_work_plan_total_minor_units": 6927100,
     "reference_class_band_id": "refclass-premises-v0",
     "signal_terms_used": [
       "premises",
@@ -1229,7 +1229,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:57e536bdfa42f799cb66fcd5dd269392c5689209c2f5823a76c0715c3030347c",
+    "content_digest": "sha256:3b8f2d3440b1307e3eeca584b3d62e0efd7023cb3e1b992d4a16f94bf68fb7a7",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1250,7 +1250,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 201444933,
-    "base_work_plan_total_minor_units": 593310,
+    "base_work_plan_total_minor_units": 12565700,
     "reference_class_band_id": "refclass-premises-v0",
     "signal_terms_used": [
       "premises",
@@ -1286,7 +1286,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:cb85ae7c54909f1bc9c255a822bc3056555d306e459bccc7226288571bcca829",
+    "content_digest": "sha256:e4d878bd0df176d3301f2889604e537038799d3ff7eb3ca5b61d5f59b8af3bcd",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1307,7 +1307,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 245681493,
-    "base_work_plan_total_minor_units": 385305,
+    "base_work_plan_total_minor_units": 11426200,
     "reference_class_band_id": "refclass-premises-v0",
     "signal_terms_used": [
       "premises",
@@ -1339,7 +1339,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:0dd4eac5aa46d894d8cb8c1e2ba9f0d45465d9fe7244b831afc2b4fd7997624f",
+    "content_digest": "sha256:d738368017e16a2b34e1fc3ab94550868b5e9790cead43dcfb2c615bf6cf3ecc",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1360,7 +1360,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 746071540,
-    "base_work_plan_total_minor_units": 1691655,
+    "base_work_plan_total_minor_units": 74904500,
     "reference_class_band_id": "refclass-medmal-v0",
     "signal_terms_used": [
       "medical malpractice",
@@ -1387,7 +1387,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:e8ce06fe9d9a320c975788f25f3dd02465d484c2292d0b2747db6a6a74623773",
+    "content_digest": "sha256:9ac8e1af0df57761c2cfb6e74f6650a9b35a1da3c71959d411b0c3c741e4cd36",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1408,7 +1408,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 613630573,
-    "base_work_plan_total_minor_units": 1795451,
+    "base_work_plan_total_minor_units": 67012300,
     "reference_class_band_id": "refclass-medmal-v0",
     "signal_terms_used": [
       "medical malpractice",
@@ -1439,7 +1439,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:9aa35d0d85d9641218ea23d1121b8155eb0374e23bba6ec2b5758c71a58e217f",
+    "content_digest": "sha256:980207a8f61123f2cec638d00f9545d4063d3866d3c4a777b09cf28418b36f90",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1460,7 +1460,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 819016608,
-    "base_work_plan_total_minor_units": 1087314,
+    "base_work_plan_total_minor_units": 44465200,
     "reference_class_band_id": "refclass-medmal-v0",
     "signal_terms_used": [
       "medical malpractice",
@@ -1495,7 +1495,7 @@
       }
     ],
     "holdout_split": "holdout",
-    "content_digest": "sha256:f01f4b04807427fb797ff70644d002d4c57e199c978935c7624f1045c402cb86",
+    "content_digest": "sha256:c0cdb83aaa15e5fd0d531be16fa03a76c715a6c9a3ed74fd205a390c8afd5c14",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1516,7 +1516,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 616146360,
-    "base_work_plan_total_minor_units": 940116,
+    "base_work_plan_total_minor_units": 26531700,
     "reference_class_band_id": "refclass-medmal-v0",
     "signal_terms_used": [
       "medical malpractice",
@@ -1547,7 +1547,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:7cf9481a1b2d0e487daedcd3408e7ba978d43bfce9e996435f73ac94c4139ae9",
+    "content_digest": "sha256:8f52a6d7fa22093f2aafdaaf646476fc6349876996bbf6837d9ccbc989088a16",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1568,7 +1568,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 442509734,
-    "base_work_plan_total_minor_units": 920980,
+    "base_work_plan_total_minor_units": 18408700,
     "reference_class_band_id": "refclass-medmal-v0",
     "signal_terms_used": [
       "medical malpractice"
@@ -1596,7 +1596,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:70535c270d9739a4c990416dc48c96c63a4515dc2efec659ba8eeb13726b2d10",
+    "content_digest": "sha256:52db5e24eba0f5ada978fd5ce556571dc35072678fa9bf37af9b60865006db27",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1617,7 +1617,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 433646337,
-    "base_work_plan_total_minor_units": 1435858,
+    "base_work_plan_total_minor_units": 35074500,
     "reference_class_band_id": "refclass-medmal-v0",
     "signal_terms_used": [
       "medical malpractice"
@@ -1649,7 +1649,7 @@
       }
     ],
     "holdout_split": "holdout",
-    "content_digest": "sha256:90c2e6283d17f9ba8f4dd79c78c3bfa307b88362f3bbe2fff8fcf1a5cf85aad1",
+    "content_digest": "sha256:5cb86f6278ce21e9c76f4d10922fda2bfe0f1fca136ace9974ceab8ea8249fc4",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1670,7 +1670,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 570753111,
-    "base_work_plan_total_minor_units": 1058350,
+    "base_work_plan_total_minor_units": 29725500,
     "reference_class_band_id": "refclass-medmal-v0",
     "signal_terms_used": [],
     "distractor_terms_used": [],
@@ -1689,7 +1689,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:7c2ae49f2d547e7883e1e7ee1f89b63a1990cf528b5ffcaecae383b1a6ee00ed",
+    "content_digest": "sha256:263a54b5fe6d62fae1932e26fc5d33dd57c8dd1cc700b0fb127ad58faf00f46a",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1710,7 +1710,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 696269348,
-    "base_work_plan_total_minor_units": 1204289,
+    "base_work_plan_total_minor_units": 44015000,
     "reference_class_band_id": "refclass-medmal-v0",
     "signal_terms_used": [
       "medical malpractice"
@@ -1746,7 +1746,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:3d5a5075d5815102a4d0bdd1183c46ce75de9bfe00a93ce456040b2f8dcb7e3e",
+    "content_digest": "sha256:653b2440a9e080b9128c4111d17026565e561b7635d78edea8067942e3ff961c",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1767,7 +1767,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 876123181,
-    "base_work_plan_total_minor_units": 965568,
+    "base_work_plan_total_minor_units": 39427700,
     "reference_class_band_id": "refclass-medmal-v0",
     "signal_terms_used": [
       "medical malpractice"
@@ -1799,7 +1799,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:7cbd3f81386326e65423e2cc402365b0e9cfbcf8d754abcee56e9203ddbe95d6",
+    "content_digest": "sha256:9968c255126bd2791c66fb5b8cdb78bc8ab74d5c9cfb349cc3533464c0969764",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1820,7 +1820,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 304112103,
-    "base_work_plan_total_minor_units": 1687598,
+    "base_work_plan_total_minor_units": 30438300,
     "reference_class_band_id": "refclass-medmal-v0",
     "signal_terms_used": [
       "medical malpractice",
@@ -1848,7 +1848,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:bacd5bc823101d0065729a50228bcc511b230e9f711313824a7c871fd9da4959",
+    "content_digest": "sha256:4629f38c3d3cfc2a46dec8faa75e98ee0e435a837734db3b2d7802d1ff0f6f7e",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1869,7 +1869,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 532774618,
-    "base_work_plan_total_minor_units": 1201803,
+    "base_work_plan_total_minor_units": 33578500,
     "reference_class_band_id": "refclass-medmal-v0",
     "signal_terms_used": [
       "medical malpractice",
@@ -1901,7 +1901,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:55a270526facc9b040cecbb2e6541111238d3495f1742b5ca1ee3a7dcbb464c8",
+    "content_digest": "sha256:81fd0e0b3bb96b03cb1416bb1e92abf1a16df67bbff475f46c6cb793488bc41c",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1922,7 +1922,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 347419460,
-    "base_work_plan_total_minor_units": 1022385,
+    "base_work_plan_total_minor_units": 17140700,
     "reference_class_band_id": "refclass-medmal-v0",
     "signal_terms_used": [
       "medical malpractice",
@@ -1958,7 +1958,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:1ee130532ca2f855fc2aed000799626e678609585c5dad13a8c910b602e40893",
+    "content_digest": "sha256:395ee91694bad78c1a902687838236ae85fa89007f94d01a5bd17c0da58a5380",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -1979,7 +1979,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 827673311,
-    "base_work_plan_total_minor_units": 1591649,
+    "base_work_plan_total_minor_units": 76782200,
     "reference_class_band_id": "refclass-medmal-v0",
     "signal_terms_used": [
       "medical malpractice",
@@ -2011,7 +2011,7 @@
       }
     ],
     "holdout_split": "holdout",
-    "content_digest": "sha256:64f0cc96c4858c1ea81c39890e8291147cb08b1ba73ebb9488d4e12a4208e9bf",
+    "content_digest": "sha256:d8e1ae3750c030cf12bbdf4d38520e1d480dd9e63341652041b999593d5a2f70",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -2032,7 +2032,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 275910691,
-    "base_work_plan_total_minor_units": 948905,
+    "base_work_plan_total_minor_units": 20486000,
     "reference_class_band_id": "refclass-labor-employment-v0",
     "signal_terms_used": [
       "wage/hour",
@@ -2059,7 +2059,7 @@
       }
     ],
     "holdout_split": "holdout",
-    "content_digest": "sha256:64e3eeafa4fb14900dbad1b4df3112e6f0d2059c2358a4f2780584ac7dbec66a",
+    "content_digest": "sha256:e97d6da454e88e3c88c2267c5109c803e9d1614af6b10304501996255070e7b1",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -2080,7 +2080,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 225945686,
-    "base_work_plan_total_minor_units": 1166620,
+    "base_work_plan_total_minor_units": 22120300,
     "reference_class_band_id": "refclass-labor-employment-v0",
     "signal_terms_used": [
       "wage/hour",
@@ -2111,7 +2111,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:8442d24b675183b3aa8917198b95f930773f7017fc58c99497d7256e43b46466",
+    "content_digest": "sha256:c132fbbdac151727ac60aef724d505319681a7959871d60553d8295f19cba63f",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -2132,7 +2132,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 159809974,
-    "base_work_plan_total_minor_units": 834265,
+    "base_work_plan_total_minor_units": 10467900,
     "reference_class_band_id": "refclass-labor-employment-v0",
     "signal_terms_used": [
       "wage/hour",
@@ -2167,7 +2167,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:be3a175702a67d61cccc377da696ad78fd4d9992e94a0c3d5d6dc766161fe012",
+    "content_digest": "sha256:7c3ca68e0f723db37f7aa93fb289c40789325cfaedfbbbefffd289d27e0f6b6c",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -2188,7 +2188,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 176446585,
-    "base_work_plan_total_minor_units": 931660,
+    "base_work_plan_total_minor_units": 12868800,
     "reference_class_band_id": "refclass-labor-employment-v0",
     "signal_terms_used": [
       "wage/hour",
@@ -2219,7 +2219,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:14f76000dd9d57a09e09afb89815a629b87d9cc60730168a1ff8a7c1937b9570",
+    "content_digest": "sha256:99d09cbc8df23e435511898b58ea66e60e693fd4d855970eb282cda4d464027b",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -2240,7 +2240,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 110629864,
-    "base_work_plan_total_minor_units": 1131320,
+    "base_work_plan_total_minor_units": 9753800,
     "reference_class_band_id": "refclass-labor-employment-v0",
     "signal_terms_used": [
       "wage/hour"
@@ -2268,7 +2268,7 @@
       }
     ],
     "holdout_split": "holdout",
-    "content_digest": "sha256:bf0bc791ae482a1d8401a14df0cb5defb22dbcf2ab41dd9c221b0666374a0080",
+    "content_digest": "sha256:ef7ac66bb0374a2b6d7420c153ef99162814d4ba5ae8e7176d51fcf436508002",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -2289,7 +2289,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 322135062,
-    "base_work_plan_total_minor_units": 825068,
+    "base_work_plan_total_minor_units": 31155000,
     "reference_class_band_id": "refclass-labor-employment-v0",
     "signal_terms_used": [
       "wage/hour"
@@ -2321,7 +2321,7 @@
       }
     ],
     "holdout_split": "holdout",
-    "content_digest": "sha256:d5f0af301de90077498b8a4c52a64004123b0e667caa194d72bd19bd1cb7caf7",
+    "content_digest": "sha256:bd89a27703c64e812bec432d747aac507ecb82bdd3f72189ca6051c4d0ef07bb",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -2342,7 +2342,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 283188449,
-    "base_work_plan_total_minor_units": 846324,
+    "base_work_plan_total_minor_units": 18810100,
     "reference_class_band_id": "refclass-labor-employment-v0",
     "signal_terms_used": [],
     "distractor_terms_used": [],
@@ -2361,7 +2361,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:d6aff9df9fdd432bab2b7d8b309207e5acfffaa064d5adb22d1b4d43b0f5829a",
+    "content_digest": "sha256:f9dfa26ac563af16478afbea5cc6bb4dc411a915b80f419d8e1297a4421b7ced",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -2382,7 +2382,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 234568147,
-    "base_work_plan_total_minor_units": 706608,
+    "base_work_plan_total_minor_units": 13080200,
     "reference_class_band_id": "refclass-labor-employment-v0",
     "signal_terms_used": [
       "wage/hour"
@@ -2418,7 +2418,7 @@
       }
     ],
     "holdout_split": "holdout",
-    "content_digest": "sha256:f6a18b0a1b6fd93c62ddeee4242a025a4567a8a838a94d4f2d0090f9901828c4",
+    "content_digest": "sha256:41421185f3da0e07a1f9ef0ae112770c394c28426a08895f7e0d886036ddcd1d",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -2439,7 +2439,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 338761024,
-    "base_work_plan_total_minor_units": 535039,
+    "base_work_plan_total_minor_units": 14456100,
     "reference_class_band_id": "refclass-labor-employment-v0",
     "signal_terms_used": [
       "wage/hour"
@@ -2471,7 +2471,7 @@
       }
     ],
     "holdout_split": "holdout",
-    "content_digest": "sha256:8ac4aa532cc8f51683c1557314ce60c076449a6f321fdc9653038a42f7b0d8b4",
+    "content_digest": "sha256:39a746cdcaa139a3e9308598b216fd3f5559c8250ba536a274461ad53b62bbcb",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -2492,7 +2492,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 372528605,
-    "base_work_plan_total_minor_units": 850758,
+    "base_work_plan_total_minor_units": 44511400,
     "reference_class_band_id": "refclass-labor-employment-v0",
     "signal_terms_used": [
       "wage/hour",
@@ -2520,7 +2520,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:e60dd9efbd1467d76d79e987564d1eff3fa77a6bb185c54ebc1b3ac576e590d5",
+    "content_digest": "sha256:ea9b9bea67df4c75dafe1c4b2548042520c428d38b32d2645a74d63e48ce1820",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -2541,7 +2541,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 341307516,
-    "base_work_plan_total_minor_units": 517138,
+    "base_work_plan_total_minor_units": 37611200,
     "reference_class_band_id": "refclass-labor-employment-v0",
     "signal_terms_used": [
       "wage/hour",
@@ -2573,7 +2573,7 @@
       }
     ],
     "holdout_split": "train",
-    "content_digest": "sha256:cc7d20a3181f6ea52472446458ddc1cd5d560d3c43c679377ba6969a9d165303",
+    "content_digest": "sha256:41f6d0915e2d128efdd30ac8963eeaf931933d0663d23e0ad94188c145351d1b",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -2594,7 +2594,7 @@
       "venue": "plaintiff_favorable"
     },
     "exposure_minor_units": 355400712,
-    "base_work_plan_total_minor_units": 1174130,
+    "base_work_plan_total_minor_units": 38597300,
     "reference_class_band_id": "refclass-labor-employment-v0",
     "signal_terms_used": [
       "wage/hour",
@@ -2630,7 +2630,7 @@
       }
     ],
     "holdout_split": "holdout",
-    "content_digest": "sha256:34be36212df18b36581577c353d74e78a13ef3b847b945226a88dc37d692deda",
+    "content_digest": "sha256:de520b6e5bf43916e92b560846c543fe3c80ea092e4df68b877d9995cfadf3ab",
     "data_origin": "synthetic",
     "candidate_only": true
   },
@@ -2651,7 +2651,7 @@
       "venue": "state_default"
     },
     "exposure_minor_units": 125901200,
-    "base_work_plan_total_minor_units": 820351,
+    "base_work_plan_total_minor_units": 14699500,
     "reference_class_band_id": "refclass-labor-employment-v0",
     "signal_terms_used": [
       "wage/hour",
@@ -2683,7 +2683,7 @@
       }
     ],
     "holdout_split": "holdout",
-    "content_digest": "sha256:dffd52ec8a12bcfb4eecf5a9090a4728eae211b4aeb56794c37076bc5cde93f9",
+    "content_digest": "sha256:9198645e959b37a66420f5819ed35d50431429c7395c5d4bcde2e5d32275c36c",
     "data_origin": "synthetic",
     "candidate_only": true
   }

@@ -59,40 +59,37 @@ _INJECTION_TEXT = (
 
 # Families the frozen corpus covers, mapped to a sizing case_type that has BOTH a
 # proportionality band (case_sizing policy) and a reference-class band. Each entry
-# declares its distractor family (a different family whose terms are noise here),
-# an exposure range, and a base work-plan range (minor units).
+# declares its distractor family (a different family whose terms are noise here)
+# and an exposure range (minor units). The BASE work plan is derived as a realistic
+# fraction of the case's exposure (defense budgets scale with exposure), sampled
+# from BASE_WORK_PLAN_FRACTION, so the sized budget lands in a meaningful
+# reference-class ratio window rather than being fixed-small.
+BASE_WORK_PLAN_FRACTION = (0.04, 0.12)
+
 FAMILY_PROFILES: dict[str, dict[str, Any]] = {
     "medical_malpractice_defense": {
         "case_type": "medical_malpractice",
         "distractor_family": "auto_liability_defense",
         "exposure_min_minor": 3_000_000_00,
         "exposure_max_minor": 9_000_000_00,
-        "base_work_plan_min_minor": 900_000,
-        "base_work_plan_max_minor": 1_800_000,
     },
     "general_liability_defense": {
         "case_type": "premises_liability",
         "distractor_family": "commercial_litigation",
         "exposure_min_minor": 500_000_00,
         "exposure_max_minor": 3_000_000_00,
-        "base_work_plan_min_minor": 300_000,
-        "base_work_plan_max_minor": 900_000,
     },
     "discrimination_harassment": {
         "case_type": "epli",
         "distractor_family": "wage_hour_flsa_state",
         "exposure_min_minor": 1_000_000_00,
         "exposure_max_minor": 6_000_000_00,
-        "base_work_plan_min_minor": 600_000,
-        "base_work_plan_max_minor": 1_500_000,
     },
     "wage_hour_flsa_state": {
         "case_type": "labor_employment",
         "distractor_family": "discrimination_harassment",
         "exposure_min_minor": 800_000_00,
         "exposure_max_minor": 4_000_000_00,
-        "base_work_plan_min_minor": 500_000,
-        "base_work_plan_max_minor": 1_200_000,
     },
 }
 
@@ -213,9 +210,10 @@ def _build_case(
     )
     drivers = _sample_drivers(rng)
     exposure = rng.randint(profile["exposure_min_minor"], profile["exposure_max_minor"])
-    base_work_plan = rng.randint(
-        profile["base_work_plan_min_minor"], profile["base_work_plan_max_minor"]
-    )
+    # Base work plan is a realistic fraction of exposure (defense budgets scale
+    # with exposure), quantized to whole dollars for exact minor-unit money.
+    fraction = rng.uniform(*BASE_WORK_PLAN_FRACTION)
+    base_work_plan = int(round(exposure * fraction / 100)) * 100
     expected = _expected_decision(difficulty=difficulty, variant=variant)
     holdout = _holdout_split(case_id, corpus_seed=corpus_seed, holdout_percent=holdout_percent)
 

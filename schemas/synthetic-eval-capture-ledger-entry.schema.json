@@ -1,0 +1,105 @@
+{
+  "additionalProperties": false,
+  "description": "One append-only capture-ledger row; carries every axis version+digest.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "entry_id": {
+      "title": "Entry Id",
+      "type": "string"
+    },
+    "eval_report_id": {
+      "title": "Eval Report Id",
+      "type": "string"
+    },
+    "corpus_id": {
+      "title": "Corpus Id",
+      "type": "string"
+    },
+    "corpus_seed": {
+      "minimum": 0,
+      "title": "Corpus Seed",
+      "type": "integer"
+    },
+    "corpus_digest": {
+      "title": "Corpus Digest",
+      "type": "string"
+    },
+    "generator_version": {
+      "title": "Generator Version",
+      "type": "string"
+    },
+    "eval_version": {
+      "title": "Eval Version",
+      "type": "string"
+    },
+    "code_ref": {
+      "title": "Code Ref",
+      "type": "string"
+    },
+    "overall_routing_accuracy": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Overall Routing Accuracy",
+      "type": "number"
+    },
+    "overall_abstention_recall": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Overall Abstention Recall",
+      "type": "number"
+    },
+    "budget_plausibility_rate": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Budget Plausibility Rate",
+      "type": "number"
+    },
+    "driver_invariants_passed": {
+      "minimum": 0,
+      "title": "Driver Invariants Passed",
+      "type": "integer"
+    },
+    "driver_invariants_total": {
+      "minimum": 0,
+      "title": "Driver Invariants Total",
+      "type": "integer"
+    },
+    "content_digest": {
+      "title": "Content Digest",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "entry_id",
+    "eval_report_id",
+    "corpus_id",
+    "corpus_seed",
+    "corpus_digest",
+    "generator_version",
+    "eval_version",
+    "code_ref",
+    "overall_routing_accuracy",
+    "overall_abstention_recall",
+    "budget_plausibility_rate",
+    "driver_invariants_passed",
+    "driver_invariants_total",
+    "content_digest",
+    "generated_at"
+  ],
+  "title": "SyntheticEvalCaptureLedgerEntry",
+  "type": "object"
+}

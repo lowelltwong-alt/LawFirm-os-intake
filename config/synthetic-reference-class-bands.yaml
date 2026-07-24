@@ -1,5 +1,5 @@
 reference_class_policy_id: synthetic-reference-class-bands
-version: "0.1"
+version: "0.2"
 status: candidate
 data_origin: synthetic
 candidate_only: true
@@ -8,44 +8,44 @@ contains_real_firm_data: false
 # SYNTHETIC ONLY. Invented reference-class feasibility bands used to sanity-check
 # that a sized synthetic budget is plausible for its case type and exposure. These
 # are NOT calibrated, NOT real firm/market data, and make NO real-world accuracy
-# claim (section 21). They are per-case-type budget-to-exposure ratio windows plus
-# an absolute minor-unit floor/ceiling. A case type with no declared band is NOT
-# evaluable (fail-closed), never a silent pass.
+# claim (section 21). Each band is a budget-to-exposure ratio window plus generous
+# absolute floor/ceiling sanity bounds (in minor units) so the RATIO is the binding
+# check. A case type with no declared band is NOT evaluable (fail-closed).
 
 bands:
   medical_malpractice:
     band_id: refclass-medmal-v0
-    min_budget_to_exposure_ratio: 0.01
-    max_budget_to_exposure_ratio: 0.60
+    min_budget_to_exposure_ratio: 0.03
+    max_budget_to_exposure_ratio: 0.40
     floor_minor_units: 200000
-    ceiling_minor_units: 60000000
+    ceiling_minor_units: 400000000
   premises_liability:
     band_id: refclass-premises-v0
-    min_budget_to_exposure_ratio: 0.02
-    max_budget_to_exposure_ratio: 0.45
+    min_budget_to_exposure_ratio: 0.03
+    max_budget_to_exposure_ratio: 0.40
     floor_minor_units: 100000
-    ceiling_minor_units: 20000000
+    ceiling_minor_units: 200000000
   epli:
     band_id: refclass-epli-v0
-    min_budget_to_exposure_ratio: 0.02
-    max_budget_to_exposure_ratio: 0.65
+    min_budget_to_exposure_ratio: 0.03
+    max_budget_to_exposure_ratio: 0.45
     floor_minor_units: 150000
-    ceiling_minor_units: 30000000
+    ceiling_minor_units: 300000000
   labor_employment:
     band_id: refclass-labor-employment-v0
-    min_budget_to_exposure_ratio: 0.02
-    max_budget_to_exposure_ratio: 0.65
+    min_budget_to_exposure_ratio: 0.03
+    max_budget_to_exposure_ratio: 0.45
     floor_minor_units: 120000
-    ceiling_minor_units: 25000000
+    ceiling_minor_units: 250000000
   auto_liability:
     band_id: refclass-auto-v0
-    min_budget_to_exposure_ratio: 0.02
-    max_budget_to_exposure_ratio: 0.50
+    min_budget_to_exposure_ratio: 0.03
+    max_budget_to_exposure_ratio: 0.40
     floor_minor_units: 80000
-    ceiling_minor_units: 15000000
+    ceiling_minor_units: 150000000
   commercial_litigation:
     band_id: refclass-commercial-v0
     min_budget_to_exposure_ratio: 0.03
-    max_budget_to_exposure_ratio: 0.70
+    max_budget_to_exposure_ratio: 0.55
     floor_minor_units: 200000
-    ceiling_minor_units: 40000000
+    ceiling_minor_units: 400000000
