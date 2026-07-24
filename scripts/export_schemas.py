@@ -450,9 +450,11 @@ from lawfirm_os_intake.models import (  # noqa: E402
     SyntheticBudgetConfigurationChange,
     SyntheticBudgetConfigurationChangeCheck,
     SyntheticBudgetConfigurationChangePackage,
+    GeneratedSyntheticCase,
     SyntheticCasePipelineResult,
     SyntheticCasePipelineSpec,
     SyntheticConfigurationRegenerationBindingReport,
+    SyntheticCorpusManifest,
     SyntheticConfigurationRegenerationCheck,
     SyntheticGuidelineProjectionWorkbenchCheck,
     SyntheticGuidelineProjectionWorkbenchReport,
@@ -1251,6 +1253,8 @@ MODELS = {
     "safety-gate-report.schema.json": SafetyGateReport,
     "synthetic-case-pipeline-spec.schema.json": SyntheticCasePipelineSpec,
     "synthetic-case-pipeline-result.schema.json": SyntheticCasePipelineResult,
+    "generated-synthetic-case.schema.json": GeneratedSyntheticCase,
+    "synthetic-corpus-manifest.schema.json": SyntheticCorpusManifest,
 }
 
 
