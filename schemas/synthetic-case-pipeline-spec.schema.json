@@ -1,0 +1,127 @@
+{
+  "$defs": {
+    "SettlementPostureInput": {
+      "additionalProperties": false,
+      "properties": {
+        "exposure_minor_units": {
+          "exclusiveMinimum": 0,
+          "title": "Exposure Minor Units",
+          "type": "integer"
+        },
+        "settlement_value_minor_units": {
+          "minimum": 0,
+          "title": "Settlement Value Minor Units",
+          "type": "integer"
+        },
+        "settlement_value_after_defense_minor_units": {
+          "minimum": 0,
+          "title": "Settlement Value After Defense Minor Units",
+          "type": "integer"
+        },
+        "win_probability_percent": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Win Probability Percent",
+          "type": "number"
+        },
+        "defense_cost_settle_now_minor_units": {
+          "minimum": 0,
+          "title": "Defense Cost Settle Now Minor Units",
+          "type": "integer"
+        },
+        "defense_cost_defend_settle_minor_units": {
+          "minimum": 0,
+          "title": "Defense Cost Defend Settle Minor Units",
+          "type": "integer"
+        },
+        "defense_cost_try_minor_units": {
+          "minimum": 0,
+          "title": "Defense Cost Try Minor Units",
+          "type": "integer"
+        },
+        "win_probability_is_declared_assumption": {
+          "const": true,
+          "default": true,
+          "title": "Win Probability Is Declared Assumption",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "exposure_minor_units",
+        "settlement_value_minor_units",
+        "settlement_value_after_defense_minor_units",
+        "win_probability_percent",
+        "defense_cost_settle_now_minor_units",
+        "defense_cost_defend_settle_minor_units",
+        "defense_cost_try_minor_units"
+      ],
+      "title": "SettlementPostureInput",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "A labeled synthetic pipeline case (generator ground truth known).",
+  "properties": {
+    "case_id": {
+      "title": "Case Id",
+      "type": "string"
+    },
+    "inbound_ref": {
+      "title": "Inbound Ref",
+      "type": "string"
+    },
+    "confirmation_template_ref": {
+      "title": "Confirmation Template Ref",
+      "type": "string"
+    },
+    "profile_ref": {
+      "title": "Profile Ref",
+      "type": "string"
+    },
+    "ground_truth_family": {
+      "title": "Ground Truth Family",
+      "type": "string"
+    },
+    "case_type": {
+      "title": "Case Type",
+      "type": "string"
+    },
+    "base_work_plan_total_minor_units": {
+      "minimum": 0,
+      "title": "Base Work Plan Total Minor Units",
+      "type": "integer"
+    },
+    "sizing_drivers": {
+      "additionalProperties": true,
+      "title": "Sizing Drivers",
+      "type": "object"
+    },
+    "posture_input": {
+      "$ref": "#/$defs/SettlementPostureInput"
+    },
+    "data_origin": {
+      "const": "synthetic",
+      "default": "synthetic",
+      "title": "Data Origin",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "case_id",
+    "inbound_ref",
+    "confirmation_template_ref",
+    "profile_ref",
+    "ground_truth_family",
+    "case_type",
+    "base_work_plan_total_minor_units",
+    "posture_input"
+  ],
+  "title": "SyntheticCasePipelineSpec",
+  "type": "object"
+}
