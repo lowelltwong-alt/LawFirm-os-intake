@@ -1,0 +1,288 @@
+{
+  "$defs": {
+    "MLLearnabilityTargetResult": {
+      "additionalProperties": false,
+      "description": "Learnability for one prediction target on the frozen holdout, fail-closed.",
+      "properties": {
+        "target": {
+          "enum": [
+            "route_family",
+            "injury_severity"
+          ],
+          "title": "Target",
+          "type": "string"
+        },
+        "holdout_count": {
+          "minimum": 0,
+          "title": "Holdout Count",
+          "type": "integer"
+        },
+        "probe_accuracy": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Probe Accuracy",
+          "type": "number"
+        },
+        "baseline_accuracy": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Baseline Accuracy",
+          "type": "number"
+        },
+        "shuffle_accuracy": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Shuffle Accuracy",
+          "type": "number"
+        },
+        "ablation_accuracy": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Ablation Accuracy",
+          "type": "number"
+        },
+        "learnability_margin": {
+          "title": "Learnability Margin",
+          "type": "number"
+        },
+        "min_margin": {
+          "minimum": 0,
+          "title": "Min Margin",
+          "type": "number"
+        },
+        "shuffle_tolerance": {
+          "minimum": 0,
+          "title": "Shuffle Tolerance",
+          "type": "number"
+        },
+        "learnable": {
+          "title": "Learnable",
+          "type": "boolean"
+        },
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target",
+        "holdout_count",
+        "probe_accuracy",
+        "baseline_accuracy",
+        "shuffle_accuracy",
+        "ablation_accuracy",
+        "learnability_margin",
+        "min_margin",
+        "shuffle_tolerance",
+        "learnable"
+      ],
+      "title": "MLLearnabilityTargetResult",
+      "type": "object"
+    },
+    "MLProbeFeatureContract": {
+      "additionalProperties": false,
+      "description": "Declares that features come only from the rendered bundle, not the labels.",
+      "properties": {
+        "features_source": {
+          "const": "rendered_bundle_terms_only",
+          "default": "rendered_bundle_terms_only",
+          "title": "Features Source",
+          "type": "string"
+        },
+        "vocabulary_size": {
+          "minimum": 1,
+          "title": "Vocabulary Size",
+          "type": "integer"
+        },
+        "prohibited_feature_fields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Prohibited Feature Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "vocabulary_size"
+      ],
+      "title": "MLProbeFeatureContract",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Shadow-only learnability probe report. reference_class_only; no promotion.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "probe_id": {
+      "title": "Probe Id",
+      "type": "string"
+    },
+    "probe_version": {
+      "title": "Probe Version",
+      "type": "string"
+    },
+    "corpus_id": {
+      "title": "Corpus Id",
+      "type": "string"
+    },
+    "corpus_digest": {
+      "title": "Corpus Digest",
+      "type": "string"
+    },
+    "holdout_split_digest": {
+      "title": "Holdout Split Digest",
+      "type": "string"
+    },
+    "holdout_count": {
+      "minimum": 0,
+      "title": "Holdout Count",
+      "type": "integer"
+    },
+    "min_holdout_count": {
+      "minimum": 1,
+      "title": "Min Holdout Count",
+      "type": "integer"
+    },
+    "feature_contract": {
+      "$ref": "#/$defs/MLProbeFeatureContract"
+    },
+    "targets": {
+      "items": {
+        "$ref": "#/$defs/MLLearnabilityTargetResult"
+      },
+      "title": "Targets",
+      "type": "array"
+    },
+    "privacy_leakage_proof_id": {
+      "title": "Privacy Leakage Proof Id",
+      "type": "string"
+    },
+    "privacy_leakage_proof_is_privacy_not_label_leakage": {
+      "const": true,
+      "default": true,
+      "title": "Privacy Leakage Proof Is Privacy Not Label Leakage",
+      "type": "boolean"
+    },
+    "reviewed_learning_gate_check_id": {
+      "title": "Reviewed Learning Gate Check Id",
+      "type": "string"
+    },
+    "reviewed_learning_gate_blocks_promotion": {
+      "title": "Reviewed Learning Gate Blocks Promotion",
+      "type": "boolean"
+    },
+    "reviewed_learning_gate_block_reason": {
+      "title": "Reviewed Learning Gate Block Reason",
+      "type": "string"
+    },
+    "label_class": {
+      "const": "reference_class_only",
+      "default": "reference_class_only",
+      "title": "Label Class",
+      "type": "string"
+    },
+    "learnability_only": {
+      "const": true,
+      "default": true,
+      "title": "Learnability Only",
+      "type": "boolean"
+    },
+    "calibrated": {
+      "const": false,
+      "default": false,
+      "title": "Calibrated",
+      "type": "boolean"
+    },
+    "real_world_accuracy_claim": {
+      "const": false,
+      "default": false,
+      "title": "Real World Accuracy Claim",
+      "type": "boolean"
+    },
+    "predicts_dollars": {
+      "const": false,
+      "default": false,
+      "title": "Predicts Dollars",
+      "type": "boolean"
+    },
+    "dollars_remain_deterministic": {
+      "const": true,
+      "default": true,
+      "title": "Dollars Remain Deterministic",
+      "type": "boolean"
+    },
+    "promotion_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Promotion Authorized",
+      "type": "boolean"
+    },
+    "shadow_only": {
+      "const": true,
+      "default": true,
+      "title": "Shadow Only",
+      "type": "boolean"
+    },
+    "silent_learning_performed": {
+      "const": false,
+      "default": false,
+      "title": "Silent Learning Performed",
+      "type": "boolean"
+    },
+    "baseline_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Baseline Mutated",
+      "type": "boolean"
+    },
+    "content_digest": {
+      "title": "Content Digest",
+      "type": "string"
+    },
+    "data_scope": {
+      "const": "synthetic_only",
+      "default": "synthetic_only",
+      "title": "Data Scope",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "probe_id",
+    "probe_version",
+    "corpus_id",
+    "corpus_digest",
+    "holdout_split_digest",
+    "holdout_count",
+    "min_holdout_count",
+    "feature_contract",
+    "privacy_leakage_proof_id",
+    "reviewed_learning_gate_check_id",
+    "reviewed_learning_gate_blocks_promotion",
+    "reviewed_learning_gate_block_reason",
+    "content_digest",
+    "generated_at"
+  ],
+  "title": "MLLearnabilityProbeReport",
+  "type": "object"
+}

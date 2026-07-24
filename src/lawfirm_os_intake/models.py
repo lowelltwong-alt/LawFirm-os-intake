@@ -10035,6 +10035,137 @@ class SyntheticEvalMetricDelta(StrictModel):
         return self
 
 
+# --- LW3: ML shadow challenger (lightweight learnability probe) ---------------
+#
+# A dependency-light learner predicting route / drivers from features computed
+# ONLY from the rendered bundle (never spec label fields - the FeatureContract, P2)
+# and evaluated on the FROZEN holdout. Learnability is claimable only when the
+# probe beats a majority-class baseline AND survives negative controls: a
+# label-shuffle permutation must collapse to chance, and feature ablation must
+# degrade the probe. All labels are reference_class_only / learnability_only -
+# NEVER "calibrated"; the probe predicts routing/drivers only, never dollars;
+# dollars stay deterministic. The probe routes its privacy leakage proof through
+# reviewed_learning_gate (which refuses promotion without an approval id) -
+# shadow-only, no promotion. A privacy leakage proof (calibration/leakage.py) and
+# these feature/label-leakage controls are DISTINCT and neither substitutes for
+# the other (P3).
+
+ML_PROBE_LABEL_FIELDS = [
+    "ground_truth_family",
+    "difficulty",
+    "expected_decision",
+    "ground_truth_drivers",
+    "exposure_minor_units",
+    "base_work_plan_total_minor_units",
+    "reference_class_band_id",
+    "holdout_split",
+]
+
+
+class MLProbeFeatureContract(StrictModel):
+    """Declares that features come only from the rendered bundle, not the labels."""
+
+    features_source: Literal["rendered_bundle_terms_only"] = "rendered_bundle_terms_only"
+    vocabulary_size: int = Field(ge=1)
+    prohibited_feature_fields: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _prohibits_label_fields(self) -> "MLProbeFeatureContract":
+        missing = set(ML_PROBE_LABEL_FIELDS) - set(self.prohibited_feature_fields)
+        if missing:
+            raise ValueError(
+                f"feature contract must prohibit all label fields; missing {sorted(missing)}"
+            )
+        return self
+
+
+class MLLearnabilityTargetResult(StrictModel):
+    """Learnability for one prediction target on the frozen holdout, fail-closed."""
+
+    target: Literal["route_family", "injury_severity"]
+    holdout_count: int = Field(ge=0)
+    probe_accuracy: float = Field(ge=0, le=1)
+    baseline_accuracy: float = Field(ge=0, le=1)
+    shuffle_accuracy: float = Field(ge=0, le=1)
+    ablation_accuracy: float = Field(ge=0, le=1)
+    learnability_margin: float
+    min_margin: float = Field(ge=0)
+    shuffle_tolerance: float = Field(ge=0)
+    learnable: bool
+    note: str = ""
+
+    @model_validator(mode="after")
+    def _learnable_fail_closed(self) -> "MLLearnabilityTargetResult":
+        if round(self.learnability_margin, 6) != round(
+            self.probe_accuracy - self.baseline_accuracy, 6
+        ):
+            raise ValueError("learnability_margin must equal probe_accuracy - baseline_accuracy")
+        # Learnable ONLY when the probe beats baseline by the margin AND the
+        # label-shuffle control collapses to ~baseline (no leakage) AND ablation
+        # degrades the probe. Any failure => not learnable (fail closed).
+        beats_baseline = self.learnability_margin >= self.min_margin
+        shuffle_collapsed = self.shuffle_accuracy <= self.baseline_accuracy + self.shuffle_tolerance
+        ablation_degrades = self.ablation_accuracy < self.probe_accuracy
+        expected = beats_baseline and shuffle_collapsed and ablation_degrades
+        if self.learnable != expected:
+            raise ValueError(
+                "learnable flag must equal (beats_baseline & shuffle_collapsed & ablation_degrades)"
+            )
+        return self
+
+
+class MLLearnabilityProbeReport(StrictModel):
+    """Shadow-only learnability probe report. reference_class_only; no promotion."""
+
+    schema_version: str = "0.1"
+    probe_id: str
+    probe_version: str
+    corpus_id: str
+    corpus_digest: str
+    holdout_split_digest: str
+    holdout_count: int = Field(ge=0)
+    min_holdout_count: int = Field(ge=1)
+    feature_contract: MLProbeFeatureContract
+    targets: list[MLLearnabilityTargetResult] = Field(default_factory=list)
+    privacy_leakage_proof_id: str
+    privacy_leakage_proof_is_privacy_not_label_leakage: Literal[True] = True
+    reviewed_learning_gate_check_id: str
+    reviewed_learning_gate_blocks_promotion: bool
+    reviewed_learning_gate_block_reason: str
+    label_class: Literal["reference_class_only"] = "reference_class_only"
+    learnability_only: Literal[True] = True
+    calibrated: Literal[False] = False
+    real_world_accuracy_claim: Literal[False] = False
+    predicts_dollars: Literal[False] = False
+    dollars_remain_deterministic: Literal[True] = True
+    promotion_authorized: Literal[False] = False
+    shadow_only: Literal[True] = True
+    silent_learning_performed: Literal[False] = False
+    baseline_mutated: Literal[False] = False
+    content_digest: str
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    generated_at: str
+
+    @model_validator(mode="after")
+    def _probe_shadow_only_fail_closed(self) -> "MLLearnabilityProbeReport":
+        if not self.targets:
+            raise ValueError("probe report requires at least one learnability target")
+        if self.holdout_count < self.min_holdout_count:
+            raise ValueError("probe holdout is below the declared floor; refuse to evaluate")
+        for target in self.targets:
+            if target.holdout_count != self.holdout_count:
+                raise ValueError("each target must be evaluated on the full frozen holdout")
+        # Shadow-only: the reviewed_learning_gate must REFUSE promotion. A report
+        # where the gate did not block is rejected (fail closed) - no promotion.
+        if not self.reviewed_learning_gate_blocks_promotion:
+            raise ValueError(
+                "probe is shadow-only; the reviewed_learning_gate must block promotion"
+            )
+        return self
+
+
 class FirmCheckpointCaseDisposition(StrictModel):
     """Firm disposition for one checkpoint case. Real firm review is a human gate;
     synthetic placeholders are explicitly labeled and never real validation."""

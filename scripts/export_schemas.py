@@ -451,6 +451,7 @@ from lawfirm_os_intake.models import (  # noqa: E402
     SyntheticBudgetConfigurationChangeCheck,
     SyntheticBudgetConfigurationChangePackage,
     GeneratedSyntheticCase,
+    MLLearnabilityProbeReport,
     SyntheticCasePipelineResult,
     SyntheticCasePipelineSpec,
     SyntheticConfigurationRegenerationBindingReport,
@@ -1261,6 +1262,7 @@ MODELS = {
     "synthetic-pipeline-eval-report.schema.json": SyntheticPipelineEvalReport,
     "synthetic-eval-capture-ledger-entry.schema.json": SyntheticEvalCaptureLedgerEntry,
     "synthetic-eval-metric-delta.schema.json": SyntheticEvalMetricDelta,
+    "ml-learnability-probe-report.schema.json": MLLearnabilityProbeReport,
 }
 
 
