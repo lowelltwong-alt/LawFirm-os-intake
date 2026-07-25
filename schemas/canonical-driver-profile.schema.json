@@ -1,0 +1,172 @@
+{
+  "$defs": {
+    "CanonicalDriverAssignment": {
+      "additionalProperties": false,
+      "properties": {
+        "driver_id": {
+          "title": "Driver Id",
+          "type": "string"
+        },
+        "layer": {
+          "enum": [
+            "universal",
+            "line"
+          ],
+          "title": "Layer",
+          "type": "string"
+        },
+        "level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Level"
+        },
+        "status": {
+          "enum": [
+            "elicited",
+            "not_elicited"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "legacy_mapping",
+                "explicit"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "assumption_note": {
+          "default": "",
+          "title": "Assumption Note",
+          "type": "string"
+        },
+        "mapping_note": {
+          "default": "",
+          "title": "Mapping Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "driver_id",
+        "layer",
+        "status"
+      ],
+      "title": "CanonicalDriverAssignment",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Per-matter canonical driver assignments, reconciled fail-closed.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "profile_id": {
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "line_id": {
+      "title": "Line Id",
+      "type": "string"
+    },
+    "contract_id": {
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "contract_version": {
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "contract_digest": {
+      "title": "Contract Digest",
+      "type": "string"
+    },
+    "assignments": {
+      "items": {
+        "$ref": "#/$defs/CanonicalDriverAssignment"
+      },
+      "title": "Assignments",
+      "type": "array"
+    },
+    "posture_flags": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Posture Flags",
+      "type": "object"
+    },
+    "not_elicited_driver_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Not Elicited Driver Ids",
+      "type": "array"
+    },
+    "required_missing_driver_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Missing Driver Ids",
+      "type": "array"
+    },
+    "exception_candidates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Exception Candidates",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "silent_defaults_applied": {
+      "const": false,
+      "default": false,
+      "title": "Silent Defaults Applied",
+      "type": "boolean"
+    },
+    "dollars_remain_deterministic": {
+      "const": true,
+      "default": true,
+      "title": "Dollars Remain Deterministic",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "profile_id",
+    "line_id",
+    "contract_id",
+    "contract_version",
+    "contract_digest",
+    "assignments"
+  ],
+  "title": "CanonicalDriverProfile",
+  "type": "object"
+}
