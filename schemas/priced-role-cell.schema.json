@@ -1,0 +1,41 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "role": {
+      "enum": [
+        "senior_attorney",
+        "junior_attorney",
+        "paralegal"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "weight": {
+      "title": "Weight",
+      "type": "string"
+    },
+    "hours": {
+      "title": "Hours",
+      "type": "string"
+    },
+    "rate_minor_units": {
+      "minimum": 0,
+      "title": "Rate Minor Units",
+      "type": "integer"
+    },
+    "dollars_minor_units": {
+      "minimum": 0,
+      "title": "Dollars Minor Units",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "role",
+    "weight",
+    "hours",
+    "rate_minor_units",
+    "dollars_minor_units"
+  ],
+  "title": "PricedRoleCell",
+  "type": "object"
+}

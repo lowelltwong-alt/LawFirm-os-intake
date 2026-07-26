@@ -1,0 +1,51 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "driver_id": {
+      "title": "Driver Id",
+      "type": "string"
+    },
+    "level": {
+      "title": "Level",
+      "type": "string"
+    },
+    "mode": {
+      "enum": [
+        "multiplicative",
+        "additive"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "factor": {
+      "title": "Factor",
+      "type": "string"
+    },
+    "phases": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Phases",
+      "type": "array"
+    },
+    "confidence": {
+      "title": "Confidence",
+      "type": "string"
+    },
+    "source": {
+      "default": "",
+      "title": "Source",
+      "type": "string"
+    }
+  },
+  "required": [
+    "driver_id",
+    "level",
+    "mode",
+    "factor",
+    "phases",
+    "confidence"
+  ],
+  "title": "AppliedDriverEffect",
+  "type": "object"
+}
