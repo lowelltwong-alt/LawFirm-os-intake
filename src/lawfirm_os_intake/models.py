@@ -10306,6 +10306,85 @@ class LearningLoopDeliveryPacket(StrictModel):
         return self
 
 
+# --- Budget-driver-taxonomy@v1 adapter (intake <-> substrate reconciliation) ---
+#
+# The canonical driver taxonomy is a vendored, digest-pinned candidate contract
+# authored in the semantic-substrate repo. Intake does not redefine drivers: the
+# legacy sizing drivers map onto the canonical set and every canonical driver the
+# intake flow cannot elicit becomes an explicit not_elicited assumption (neutral
+# multiplier, rule-attributed) - never a silent default (fail-closed invariant).
+
+
+class CanonicalDriverAssignment(StrictModel):
+    driver_id: str
+    layer: Literal["universal", "line"]
+    level: str | None = None
+    status: Literal["elicited", "not_elicited"]
+    source: Literal["legacy_mapping", "explicit"] | None = None
+    assumption_note: str = ""
+    mapping_note: str = ""
+
+    @model_validator(mode="after")
+    def _assignment_fail_closed(self) -> "CanonicalDriverAssignment":
+        if self.status == "elicited":
+            if self.level is None:
+                raise ValueError("an elicited driver assignment requires a level")
+            if self.source is None:
+                raise ValueError("an elicited driver assignment requires a source")
+        else:
+            if self.level is not None:
+                raise ValueError("a not_elicited driver assignment cannot carry a level")
+            if not self.assumption_note:
+                raise ValueError(
+                    "a not_elicited driver requires an explicit assumption note; "
+                    "silent defaults are prohibited"
+                )
+        return self
+
+
+class CanonicalDriverProfile(StrictModel):
+    """Per-matter canonical driver assignments, reconciled fail-closed."""
+
+    schema_version: str = "0.1"
+    profile_id: str
+    line_id: str
+    contract_id: str
+    contract_version: str
+    contract_digest: str
+    assignments: list[CanonicalDriverAssignment]
+    posture_flags: dict[str, str] = Field(default_factory=dict)
+    not_elicited_driver_ids: list[str] = Field(default_factory=list)
+    required_missing_driver_ids: list[str] = Field(default_factory=list)
+    exception_candidates: list[str] = Field(default_factory=list)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    silent_defaults_applied: Literal[False] = False
+    dollars_remain_deterministic: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _profile_reconciled_fail_closed(self) -> "CanonicalDriverProfile":
+        if not self.assignments:
+            raise ValueError("a canonical driver profile requires assignments")
+        ids = [a.driver_id for a in self.assignments]
+        if len(ids) != len(set(ids)):
+            raise ValueError("driver assignments must be unique per driver")
+        not_elicited = sorted(a.driver_id for a in self.assignments if a.status == "not_elicited")
+        if sorted(self.not_elicited_driver_ids) != not_elicited:
+            raise ValueError("not_elicited_driver_ids does not match the assignments")
+        if not set(self.required_missing_driver_ids) <= set(not_elicited):
+            raise ValueError("required_missing drivers must be a subset of not_elicited")
+        if self.required_missing_driver_ids and (
+            "missing_required_budget_driver" not in self.exception_candidates
+        ):
+            raise ValueError(
+                "required-but-missing drivers must raise the "
+                "missing_required_budget_driver exception candidate"
+            )
+        if not self.required_missing_driver_ids and self.exception_candidates:
+            raise ValueError("exception candidates present without required-missing drivers")
+        return self
+
+
 class FirmCheckpointCaseDisposition(StrictModel):
     """Firm disposition for one checkpoint case. Real firm review is a human gate;
     synthetic placeholders are explicitly labeled and never real validation."""

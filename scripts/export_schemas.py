@@ -451,6 +451,8 @@ from lawfirm_os_intake.models import (  # noqa: E402
     SyntheticBudgetConfigurationChangeCheck,
     SyntheticBudgetConfigurationChangePackage,
     GeneratedSyntheticCase,
+    CanonicalDriverAssignment,
+    CanonicalDriverProfile,
     LearningCaptureReport,
     LearningLoopDeliveryPacket,
     LearningLoopHostileSweepReport,
@@ -1267,6 +1269,8 @@ MODELS = {
     "synthetic-eval-metric-delta.schema.json": SyntheticEvalMetricDelta,
     "ml-learnability-probe-report.schema.json": MLLearnabilityProbeReport,
     "learning-capture-report.schema.json": LearningCaptureReport,
+    "canonical-driver-assignment.schema.json": CanonicalDriverAssignment,
+    "canonical-driver-profile.schema.json": CanonicalDriverProfile,
     "learning-loop-hostile-sweep-report.schema.json": LearningLoopHostileSweepReport,
     "learning-loop-delivery-packet.schema.json": LearningLoopDeliveryPacket,
 }

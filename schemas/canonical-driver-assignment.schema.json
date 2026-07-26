@@ -1,0 +1,70 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "driver_id": {
+      "title": "Driver Id",
+      "type": "string"
+    },
+    "layer": {
+      "enum": [
+        "universal",
+        "line"
+      ],
+      "title": "Layer",
+      "type": "string"
+    },
+    "level": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Level"
+    },
+    "status": {
+      "enum": [
+        "elicited",
+        "not_elicited"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source": {
+      "anyOf": [
+        {
+          "enum": [
+            "legacy_mapping",
+            "explicit"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source"
+    },
+    "assumption_note": {
+      "default": "",
+      "title": "Assumption Note",
+      "type": "string"
+    },
+    "mapping_note": {
+      "default": "",
+      "title": "Mapping Note",
+      "type": "string"
+    }
+  },
+  "required": [
+    "driver_id",
+    "layer",
+    "status"
+  ],
+  "title": "CanonicalDriverAssignment",
+  "type": "object"
+}

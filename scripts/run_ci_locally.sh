@@ -30,6 +30,9 @@ step "validate_repo.py"
 step "validate_governance_dependency_map_mirror.py --mirror-updated true"
 "$PY" scripts/validate_governance_dependency_map_mirror.py --mirror-updated true
 
+step "validate_driver_taxonomy_conformance.py"
+"$PY" scripts/validate_driver_taxonomy_conformance.py
+
 step "export_schemas.py (+ verify no drift)"
 "$PY" scripts/export_schemas.py
 if ! git diff --quiet -- schemas; then
