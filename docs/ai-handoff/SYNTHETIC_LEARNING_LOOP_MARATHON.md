@@ -169,7 +169,7 @@ WITHOUT pausing for per-wave approval. I pre-approve every routine per-wave gate
 (pipeline-contract, generator, eval-capture, shadow-eval, delivery). Do not wait
 for me between waves; proceed straight into the next wave.
 
-Working directory: C:/Users/lowel/lfw-le. Read first, in order:
+Working directory: <worktree-root>. Read first, in order:
 docs/ai-handoff/SYNTHETIC_LEARNING_LOOP_MARATHON.md,
 docs/ai-handoff/CASE_SIZING_AND_TRAINING_DESIGN.md (section 5),
 docs/ai-handoff/CONVERGED_PLAN_OF_RECORD.md, AGENTS.md, CLAUDE.md. Branch off the

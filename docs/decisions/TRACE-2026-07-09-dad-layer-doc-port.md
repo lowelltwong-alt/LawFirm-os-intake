@@ -54,7 +54,7 @@ bare `asset-dir` executable on PATH. The same DAD CLI was invoked through the
 local DAD source tree instead:
 
 ```text
-PYTHONPATH=C:\Users\lowel\OneDrive\Desktop\Git Projects\04_Digital_Assett_Directory\src
+PYTHONPATH=${DAD_HUB}\src
 python -m digital_asset_directory.cli agent preflight ...
 session_id: dad:session:fe82b384-768b-4b1b-8a19-a8ab40d87b0e
 ```

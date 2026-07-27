@@ -45,7 +45,7 @@ The risk is slightly longer exception-detail lines. The change is contained to M
 - `python -m ruff check src tests scripts` -> all checks passed.
 - `python -m ruff format --check src tests scripts` -> 48 files already formatted.
 - `python scripts/validate_repo.py` -> repository validation passed.
-- `bash -lc 'export PATH="/c/Users/lowel/AppData/Local/Programs/Python/Python312:$PATH"; export PYTHONDONTWRITEBYTECODE=1; export PYTHONPATH=src; bash scripts/smoke_demo.sh'` -> passed.
+- `bash -lc 'export PATH="<python-install-dir>:$PATH"; export PYTHONDONTWRITEBYTECODE=1; export PYTHONPATH=src; bash scripts/smoke_demo.sh'` -> passed.
 - Initial CI run `28068842391` failed in `bash scripts/smoke_demo.sh` with exit 141 because the section-scoped `awk | grep -q` assertion interacted poorly with `pipefail`; the smoke script now captures the exception-detail section before grepping it.
 
 ## Human gates

@@ -91,7 +91,7 @@ promoted contract change; no cross-repo write. New local candidate schemas only.
 
 ## Validation
 
-From `C:/Users/lowel/lfw-le` with `PYTHONPATH=src` and
+From `<worktree-root>` with `PYTHONPATH=src` and
 `LAWFIRM_OS_VALIDATION_RUNTIME_POLICY=intake-validation-runtime-policy.v1`:
 
 - `ruff check` + `ruff format --check` — clean.

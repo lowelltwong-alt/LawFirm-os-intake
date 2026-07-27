@@ -51,5 +51,5 @@ admission, route IDs, event classes, or canonical schema promotion.
 - `python -m ruff check src tests scripts` - passed
 - `python -m ruff format --check src tests scripts` - passed after formatting
 - `python -m pytest -q` - passed
-- `bash -lc 'export PATH="/c/Users/lowel/AppData/Local/Programs/Python/Python312:$PATH"; bash scripts/smoke_demo.sh'` - passed
+- `bash -lc 'export PATH="<python-install-dir>:$PATH"; bash scripts/smoke_demo.sh'` - passed
 - `python scripts/validate_repo.py` - passed after generated caches were cleaned

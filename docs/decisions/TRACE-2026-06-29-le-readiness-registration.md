@@ -38,7 +38,7 @@ The readiness audit now checks:
 - `python -m ruff format --check src tests scripts`
 - `python scripts/export_schemas.py`
 - `python scripts/run_full_pytest.py` - 373 passed in 299.69s
-- `bash -lc 'export PATH="/c/Users/lowel/AppData/Local/Programs/Python/Python312:$PATH"; export PYTHONDONTWRITEBYTECODE=1; export PYTHONPATH=src; bash scripts/smoke_demo.sh'`
+- `bash -lc 'export PATH="<python-install-dir>:$PATH"; export PYTHONDONTWRITEBYTECODE=1; export PYTHONPATH=src; bash scripts/smoke_demo.sh'`
 - `python scripts/validate_repo.py`
 - Cross-repo AI front-door validation
 - Cross-repo skill-agent control plane validation

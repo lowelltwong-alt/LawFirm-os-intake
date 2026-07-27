@@ -143,7 +143,7 @@
   "public_facing": false,
   "repo_alias": "LawFirm-os-intake",
   "repo_id": "lawfirm-os-intake",
-  "repo_path": "C:/Users/lowel/.dad/repos/LawFirm-os-intake",
+  "repo_path": "~/.dad/repos/LawFirm-os-intake",
   "repo_ref": "dad://repo/lawfirm-os-intake",
   "return_address": "dad://repo/lawfirm-os-intake/.digital-asset/mail/outbox.jsonl",
   "schema_version": "0.1.0",
