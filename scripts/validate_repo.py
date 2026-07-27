@@ -330,21 +330,39 @@ def main() -> int:
     # quickstart fail on every clean checkout.
     forbidden = list(ROOT.rglob("__pycache__")) + list(ROOT.rglob("*.egg-info"))
     if forbidden:
-        # Posix-normalize both directions: git check-ignore echoes forward-slash
-        # paths, so backslash input on Windows would never match the echo set.
+        # The real question is "could this be committed?", not "does it exist".
+        # A fresh clone that follows the README verbatim runs `pip install -e .`,
+        # which unavoidably creates src/*.egg-info and __pycache__; failing on
+        # artifacts git already ignores made the documented quickstart fail on
+        # every clean checkout.
+        #
+        # Do NOT use `git check-ignore --stdin` here: on Windows it silently
+        # under-reports (it matched 1 of 7 paths without a trailing newline and
+        # 0 with one), which would resurrect the false failure. Ask git the two
+        # questions directly instead.
         rels = [p.relative_to(ROOT).as_posix() for p in forbidden]
-        probe = subprocess.run(
-            ["git", "-C", str(ROOT), "check-ignore", "--stdin"],
-            input="\n".join(rels),
-            capture_output=True,
-            text=True,
+
+        def _git(*args: str) -> str:
+            done = subprocess.run(["git", "-C", str(ROOT), *args], capture_output=True, text=True)
+            return done.stdout if done.returncode in (0, 1) else ""
+
+        # (a) already tracked -> a real defect regardless of ignore rules
+        tracked = {line.strip() for line in _git("ls-files", "--", *rels).splitlines()}
+        # (b) untracked and not ignored -> committable, so also a defect
+        untracked = {
+            line[3:].strip().strip('"')
+            for line in _git("status", "--porcelain", "--untracked-files=all").splitlines()
+            if line.startswith("??")
+        }
+        committable = sorted(
+            rel
+            for rel in rels
+            if any(entry == rel or entry.startswith(rel + "/") for entry in tracked | untracked)
         )
-        ignored = {line.replace("\\", "/") for line in probe.stdout.splitlines()}
-        not_ignored = [rel for rel in rels if rel not in ignored]
-        if not_ignored:
+        if committable:
             fail(
-                "generated cache/package metadata is present and not gitignored: "
-                + ", ".join(not_ignored[:5])
+                "generated cache/package metadata is committable (tracked or not "
+                "gitignored): " + ", ".join(committable[:5])
             )
 
     print("repository validation passed")
