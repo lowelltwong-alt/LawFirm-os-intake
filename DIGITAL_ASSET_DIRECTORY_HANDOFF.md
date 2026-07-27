@@ -1,6 +1,6 @@
 # Digital Asset Directory Handoff
 
-Central hub: `C:\Users\lowel\OneDrive\Desktop\Git Projects\04_Digital_Assett_Directory`
+Central hub: `${DAD_HUB}`
 
 Enable the versioned hook for this clone:
 

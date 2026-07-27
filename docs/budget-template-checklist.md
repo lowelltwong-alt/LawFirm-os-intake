@@ -18,7 +18,7 @@ The workbook itself stays outside this repo. Store only synthetic structural fix
 ## Audit Command
 
 ```powershell
-lawfirm-os-intake budget-form-audit --template "C:\path\to\Budget Template Sanitized.xlsx" --out budget_form_template_audit_report.json
+lawfirm-os-intake budget-form-audit --template "C:\path\to\carrier-budget-template.xlsx" --out budget_form_template_audit_report.json
 ```
 
 A passing report means the workbook is structurally suitable for template-backed rendering. A failed report should be repaired outside this repo and re-audited before rendering.

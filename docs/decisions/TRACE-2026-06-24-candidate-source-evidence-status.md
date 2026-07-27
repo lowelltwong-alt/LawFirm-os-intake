@@ -54,7 +54,7 @@ Completed on 2026-06-24:
 - `python -m ruff check src tests scripts` - passed
 - `python -m ruff format --check src tests scripts` - 49 files already formatted
 - `python scripts/validate_repo.py` - passed after generated test/lint caches were cleaned
-- `bash -lc 'export PATH="/c/Users/lowel/AppData/Local/Programs/Python/Python312:$PATH"; export PYTHONDONTWRITEBYTECODE=1; export PYTHONPATH=src; bash scripts/smoke_demo.sh'` - passed
+- `bash -lc 'export PATH="<python-install-dir>:$PATH"; export PYTHONDONTWRITEBYTECODE=1; export PYTHONPATH=src; bash scripts/smoke_demo.sh'` - passed
 
 Remaining before merge:
 

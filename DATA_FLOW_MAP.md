@@ -274,7 +274,7 @@ These are the remaining data-flow gaps to close before claiming the private inta
 
 The local starter now emits and enforces `contract_state_report.json` for each preflight run. That proves the private vertical used the reviewed local lock files; it does not replace the sibling repo governance steps above.
 
-Workspace note: the pushed Semantic Substrate registration branch explicitly excludes `LawFirm-os-talent-intelligence-private` from this kernel registry until that separate private vertical receives its own admission decision.
+Workspace note: the pushed Semantic Substrate registration branch explicitly excludes a separate private vertical from this kernel registry until it receives its own admission decision.
 
 ## Validation
 

@@ -47,7 +47,7 @@ The risk is a longer package when many exception candidates exist. The change is
 - `python -m ruff format --check src tests scripts` -> 48 files already formatted.
 - `python scripts/validate_repo.py` -> repository validation passed.
 - `bash scripts/smoke_demo.sh` in Git Bash could not find `python`; rerun with the local Python path exported passed:
-  `bash -lc 'export PATH="/c/Users/lowel/AppData/Local/Programs/Python/Python312:$PATH"; export PYTHONDONTWRITEBYTECODE=1; export PYTHONPATH=src; bash scripts/smoke_demo.sh'`.
+  `bash -lc 'export PATH="<python-install-dir>:$PATH"; export PYTHONDONTWRITEBYTECODE=1; export PYTHONPATH=src; bash scripts/smoke_demo.sh'`.
 
 ## Human gates
 

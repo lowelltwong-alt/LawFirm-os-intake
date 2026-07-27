@@ -57,7 +57,7 @@ Completed on 2026-06-24:
 - `python -m pytest -q` - passed
 - `python -m pytest --collect-only -q` - collected 70 tests
 - `python scripts/validate_repo.py` - passed after generated test/lint caches were cleaned
-- `bash -lc 'export PATH="/c/Users/lowel/AppData/Local/Programs/Python/Python312:$PATH"; export PYTHONDONTWRITEBYTECODE=1; export PYTHONPATH=src; bash scripts/smoke_demo.sh'` - passed
+- `bash -lc 'export PATH="<python-install-dir>:$PATH"; export PYTHONDONTWRITEBYTECODE=1; export PYTHONPATH=src; bash scripts/smoke_demo.sh'` - passed
 
 ## Human gates
 
