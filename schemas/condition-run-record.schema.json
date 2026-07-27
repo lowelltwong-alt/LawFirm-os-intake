@@ -1,0 +1,97 @@
+{
+  "additionalProperties": false,
+  "description": "The outcome of one condition on one case. The comparative unit.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "record_id": {
+      "title": "Record Id",
+      "type": "string"
+    },
+    "case_ref": {
+      "title": "Case Ref",
+      "type": "string"
+    },
+    "case_digest": {
+      "title": "Case Digest",
+      "type": "string"
+    },
+    "partition": {
+      "enum": [
+        "development",
+        "holdout"
+      ],
+      "title": "Partition",
+      "type": "string"
+    },
+    "condition_id": {
+      "title": "Condition Id",
+      "type": "string"
+    },
+    "config_digest": {
+      "title": "Config Digest",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "completed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "outcome_projection_digest": {
+      "title": "Outcome Projection Digest",
+      "type": "string"
+    },
+    "model_calls_permitted": {
+      "minimum": 0,
+      "title": "Model Calls Permitted",
+      "type": "integer"
+    },
+    "provider_call_performed": {
+      "const": false,
+      "default": false,
+      "title": "Provider Call Performed",
+      "type": "boolean"
+    },
+    "run_dir_ref": {
+      "title": "Run Dir Ref",
+      "type": "string"
+    },
+    "failure_reason": {
+      "default": "",
+      "title": "Failure Reason",
+      "type": "string"
+    },
+    "data_scope": {
+      "const": "synthetic_only",
+      "default": "synthetic_only",
+      "title": "Data Scope",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "record_id",
+    "case_ref",
+    "case_digest",
+    "partition",
+    "condition_id",
+    "config_digest",
+    "status",
+    "outcome_projection_digest",
+    "model_calls_permitted",
+    "run_dir_ref"
+  ],
+  "title": "ConditionRunRecord",
+  "type": "object"
+}

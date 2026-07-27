@@ -1,0 +1,14 @@
+{
+  "schema_version": "0.1",
+  "description": "Implementation conditions scored on the shared held-out set. Only C0 exists today: the deterministic governed pipeline. C1 (retrieval-assisted) and C2 (bounded tool-using agent) are deliberately absent rather than stubbed, because a condition that cannot run is not a condition and would make the report look comparative when it is not.",
+  "conditions": [
+    {
+      "condition_id": "c0-deterministic-baseline",
+      "description": "The existing governed deterministic pipeline, wrapped not rebuilt. Makes no provider call by construction.",
+      "adapter": "deterministic",
+      "practice_profile_ref": "context/synthetic-profiles/insurance-defense.yaml",
+      "model_calls_permitted": 0,
+      "config_digest": "sha256:679456d375850cecbd01bcbd1f959a9fe05d24086596962f4d08b775f73a3be1"
+    }
+  ]
+}
