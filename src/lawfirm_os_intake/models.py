@@ -23135,3 +23135,129 @@ class ConditionComparisonReport(StrictModel):
         if not self.comparative_claim_note.strip():
             raise ValueError("comparative_claim_note is required")
         return self
+
+
+# ---------------------------------------------------------------------------
+# Condition grading (Wave 3d) — the first numeric scores in this repository.
+#
+# Everything else here is pass/fail/blocked check lists, which is right for
+# gates but cannot express "condition A satisfied 14 of 17 gold expectations
+# while condition B satisfied 11". Grading turns run artifacts and reviewed
+# gold expectations into per-dimension scores in [0, 1] with their numerators
+# and denominators preserved, so a score can always be decomposed back into
+# the checks that produced it.
+#
+# A dimension that cannot be computed carries no score. Grading the holdout
+# partition against gold is impossible until holdout gold specs are authored
+# and reviewed — that fact is surfaced as data, never papered over with an
+# imputed value.
+# ---------------------------------------------------------------------------
+
+GradingBasis = Literal[
+    "measured_from_artifacts",
+    "gold_compared",
+    "not_computable_missing_gold",
+    "not_computable_missing_artifact",
+]
+
+
+class GradedDimensionScore(StrictModel):
+    """One dimension of one condition on one case."""
+
+    case_ref: str
+    condition_id: str
+    dimension: str
+    basis: GradingBasis
+    score: float | None = Field(default=None, ge=0.0, le=1.0)
+    numerator: int | None = Field(default=None, ge=0)
+    denominator: int | None = Field(default=None, ge=0)
+    note: str = ""
+
+    @model_validator(mode="after")
+    def _score_consistency(self) -> "GradedDimensionScore":
+        computable = self.basis in ("measured_from_artifacts", "gold_compared")
+        if computable:
+            if self.score is None or self.numerator is None or self.denominator is None:
+                raise ValueError("a computable dimension must carry score and counts")
+            if self.denominator == 0:
+                raise ValueError("a computable dimension requires a non-zero denominator")
+            if round(self.score, 6) != round(self.numerator / self.denominator, 6):
+                raise ValueError("score must equal numerator/denominator")
+        else:
+            if self.score is not None:
+                raise ValueError("a non-computable dimension may not carry a score")
+            if not self.note.strip():
+                raise ValueError("a non-computable dimension must say why")
+        return self
+
+
+class ConditionDimensionAggregate(StrictModel):
+    """Mean of one dimension for one condition over the computable cases."""
+
+    condition_id: str
+    dimension: str
+    mean_score: float | None = Field(default=None, ge=0.0, le=1.0)
+    computable_case_count: int = Field(ge=0)
+    total_case_count: int = Field(ge=1)
+
+    @model_validator(mode="after")
+    def _aggregate_consistency(self) -> "ConditionDimensionAggregate":
+        if self.computable_case_count == 0 and self.mean_score is not None:
+            raise ValueError("an aggregate over zero computable cases may not carry a mean")
+        if self.computable_case_count > 0 and self.mean_score is None:
+            raise ValueError("an aggregate over computable cases must carry a mean")
+        if self.computable_case_count > self.total_case_count:
+            raise ValueError("computable cases cannot exceed total cases")
+        return self
+
+
+class ConditionGradingCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    offending_refs: list[str] = Field(default_factory=list)
+
+
+class ConditionGradingReport(StrictModel):
+    schema_version: str = "0.1"
+    report_id: str
+    comparison_report_ref: str
+    split_id: str
+    graded_partition: EvaluationPartition
+    generated_at: str
+    condition_ids: list[str] = Field(min_length=1)
+    case_count: int = Field(ge=0)
+    scores: list[GradedDimensionScore] = Field(default_factory=list)
+    aggregates: list[ConditionDimensionAggregate] = Field(default_factory=list)
+    gold_coverage_complete: bool
+    cases_missing_gold: list[str] = Field(default_factory=list)
+    checks: list[ConditionGradingCheck] = Field(min_length=1)
+    status: Literal["passed", "failed"]
+    ranking_supported: bool
+    ranking_note: str
+    required_next_gates: list[str] = Field(default_factory=list)
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    human_review_required: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def _grading_integrity(self) -> "ConditionGradingReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.status != ("failed" if failed else "passed"):
+            raise ValueError("report status must match the presence of failed checks")
+        if self.gold_coverage_complete and self.cases_missing_gold:
+            raise ValueError("gold coverage cannot be complete while cases lack gold")
+        # Ranking conditions requires more than one condition AND gold-graded
+        # evidence on every scored case. Scores over artifacts alone measure
+        # discipline, not correctness, and cannot rank strategies.
+        supported = len(set(self.condition_ids)) > 1 and self.gold_coverage_complete
+        if self.ranking_supported != supported:
+            raise ValueError(
+                "ranking_supported must reflect >1 condition and complete gold coverage"
+            )
+        if not self.ranking_note.strip():
+            raise ValueError("ranking_note is required")
+        return self

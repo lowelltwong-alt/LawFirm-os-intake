@@ -29,6 +29,7 @@ from .budget_fixture_update_pr_package import run_budget_fixture_update_pr_packa
 from .budget_fixture_update_review import run_budget_fixture_update_review_record
 from .benchmarks import run_benchmark_replay_audit
 from .condition_comparison import load_condition_specs, run_condition_comparison
+from .condition_grading import run_condition_grading
 from .evaluation_split import run_evaluation_split_audit
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .budget_human_review_outcome_owner_adoption import (
@@ -505,6 +506,22 @@ def _parser() -> argparse.ArgumentParser:
         ),
     )
     condition_comparison.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
+    )
+
+    condition_grading = sub.add_parser(
+        "grade-condition-runs",
+        help=(
+            "Grade completed condition runs into per-dimension numeric scores: discipline "
+            "dimensions from run artifacts, correctness only against reviewed gold."
+        ),
+    )
+    condition_grading.add_argument("--comparison-dir", required=True)
+    condition_grading.add_argument("--split-manifest", required=True)
+    condition_grading.add_argument("--out-dir", required=True)
+    condition_grading.add_argument("--repo-root", default=".")
+    condition_grading.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
@@ -3107,6 +3124,43 @@ def main(argv: list[str] | None = None) -> int:
             )
             _print(report)
             return 0 if report["status"] == "passed" else 1
+
+        if args.command == "grade-condition-runs":
+            report, run_dir = run_condition_grading(
+                comparison_dir=args.comparison_dir,
+                split_manifest_path=args.split_manifest,
+                out_dir=args.out_dir,
+                repo_root=args.repo_root,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "report_id": report.report_id,
+                    "case_count": report.case_count,
+                    "gold_coverage_complete": report.gold_coverage_complete,
+                    "cases_missing_gold": report.cases_missing_gold,
+                    "ranking_supported": report.ranking_supported,
+                    "ranking_note": report.ranking_note,
+                    "aggregates": [
+                        {
+                            "condition_id": a.condition_id,
+                            "dimension": a.dimension,
+                            "mean_score": a.mean_score,
+                            "computable_case_count": a.computable_case_count,
+                            "total_case_count": a.total_case_count,
+                        }
+                        for a in report.aggregates
+                    ],
+                    "failed_checks": [c.check_id for c in report.checks if c.status == "failed"],
+                    "candidate_only": report.candidate_only,
+                    "human_review_required": report.human_review_required,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
 
         if args.command == "run-condition-comparison":
             report, run_dir = run_condition_comparison(

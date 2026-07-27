@@ -1,0 +1,81 @@
+{
+  "additionalProperties": false,
+  "description": "One dimension of one condition on one case.",
+  "properties": {
+    "case_ref": {
+      "title": "Case Ref",
+      "type": "string"
+    },
+    "condition_id": {
+      "title": "Condition Id",
+      "type": "string"
+    },
+    "dimension": {
+      "title": "Dimension",
+      "type": "string"
+    },
+    "basis": {
+      "enum": [
+        "measured_from_artifacts",
+        "gold_compared",
+        "not_computable_missing_gold",
+        "not_computable_missing_artifact"
+      ],
+      "title": "Basis",
+      "type": "string"
+    },
+    "score": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Score"
+    },
+    "numerator": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Numerator"
+    },
+    "denominator": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Denominator"
+    },
+    "note": {
+      "default": "",
+      "title": "Note",
+      "type": "string"
+    }
+  },
+  "required": [
+    "case_ref",
+    "condition_id",
+    "dimension",
+    "basis"
+  ],
+  "title": "GradedDimensionScore",
+  "type": "object"
+}
