@@ -78,6 +78,8 @@ No reviewer reads 155 modules. The short path:
 3. **Read `GOVERNANCE_BOUNDARY.md`** for what this repo is *not allowed* to do, which is the
    design's actual substance.
 4. Skim `schemas/` (430+ contracts) and `tests/` to calibrate depth.
+5. **Read the [baseline case study](case-studies/baseline-intake-to-budget.md)** — the
+   scored evaluation of what exists, its failure-found-and-fixed, and its stated limits.
 
 Everything is synthetic. Nothing here is legal advice or a production legal system. See
 `SECURITY.md` for the data boundary and `VISIBILITY_AND_RELEASE.md` for what the public release
