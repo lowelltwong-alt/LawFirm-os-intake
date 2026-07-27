@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1",
+  "applies_to": "preflight",
+  "reviewed": false,
+  "reviewer_id": "PENDING-OWNER-REVIEW",
+  "reviewed_at": "PENDING",
+  "data_scope": "synthetic_only",
+  "expected_preflight_status": "human_intake_review_required",
+  "require_source_bound_evidence": true,
+  "expected_prohibited_next_steps": [
+    "do_not_clear_conflicts",
+    "do_not_accept_representation",
+    "do_not_send_client_or_carrier_communications",
+    "do_not_open_matter_or_imanage_workspace",
+    "do_not_docket_deadlines",
+    "do_not_submit_budget"
+  ],
+  "gold_id": "fixture-gold-holdout-carrier-client-role-matrix-draft-v0-1",
+  "fixture_id": "syn-bundle-holdout-carrier-client-role-matrix-001",
+  "expected_top_three_matter_families": [
+    "medical_malpractice_defense",
+    "unknown",
+    "insurance_coverage"
+  ],
+  "expected_top_inbound_event": "carrier_assignment",
+  "expected_top_representation_posture": "defense_of_insured",
+  "expected_party_role_candidates": {
+    "Harbor Point Insurance": [
+      "insurance_carrier",
+      "payer",
+      "instructing_source"
+    ],
+    "ClaimsPro Administrators": [
+      "third_party_administrator"
+    ],
+    "Fleet Parent Holdings Inc.": [
+      "affiliate"
+    ]
+  },
+  "prohibited_party_role_candidates": {
+    "Harbor Point Insurance": [
+      "prospective_represented_client",
+      "represented_client"
+    ],
+    "ClaimsPro Administrators": [
+      "prospective_represented_client",
+      "represented_client"
+    ]
+  },
+  "expected_missing_information": [
+    "adverse_party",
+    "assignment_scope",
+    "claim_number",
+    "incident_date",
+    "jurisdiction",
+    "prospective_represented_client",
+    "response_or_reporting_deadline"
+  ],
+  "expected_critic_finding_codes": [
+    "ROLE_CANDIDATES_AMBIGUOUS",
+    "MISSING_REQUIRED_INTAKE_INFORMATION"
+  ],
+  "expected_preflight_exception_labels": [
+    "critic_role_candidates_ambiguous",
+    "critic_missing_required_intake_information",
+    "intake_escalation_required"
+  ]
+}

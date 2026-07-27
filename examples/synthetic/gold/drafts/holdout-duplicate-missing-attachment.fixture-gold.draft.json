@@ -1,0 +1,69 @@
+{
+  "schema_version": "0.1",
+  "applies_to": "preflight",
+  "reviewed": false,
+  "reviewer_id": "PENDING-OWNER-REVIEW",
+  "reviewed_at": "PENDING",
+  "data_scope": "synthetic_only",
+  "expected_preflight_status": "human_intake_review_required",
+  "require_source_bound_evidence": true,
+  "expected_prohibited_next_steps": [
+    "do_not_clear_conflicts",
+    "do_not_accept_representation",
+    "do_not_send_client_or_carrier_communications",
+    "do_not_open_matter_or_imanage_workspace",
+    "do_not_docket_deadlines",
+    "do_not_submit_budget"
+  ],
+  "gold_id": "fixture-gold-holdout-duplicate-missing-attachment-draft-v0-1",
+  "fixture_id": "syn-bundle-holdout-dup-attach-001",
+  "expected_source_coverage": {
+    "coverage_complete": false,
+    "duplicate_sources": 1,
+    "missing_sources": 1
+  },
+  "expected_source_states": [
+    {
+      "source_id": "syn-attachment-missing-001",
+      "read_state": "missing",
+      "availability_state": "missing"
+    },
+    {
+      "source_id": "syn-email-dup-001",
+      "read_state": "read",
+      "availability_state": "available"
+    },
+    {
+      "source_id": "syn-email-dup-002",
+      "read_state": "read",
+      "availability_state": "duplicate"
+    }
+  ],
+  "expected_party_role_candidates": {
+    "Harbor Point Insurance": [
+      "insurance_carrier",
+      "instructing_source"
+    ],
+    "Dr. Maya Chen": [
+      "insured_or_prospective_represented_client"
+    ]
+  },
+  "expected_missing_information": [
+    "adverse_party",
+    "assignment_scope",
+    "incident_date",
+    "jurisdiction",
+    "response_or_reporting_deadline"
+  ],
+  "expected_critic_finding_codes": [
+    "ROLE_CANDIDATES_AMBIGUOUS",
+    "MISSING_REQUIRED_INTAKE_INFORMATION"
+  ],
+  "expected_preflight_exception_labels": [
+    "duplicate_source_detected",
+    "source_missing",
+    "critic_role_candidates_ambiguous",
+    "critic_missing_required_intake_information",
+    "intake_escalation_required"
+  ]
+}
