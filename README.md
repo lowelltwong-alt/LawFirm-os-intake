@@ -65,6 +65,28 @@ The five LawFirm OS repos already separate canonical authority, execution, evide
 
 See `docs/lawfirm-os-integration.md` and `repo_topology.yaml`.
 
+## Evaluate this repo in 10 minutes
+
+No reviewer reads 155 modules. The short path:
+
+1. **Run the demo** (below): one command turns a messy synthetic intake package into a
+   human-reviewable matter-opening package with a driver-scaled UTBMS budget proposal. Note the
+   final boundary in the output — `blocked_pending_conflicts_and_engagement`. The system proposes;
+   it never opens a matter or submits a budget.
+2. **Read one decision record** in `docs/decisions/` (any `TRACE-*.md`) to see how changes are
+   evidenced here.
+3. **Read `GOVERNANCE_BOUNDARY.md`** for what this repo is *not allowed* to do, which is the
+   design's actual substance.
+4. Skim `schemas/` (430+ contracts) and `tests/` to calibrate depth.
+
+Everything is synthetic. Nothing here is legal advice or a production legal system. See
+`SECURITY.md` for the data boundary and `VISIBILITY_AND_RELEASE.md` for what the public release
+does and does not authorize.
+
+> **Windows note:** this repo has deep paths. Clone with
+> `git clone -c core.longpaths=true …` (or set `git config --global core.longpaths true`)
+> or the checkout will be silently incomplete.
+
 ## Quickstart
 
 ```bash
