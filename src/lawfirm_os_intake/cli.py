@@ -28,6 +28,7 @@ from .budget_fixture_bindings import run_budget_fixture_binding_candidates
 from .budget_fixture_update_pr_package import run_budget_fixture_update_pr_package
 from .budget_fixture_update_review import run_budget_fixture_update_review_record
 from .benchmarks import run_benchmark_replay_audit
+from .evaluation_split import run_evaluation_split_audit
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .budget_human_review_outcome_owner_adoption import (
     run_budget_human_review_outcome_owner_adoption,
@@ -455,6 +456,25 @@ def _parser() -> argparse.ArgumentParser:
     benchmark_replay.add_argument(
         "--as-of-date",
         help="Optional YYYY-MM-DD/ISO date for deterministic effective-grade staleness.",
+    )
+
+    evaluation_split_audit = sub.add_parser(
+        "audit-evaluation-split",
+        help=(
+            "Verify the reviewed development/holdout partition that gates comparative "
+            "scoring: pinned fixture digests, no cross-partition gold, reserved holdout."
+        ),
+    )
+    evaluation_split_audit.add_argument("--split-manifest", required=True)
+    evaluation_split_audit.add_argument("--out-dir", required=True)
+    evaluation_split_audit.add_argument(
+        "--repo-root",
+        default=".",
+        help="Repository root for relative fixture refs; defaults to current directory.",
+    )
+    evaluation_split_audit.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
 
     intensity_signoff = sub.add_parser(
@@ -3055,6 +3075,32 @@ def main(argv: list[str] | None = None) -> int:
             )
             _print(report)
             return 0 if report["status"] == "passed" else 1
+
+        if args.command == "audit-evaluation-split":
+            report, run_dir = run_evaluation_split_audit(
+                split_manifest_path=args.split_manifest,
+                out_dir=args.out_dir,
+                repo_root=args.repo_root,
+                generated_at=args.generated_at,
+            )
+            failed_checks = [check.check_id for check in report.checks if check.status == "failed"]
+            _print(
+                {
+                    "status": report.status,
+                    "report_id": report.report_id,
+                    "split_id": report.split_id,
+                    "development_count": report.development_count,
+                    "holdout_count": report.holdout_count,
+                    "failed_checks": failed_checks,
+                    "required_next_gates": report.required_next_gates,
+                    "candidate_only": report.candidate_only,
+                    "human_review_required": report.human_review_required,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
 
         if args.command == "audit-benchmark-replay":
             report, run_dir = run_benchmark_replay_audit(

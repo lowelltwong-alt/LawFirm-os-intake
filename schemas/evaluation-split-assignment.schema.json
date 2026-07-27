@@ -1,0 +1,41 @@
+{
+  "additionalProperties": false,
+  "description": "One fixture's partition assignment, pinned by content digest.",
+  "properties": {
+    "fixture_ref": {
+      "title": "Fixture Ref",
+      "type": "string"
+    },
+    "partition": {
+      "enum": [
+        "development",
+        "holdout"
+      ],
+      "title": "Partition",
+      "type": "string"
+    },
+    "fixture_digest": {
+      "title": "Fixture Digest",
+      "type": "string"
+    },
+    "rationale": {
+      "title": "Rationale",
+      "type": "string"
+    },
+    "gold_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Gold Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "fixture_ref",
+    "partition",
+    "fixture_digest",
+    "rationale"
+  ],
+  "title": "EvaluationSplitAssignment",
+  "type": "object"
+}

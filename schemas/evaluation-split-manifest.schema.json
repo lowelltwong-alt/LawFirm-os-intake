@@ -1,0 +1,110 @@
+{
+  "$defs": {
+    "EvaluationSplitAssignment": {
+      "additionalProperties": false,
+      "description": "One fixture's partition assignment, pinned by content digest.",
+      "properties": {
+        "fixture_ref": {
+          "title": "Fixture Ref",
+          "type": "string"
+        },
+        "partition": {
+          "enum": [
+            "development",
+            "holdout"
+          ],
+          "title": "Partition",
+          "type": "string"
+        },
+        "fixture_digest": {
+          "title": "Fixture Digest",
+          "type": "string"
+        },
+        "rationale": {
+          "title": "Rationale",
+          "type": "string"
+        },
+        "gold_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Gold Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "fixture_ref",
+        "partition",
+        "fixture_digest",
+        "rationale"
+      ],
+      "title": "EvaluationSplitAssignment",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The reviewed development/holdout partition for comparative evaluation.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "split_id": {
+      "title": "Split Id",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "reviewed": {
+      "title": "Reviewed",
+      "type": "boolean"
+    },
+    "reviewer_id": {
+      "title": "Reviewer Id",
+      "type": "string"
+    },
+    "reviewed_at": {
+      "title": "Reviewed At",
+      "type": "string"
+    },
+    "data_scope": {
+      "const": "synthetic_only",
+      "default": "synthetic_only",
+      "title": "Data Scope",
+      "type": "string"
+    },
+    "assignments": {
+      "items": {
+        "$ref": "#/$defs/EvaluationSplitAssignment"
+      },
+      "minItems": 1,
+      "title": "Assignments",
+      "type": "array"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "split_id",
+    "description",
+    "reviewed",
+    "reviewer_id",
+    "reviewed_at",
+    "assignments"
+  ],
+  "title": "EvaluationSplitManifest",
+  "type": "object"
+}
