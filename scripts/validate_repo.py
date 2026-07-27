@@ -4,6 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import subprocess
 import sys
 import tempfile
 import yaml
@@ -322,9 +323,25 @@ def main() -> int:
         if payload.get("canonical") is not False:
             fail(f"candidate registry masquerades as canon: {path.relative_to(ROOT)}")
 
+    # Generated artifacts are only a defect when git does not already ignore
+    # them (i.e. when they could be committed). A fresh clone that follows the
+    # README verbatim runs `pip install -e .` first, which unavoidably creates
+    # src/*.egg-info; failing on ignored artifacts made the documented
+    # quickstart fail on every clean checkout.
     forbidden = list(ROOT.rglob("__pycache__")) + list(ROOT.rglob("*.egg-info"))
     if forbidden:
-        fail("generated cache/package metadata is present")
+        probe = subprocess.run(
+            ["git", "-C", str(ROOT), "check-ignore", "--stdin"],
+            input="\n".join(str(p.relative_to(ROOT)) for p in forbidden),
+            capture_output=True,
+            text=True,
+        )
+        ignored = set(probe.stdout.splitlines())
+        not_ignored = [
+            p for p in forbidden if str(p.relative_to(ROOT)) not in ignored
+        ]
+        if not_ignored:
+            fail("generated cache/package metadata is present and not gitignored")
 
     print("repository validation passed")
     return 0

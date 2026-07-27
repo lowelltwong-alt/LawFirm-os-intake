@@ -48,4 +48,4 @@ Completed on 2026-06-24:
 - `python -m ruff check src tests scripts` - passed
 - `python -m ruff format --check src tests scripts` - passed
 - `python scripts\validate_repo.py` - passed after generated caches were cleaned
-- `bash -lc 'export PATH="/c/Users/lowel/AppData/Local/Programs/Python/Python312:$PATH"; export PYTHONDONTWRITEBYTECODE=1; export PYTHONPATH=src; bash scripts/smoke_demo.sh'` - passed and wrote starter, blocked-budget, and context-counterfactual audit reports
+- `bash -lc 'export PATH="<python-install-dir>:$PATH"; export PYTHONDONTWRITEBYTECODE=1; export PYTHONPATH=src; bash scripts/smoke_demo.sh'` - passed and wrote starter, blocked-budget, and context-counterfactual audit reports

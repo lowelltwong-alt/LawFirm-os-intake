@@ -1,5 +1,5 @@
 version: 0.1.0
-hub_path: C:\Users\lowel\OneDrive\Desktop\Git Projects\04_Digital_Assett_Directory
+hub_path: ${DAD_HUB}
 lessons_required: true
 handoff_required: true
 enforcement: pre_push
