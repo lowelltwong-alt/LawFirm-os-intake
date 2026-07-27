@@ -31,6 +31,8 @@ jobs:
         run: npm run smoke:browser
         env:
           PYTHONPATH: ${{ github.workspace }}/src
+      - run: python scripts/check_no_local_paths.py
+        timeout-minutes: 3
       - run: python scripts/validate_repo.py
         timeout-minutes: 3
       - run: python scripts/validate_governance_dependency_map_mirror.py --mirror-updated true

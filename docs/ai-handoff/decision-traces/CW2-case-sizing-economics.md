@@ -78,7 +78,7 @@ change, no cross-repo write.
 
 ## Validation
 
-From `C:/Users/lowel/lfw-le` with `PYTHONPATH=src` and the intake validation
+From `<worktree-root>` with `PYTHONPATH=src` and the intake validation
 runtime policy: ruff check/format clean; `export_schemas.py` idempotent (nine new
 schemas); `validate_repo.py` passed; `run_full_pytest.py -q` full suite passed;
 `npm run build` + `npm run smoke:browser` OK.

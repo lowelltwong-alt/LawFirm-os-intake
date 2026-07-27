@@ -14,7 +14,7 @@ shape, validated for a firm checkpoint — then contract reconciliation, regime
 seam, and hardening. Serialized waves, WIP=1, one PR per wave, stop at every gate.
 
 OPERATING RULES (every wave):
-- Working directory: `C:/Users/lowel/lfw-le` — the `claude/le-replay-expansion`
+- Working directory: `<worktree-root>` — the `claude/le-replay-expansion`
   branch. It holds all planning docs AND the committed F1–F4 trust fixes, and it
   is a worktree of the REAL repo (`.codex-worktrees/workbench-completion-v2`), so
   it shares git/origin. The top-level `LawFirm-os-intake` folder is a stale
@@ -79,7 +79,7 @@ GATE: sizing/economics contract review.
 
 WAVE CW3 — Exporter seam + firm-Excel renderer. Exporter plugin boundary (model →
 renderer); firm-Excel exporter matching the sanitized template shape
-(C:\Users\lowel\Downloads\Budget Template Sanitized (1).xlsx): UTBMS phase/task
+(C:\path\to\carrier-budget-template.xlsx): UTBMS phase/task
 rows, Original/Billed/Remaining/New columns, CORRECT phase-subtotal + grand-total
 formulas (do not reproduce the template's missing G33–G85 formulas or the P85
 double-count of P129 — document both deviations), role/rate/hours decomposition

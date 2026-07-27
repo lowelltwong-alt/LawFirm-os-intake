@@ -43,7 +43,7 @@ The main risk is longer Markdown lines in dense review sections. The change is c
 - `python -m ruff check src tests scripts` -> all checks passed.
 - `python -m ruff format --check src tests scripts` -> 48 files already formatted.
 - `python scripts/validate_repo.py` -> repository validation passed.
-- `bash -lc 'export PATH="/c/Users/lowel/AppData/Local/Programs/Python/Python312:$PATH"; export PYTHONDONTWRITEBYTECODE=1; export PYTHONPATH=src; bash scripts/smoke_demo.sh'` -> passed.
+- `bash -lc 'export PATH="<python-install-dir>:$PATH"; export PYTHONDONTWRITEBYTECODE=1; export PYTHONPATH=src; bash scripts/smoke_demo.sh'` -> passed.
 
 ## Human gates
 
