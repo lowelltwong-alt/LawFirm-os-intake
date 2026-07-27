@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import re
 import subprocess
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -29,8 +28,24 @@ PATTERNS = (
 )
 
 TEXT_SUFFIXES = {
-    ".md", ".txt", ".json", ".jsonl", ".yaml", ".yml", ".toml", ".cfg", ".ini",
-    ".py", ".ps1", ".sh", ".csv", ".rs", ".ts", ".tsx", ".js", ".html",
+    ".md",
+    ".txt",
+    ".json",
+    ".jsonl",
+    ".yaml",
+    ".yml",
+    ".toml",
+    ".cfg",
+    ".ini",
+    ".py",
+    ".ps1",
+    ".sh",
+    ".csv",
+    ".rs",
+    ".ts",
+    ".tsx",
+    ".js",
+    ".html",
 }
 
 # The guard documents the patterns it forbids; never self-flag. The remediation
