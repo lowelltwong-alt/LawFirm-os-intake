@@ -9594,6 +9594,57 @@ class PipelineExportStage(StrictModel):
         return self
 
 
+class PipelineCanonicalPricingStage(StrictModel):
+    """DT3: the canonical engine's plan riding alongside legacy sizing.
+
+    INFORMATIONAL ONLY — legacy sizing remains authoritative and this stage can
+    never block the chain. A line the engine cannot price yet is a typed
+    ``not_priced`` with a reason, never a silent omission."""
+
+    status: Literal["priced_candidate", "not_priced"]
+    reason: str = ""
+    profile_id: str | None = None
+    plan_id: str | None = None
+    contract_digest: str | None = None
+    canonical_total_minor_units: int | None = Field(default=None, ge=0)
+    legacy_sized_total_minor_units: int | None = Field(default=None, ge=0)
+    neutral_assumed_driver_count: int = Field(default=0, ge=0)
+    required_missing_driver_ids: list[str] = Field(default_factory=list)
+    authoritative: Literal[False] = False
+    candidate_only: Literal[True] = True
+    note: str = (
+        "canonical engine is a candidate successor; legacy sizing remains "
+        "authoritative; totals are not expected to match (different bases)"
+    )
+
+    @model_validator(mode="after")
+    def _canonical_stage_joint_fail_closed(self) -> "PipelineCanonicalPricingStage":
+        if self.status == "priced_candidate":
+            if (
+                self.profile_id is None
+                or self.plan_id is None
+                or self.contract_digest is None
+                or self.canonical_total_minor_units is None
+                or self.legacy_sized_total_minor_units is None
+            ):
+                raise ValueError(
+                    "a priced_candidate canonical stage must carry profile/plan ids, "
+                    "contract digest, and both totals"
+                )
+            if self.reason:
+                raise ValueError("a priced_candidate canonical stage cannot carry a reason")
+        else:
+            if not self.reason:
+                raise ValueError("a not_priced canonical stage requires a typed reason")
+            if (
+                self.plan_id is not None
+                or self.canonical_total_minor_units is not None
+                or self.legacy_sized_total_minor_units is not None
+            ):
+                raise ValueError("a not_priced canonical stage cannot carry priced results")
+        return self
+
+
 class SyntheticCasePipelineResult(StrictModel):
     """One typed result reconciling every pipeline stage, fail-closed."""
 
@@ -9606,6 +9657,8 @@ class SyntheticCasePipelineResult(StrictModel):
     budget: PipelineBudgetStage
     sizing: PipelineSizingStage
     export: PipelineExportStage
+    # Absent only on pre-DT3 artifacts; the runner always populates it.
+    canonical: PipelineCanonicalPricingStage | None = None
     # Overall status is the reconciled terminal state of the chain.
     status: Literal["completed", "blocked"]
     blocking_reasons: list[str] = Field(default_factory=list)
@@ -9641,6 +9694,18 @@ class SyntheticCasePipelineResult(StrictModel):
                 raise ValueError(
                     "firm-Excel export total must equal the deterministic work-plan total"
                 )
+
+        # DT3 side-by-side reconciliation: the canonical stage's copy of the
+        # legacy sized total must equal the sizing stage exactly (fail-closed);
+        # the canonical stage itself never participates in blocking.
+        if self.canonical is not None and self.canonical.status == "priced_candidate":
+            if self.sizing.status != "sized":
+                raise ValueError("a priced canonical stage requires a sized sizing stage")
+            if (
+                self.canonical.legacy_sized_total_minor_units
+                != self.sizing.sized_work_plan_total_minor_units
+            ):
+                raise ValueError("canonical stage legacy total must equal the sizing stage total")
 
         # A completed chain requires every stage to have succeeded; any blocked
         # joint yields a typed blocked status with recorded reasons (fail-closed).

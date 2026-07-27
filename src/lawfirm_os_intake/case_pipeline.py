@@ -31,10 +31,13 @@ from .case_sizing import (
     build_case_sizing_report,
     load_case_sizing_policy,
 )
+from .canonical_pricing import build_canonical_priced_work_plan
 from .confirmation import bind_confirmation_to_packet_evidence
+from .driver_taxonomy import build_canonical_driver_profile
 from .models import (
     HumanConfirmation,
     PipelineBudgetStage,
+    PipelineCanonicalPricingStage,
     PipelineConfirmStage,
     PipelineExportStage,
     PipelineRouteStage,
@@ -43,7 +46,7 @@ from .models import (
     SyntheticCasePipelineSpec,
 )
 from .routing_eval import route_decision
-from .util import digest_json, load_json, now_iso
+from .util import digest_json, load_json, now_iso, write_json
 from .workflow import run_budget, run_preflight
 
 
@@ -164,6 +167,47 @@ def _export_stage(budget: Any) -> PipelineExportStage:
     )
 
 
+def _canonical_pricing_stage(
+    spec: SyntheticCasePipelineSpec,
+    sizing: PipelineSizingStage,
+    *,
+    root: Path,
+    work_dir: Path,
+) -> PipelineCanonicalPricingStage:
+    """DT3: informational canonical-pricing stage riding alongside legacy sizing.
+
+    Never blocks the chain: a failure here is a typed not_priced reason. Only the
+    med-mal line is CLCM-mapped so far; other case types are typed accordingly."""
+
+    if sizing.status != "sized":
+        return PipelineCanonicalPricingStage(status="not_priced", reason="sizing_blocked")
+    if spec.case_type != "medical_malpractice":
+        return PipelineCanonicalPricingStage(
+            status="not_priced",
+            reason=f"line_not_yet_clcm_mapped:{spec.case_type}",
+        )
+    try:
+        profile = build_canonical_driver_profile(spec.sizing_drivers, repo_root=root)
+        plan = build_canonical_priced_work_plan(profile, repo_root=root)
+    except Exception as exc:  # typed for review, never a silent drop or a block
+        return PipelineCanonicalPricingStage(
+            status="not_priced", reason=f"canonical_pricing_unavailable:{exc}"
+        )
+    canonical_dir = work_dir / "canonical"
+    canonical_dir.mkdir(parents=True, exist_ok=True)
+    write_json(canonical_dir / "canonical_priced_work_plan.json", plan.model_dump(mode="json"))
+    return PipelineCanonicalPricingStage(
+        status="priced_candidate",
+        profile_id=profile.profile_id,
+        plan_id=plan.plan_id,
+        contract_digest=plan.contract_digest,
+        canonical_total_minor_units=plan.total_dollars_minor_units,
+        legacy_sized_total_minor_units=sizing.sized_work_plan_total_minor_units,
+        neutral_assumed_driver_count=len(profile.not_elicited_driver_ids),
+        required_missing_driver_ids=list(profile.required_missing_driver_ids),
+    )
+
+
 def run_synthetic_case_pipeline(
     spec: SyntheticCasePipelineSpec,
     *,
@@ -210,6 +254,8 @@ def run_synthetic_case_pipeline(
 
     export = _export_stage(budget)
 
+    canonical = _canonical_pricing_stage(spec, sizing, root=root, work_dir=work_dir)
+
     blocked: list[str] = []
     if route.status != "routed":
         blocked.append(f"route:{route.decision_reason}")
@@ -237,6 +283,8 @@ def run_synthetic_case_pipeline(
         "proportionality_status": sizing.proportionality_status,
         "export_status": export.status,
         "export_total_minor_units": export.firm_excel_original_total_minor_units,
+        "canonical_status": canonical.status,
+        "canonical_total_minor_units": canonical.canonical_total_minor_units,
         "blocked": sorted(blocked),
     }
     content_digest = digest_json(digest_basis)
@@ -251,6 +299,7 @@ def run_synthetic_case_pipeline(
         budget=budget_stage,
         sizing=sizing,
         export=export,
+        canonical=canonical,
         status="completed" if not blocked else "blocked",
         blocking_reasons=sorted(blocked),
         content_digest=content_digest,
