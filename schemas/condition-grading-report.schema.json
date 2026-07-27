@@ -1,0 +1,319 @@
+{
+  "$defs": {
+    "ConditionDimensionAggregate": {
+      "additionalProperties": false,
+      "description": "Mean of one dimension for one condition over the computable cases.",
+      "properties": {
+        "condition_id": {
+          "title": "Condition Id",
+          "type": "string"
+        },
+        "dimension": {
+          "title": "Dimension",
+          "type": "string"
+        },
+        "mean_score": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mean Score"
+        },
+        "computable_case_count": {
+          "minimum": 0,
+          "title": "Computable Case Count",
+          "type": "integer"
+        },
+        "total_case_count": {
+          "minimum": 1,
+          "title": "Total Case Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "condition_id",
+        "dimension",
+        "computable_case_count",
+        "total_case_count"
+      ],
+      "title": "ConditionDimensionAggregate",
+      "type": "object"
+    },
+    "ConditionGradingCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "offending_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Offending Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "message"
+      ],
+      "title": "ConditionGradingCheck",
+      "type": "object"
+    },
+    "GradedDimensionScore": {
+      "additionalProperties": false,
+      "description": "One dimension of one condition on one case.",
+      "properties": {
+        "case_ref": {
+          "title": "Case Ref",
+          "type": "string"
+        },
+        "condition_id": {
+          "title": "Condition Id",
+          "type": "string"
+        },
+        "dimension": {
+          "title": "Dimension",
+          "type": "string"
+        },
+        "basis": {
+          "enum": [
+            "measured_from_artifacts",
+            "gold_compared",
+            "not_computable_missing_gold",
+            "not_computable_missing_artifact"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "score": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Score"
+        },
+        "numerator": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Numerator"
+        },
+        "denominator": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Denominator"
+        },
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "case_ref",
+        "condition_id",
+        "dimension",
+        "basis"
+      ],
+      "title": "GradedDimensionScore",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "report_id": {
+      "title": "Report Id",
+      "type": "string"
+    },
+    "comparison_report_ref": {
+      "title": "Comparison Report Ref",
+      "type": "string"
+    },
+    "split_id": {
+      "title": "Split Id",
+      "type": "string"
+    },
+    "graded_partition": {
+      "enum": [
+        "development",
+        "holdout"
+      ],
+      "title": "Graded Partition",
+      "type": "string"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    },
+    "condition_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Condition Ids",
+      "type": "array"
+    },
+    "case_count": {
+      "minimum": 0,
+      "title": "Case Count",
+      "type": "integer"
+    },
+    "scores": {
+      "items": {
+        "$ref": "#/$defs/GradedDimensionScore"
+      },
+      "title": "Scores",
+      "type": "array"
+    },
+    "aggregates": {
+      "items": {
+        "$ref": "#/$defs/ConditionDimensionAggregate"
+      },
+      "title": "Aggregates",
+      "type": "array"
+    },
+    "gold_coverage_complete": {
+      "title": "Gold Coverage Complete",
+      "type": "boolean"
+    },
+    "cases_missing_gold": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Cases Missing Gold",
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/ConditionGradingCheck"
+      },
+      "minItems": 1,
+      "title": "Checks",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "ranking_supported": {
+      "title": "Ranking Supported",
+      "type": "boolean"
+    },
+    "ranking_note": {
+      "title": "Ranking Note",
+      "type": "string"
+    },
+    "required_next_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Next Gates",
+      "type": "array"
+    },
+    "data_scope": {
+      "const": "synthetic_only",
+      "default": "synthetic_only",
+      "title": "Data Scope",
+      "type": "string"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Human Review Required",
+      "type": "boolean"
+    },
+    "external_writes_performed": {
+      "const": false,
+      "default": false,
+      "title": "External Writes Performed",
+      "type": "boolean"
+    },
+    "lake_write_performed": {
+      "const": false,
+      "default": false,
+      "title": "Lake Write Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "report_id",
+    "comparison_report_ref",
+    "split_id",
+    "graded_partition",
+    "generated_at",
+    "condition_ids",
+    "case_count",
+    "gold_coverage_complete",
+    "checks",
+    "status",
+    "ranking_supported",
+    "ranking_note"
+  ],
+  "title": "ConditionGradingReport",
+  "type": "object"
+}

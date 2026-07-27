@@ -1,0 +1,46 @@
+{
+  "additionalProperties": false,
+  "description": "Mean of one dimension for one condition over the computable cases.",
+  "properties": {
+    "condition_id": {
+      "title": "Condition Id",
+      "type": "string"
+    },
+    "dimension": {
+      "title": "Dimension",
+      "type": "string"
+    },
+    "mean_score": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Mean Score"
+    },
+    "computable_case_count": {
+      "minimum": 0,
+      "title": "Computable Case Count",
+      "type": "integer"
+    },
+    "total_case_count": {
+      "minimum": 1,
+      "title": "Total Case Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "condition_id",
+    "dimension",
+    "computable_case_count",
+    "total_case_count"
+  ],
+  "title": "ConditionDimensionAggregate",
+  "type": "object"
+}

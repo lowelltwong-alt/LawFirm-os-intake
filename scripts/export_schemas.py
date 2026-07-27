@@ -26,6 +26,10 @@ from lawfirm_os_intake.lessons import (  # noqa: E402
 from lawfirm_os_intake.outbox import CrossingProof, CrossingRequest  # noqa: E402
 from lawfirm_os_intake.models import (  # noqa: E402
     ConditionComparisonCheck,
+    ConditionDimensionAggregate,
+    ConditionGradingCheck,
+    ConditionGradingReport,
+    GradedDimensionScore,
     ConditionComparisonReport,
     ConditionPairDelta,
     ConditionRunRecord,
@@ -1244,6 +1248,10 @@ MODELS = {
     "condition-pair-delta.schema.json": ConditionPairDelta,
     "condition-comparison-check.schema.json": ConditionComparisonCheck,
     "condition-comparison-report.schema.json": ConditionComparisonReport,
+    "graded-dimension-score.schema.json": GradedDimensionScore,
+    "condition-dimension-aggregate.schema.json": ConditionDimensionAggregate,
+    "condition-grading-check.schema.json": ConditionGradingCheck,
+    "condition-grading-report.schema.json": ConditionGradingReport,
     "run-ledger-integrity-report.schema.json": RunLedgerIntegrityReport,
     "dad-review-issue-record.schema.json": DADReviewIssueRecord,
     "dad-review-issue-outbox-mail.schema.json": DADReviewIssueOutboxMail,
