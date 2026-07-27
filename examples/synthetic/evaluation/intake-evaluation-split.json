@@ -1,0 +1,150 @@
+{
+  "schema_version": "0.1",
+  "split_id": "intake-evaluation-split.v1",
+  "description": "Development/holdout partition of the synthetic inbound corpus for comparative evaluation of implementation strategies. Digests are pinned so that editing a holdout case after review is detectable.",
+  "reviewed": true,
+  "reviewer_id": "lowell-t-wong",
+  "reviewed_at": "2026-07-27",
+  "data_scope": "synthetic_only",
+  "assignments": [
+    {
+      "fixture_ref": "examples/synthetic/inbound/carrier-assignment-auto-bi.json",
+      "partition": "development",
+      "fixture_digest": "sha256:bdd748ce2c33bcaf48cd9c3f0661dc77da0398bb8e966aea21140bae3d68e688",
+      "rationale": "Available for development. Used to build and debug the deterministic pipeline, so results measured on it are not evidence of generalisation.",
+      "gold_refs": []
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/carrier-assignment-medmal.json",
+      "partition": "development",
+      "fixture_digest": "sha256:c07031e88ce91efe96cb9830986b84bd686500bcea8449ff087f49831953c36e",
+      "rationale": "Available for development. Used to build and debug the deterministic pipeline, so results measured on it are not evidence of generalisation.",
+      "gold_refs": [
+        "examples/synthetic/gold/carrier-assignment-medmal-hours-only.fixture-gold.json"
+      ]
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/correspondence-dump.json",
+      "partition": "development",
+      "fixture_digest": "sha256:e3980cdd3aa8620cdd2b0073fffeaab4eed0ad7a500c46d99636451a71a0e5a9",
+      "rationale": "Available for development. Used to build and debug the deterministic pipeline, so results measured on it are not evidence of generalisation.",
+      "gold_refs": []
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/demand-letter.json",
+      "partition": "development",
+      "fixture_digest": "sha256:cc2b23413a3083aec18c54a70d041f1431b831bbe1aa9fec9d7ef4764048f7d7",
+      "rationale": "Available for development. Used to build and debug the deterministic pipeline, so results measured on it are not evidence of generalisation.",
+      "gold_refs": []
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/help-email.json",
+      "partition": "development",
+      "fixture_digest": "sha256:06b27ac8521998c2f39699624540d0a175a1f5c722170c655252885db1a390ab",
+      "rationale": "Available for development. Used to build and debug the deterministic pipeline, so results measured on it are not evidence of generalisation.",
+      "gold_refs": []
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/high-volume-ingestion-proxy.json",
+      "partition": "development",
+      "fixture_digest": "sha256:edb0c6f643b06f48bb39cafe2ab7e936a07d6680960e94f1a81b3281cc33b88e",
+      "rationale": "Available for development. Used to build and debug the deterministic pipeline, so results measured on it are not evidence of generalisation.",
+      "gold_refs": []
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/holdout-carrier-client-role-matrix.json",
+      "partition": "holdout",
+      "fixture_digest": "sha256:6b8cc53f300b041795aed48fbc4f15dbc7cad698464f09bd246d3bc85a63b44c",
+      "rationale": "Reserved for evaluation only. Adversarial or boundary case authored to probe a specific failure mode; developing against it would make any score on it unattributable.",
+      "gold_refs": []
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/holdout-correspondence-dump-message-boundaries.json",
+      "partition": "holdout",
+      "fixture_digest": "sha256:30530d8891ed493e1f97daa74ef8ef590df55e1e18d0a81f01dcf340ddafeac8",
+      "rationale": "Reserved for evaluation only. Adversarial or boundary case authored to probe a specific failure mode; developing against it would make any score on it unattributable.",
+      "gold_refs": []
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/holdout-duplicate-missing-attachment.json",
+      "partition": "holdout",
+      "fixture_digest": "sha256:1882b2eb0a1c479ebe92a8da08bcdff6bef29560c9ea9feea4b501eb863e8637",
+      "rationale": "Reserved for evaluation only. Adversarial or boundary case authored to probe a specific failure mode; developing against it would make any score on it unattributable.",
+      "gold_refs": []
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/holdout-misleading-sender-role-ambiguity.json",
+      "partition": "holdout",
+      "fixture_digest": "sha256:af10183392ee7370f8f1a3ebdc6772e6e71feb08603b33489ab34e5821eaa424",
+      "rationale": "Reserved for evaluation only. Adversarial or boundary case authored to probe a specific failure mode; developing against it would make any score on it unattributable.",
+      "gold_refs": []
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/holdout-unread-source.json",
+      "partition": "holdout",
+      "fixture_digest": "sha256:b7e752245704c5cb71ad9b7f2ccf417e7bb1c3c364089f62ae487c0b1490566a",
+      "rationale": "Reserved for evaluation only. Adversarial or boundary case authored to probe a specific failure mode; developing against it would make any score on it unattributable.",
+      "gold_refs": []
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/linking-bridge-document.source-bundle.json",
+      "partition": "development",
+      "fixture_digest": "sha256:0966e2f1f19436d48fbfeecca7de3d0f5c03e841f60720493637dc79adf02beb",
+      "rationale": "Available for development. Used to build and debug the deterministic pipeline, so results measured on it are not evidence of generalisation.",
+      "gold_refs": []
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/linking-claim-number-reuse.source-bundle.json",
+      "partition": "development",
+      "fixture_digest": "sha256:a71c4aae65492bde1c76916ba498e3ce0baa686a333b1113a6b57fa56aba92aa",
+      "rationale": "Available for development. Used to build and debug the deterministic pipeline, so results measured on it are not evidence of generalisation.",
+      "gold_refs": []
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/linking-no-keys-attachment.source-bundle.json",
+      "partition": "development",
+      "fixture_digest": "sha256:e4d07b9e19a2afa670f7841ecb5acee58bd997f67be7871d74e75aec283b6075",
+      "rationale": "Available for development. Used to build and debug the deterministic pipeline, so results measured on it are not evidence of generalisation.",
+      "gold_refs": []
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/linking-policy-shared.source-bundle.json",
+      "partition": "development",
+      "fixture_digest": "sha256:1703621327eaa91b6a3f4f68738e44659d9445800667d3ab532860cfb7b6139a",
+      "rationale": "Available for development. Used to build and debug the deterministic pipeline, so results measured on it are not evidence of generalisation.",
+      "gold_refs": []
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/linking-thread-drift.source-bundle.json",
+      "partition": "development",
+      "fixture_digest": "sha256:108696882c4a24eb13164e4b83e5e6bf3c0f6de74d9b4f62d36c3c1a7e3add0e",
+      "rationale": "Available for development. Used to build and debug the deterministic pipeline, so results measured on it are not evidence of generalisation.",
+      "gold_refs": []
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/linking-two-matters-one-sender.source-bundle.json",
+      "partition": "development",
+      "fixture_digest": "sha256:a56acc5e3364124e5d31345b37cc4525cfca74410b2efded43913d10743d8f49",
+      "rationale": "Available for development. Used to build and debug the deterministic pipeline, so results measured on it are not evidence of generalisation.",
+      "gold_refs": []
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/north-star-messy-intake.json",
+      "partition": "development",
+      "fixture_digest": "sha256:142e2f29d1ffb6a677554c94a3a9bc195771ce95f8ec645a4b4f9182bb607e24",
+      "rationale": "Available for development. Used to build and debug the deterministic pipeline, so results measured on it are not evidence of generalisation.",
+      "gold_refs": [
+        "examples/synthetic/gold/north-star-messy-intake.fixture-gold.json"
+      ]
+    },
+    {
+      "fixture_ref": "examples/synthetic/inbound/prompt-injection-email.json",
+      "partition": "development",
+      "fixture_digest": "sha256:f56b08c7b50359671b85edaa15e5be03a407147888845281aa86b7ffa1f7a1a0",
+      "rationale": "Available for development. Used to build and debug the deterministic pipeline, so results measured on it are not evidence of generalisation.",
+      "gold_refs": []
+    }
+  ],
+  "candidate_only": true,
+  "non_authoritative": true
+}

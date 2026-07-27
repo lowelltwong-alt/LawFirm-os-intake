@@ -22905,3 +22905,102 @@ class SyntheticConfigurationRegenerationBindingReport(StrictModel):
 
 
 UIReviewDataBundle.model_rebuild()
+
+
+# ---------------------------------------------------------------------------
+# Evaluation split (Wave 3a) — a partition that gates SCORING.
+#
+# The repo already has holdout machinery, but it answers a different question:
+# `SyntheticFixtureExpansionHoldoutSpec` is a coverage audit, and
+# `holdout_excluded_from_prompt_assembly` keeps a case out of model-visible
+# context. Neither says "this case is reserved for evaluation; do not develop
+# against it and do not tune on it." Comparative evaluation needs that, because
+# a result measured on cases used during development is not evidence.
+#
+# The partition is recorded as data with pinned content digests rather than
+# inferred from a filename convention, so contamination is detectable: editing
+# a holdout fixture after the split was pinned breaks its digest and fails the
+# audit loudly instead of silently changing what "held out" means.
+# ---------------------------------------------------------------------------
+
+EvaluationPartition = Literal["development", "holdout"]
+
+
+class EvaluationSplitAssignment(StrictModel):
+    """One fixture's partition assignment, pinned by content digest."""
+
+    fixture_ref: str
+    partition: EvaluationPartition
+    fixture_digest: str
+    rationale: str
+    gold_refs: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _digest_shape(self) -> "EvaluationSplitAssignment":
+        if not self.fixture_digest.startswith("sha256:"):
+            raise ValueError("fixture_digest must be a sha256: prefixed digest")
+        if not self.rationale.strip():
+            raise ValueError("each assignment requires a non-empty rationale")
+        return self
+
+
+class EvaluationSplitManifest(StrictModel):
+    """The reviewed development/holdout partition for comparative evaluation."""
+
+    schema_version: str = "0.1"
+    split_id: str
+    description: str
+    reviewed: bool
+    reviewer_id: str
+    reviewed_at: str
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    assignments: list[EvaluationSplitAssignment] = Field(min_length=1)
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _split_integrity(self) -> "EvaluationSplitManifest":
+        refs = [item.fixture_ref for item in self.assignments]
+        if len(refs) != len(set(refs)):
+            raise ValueError("a fixture may not appear twice in the split manifest")
+        if not any(item.partition == "holdout" for item in self.assignments):
+            raise ValueError("split manifest must reserve at least one holdout fixture")
+        if not any(item.partition == "development" for item in self.assignments):
+            raise ValueError("split manifest must retain at least one development fixture")
+        if not self.reviewed:
+            raise ValueError("an unreviewed split manifest may not gate scoring")
+        return self
+
+
+class EvaluationSplitCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    offending_refs: list[str] = Field(default_factory=list)
+
+
+class EvaluationSplitAuditReport(StrictModel):
+    schema_version: str = "0.1"
+    report_id: str
+    split_id: str
+    split_manifest_ref: str
+    generated_at: str
+    status: Literal["passed", "failed"]
+    development_count: int = Field(ge=0)
+    holdout_count: int = Field(ge=0)
+    checks: list[EvaluationSplitCheck] = Field(min_length=1)
+    required_next_gates: list[str] = Field(default_factory=list)
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    human_review_required: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def _status_matches_checks(self) -> "EvaluationSplitAuditReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        expected = "failed" if failed else "passed"
+        if self.status != expected:
+            raise ValueError("report status must match the presence of failed checks")
+        return self
