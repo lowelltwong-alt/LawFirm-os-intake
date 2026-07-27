@@ -337,9 +337,7 @@ def main() -> int:
             text=True,
         )
         ignored = set(probe.stdout.splitlines())
-        not_ignored = [
-            p for p in forbidden if str(p.relative_to(ROOT)) not in ignored
-        ]
+        not_ignored = [p for p in forbidden if str(p.relative_to(ROOT)) not in ignored]
         if not_ignored:
             fail("generated cache/package metadata is present and not gitignored")
 
