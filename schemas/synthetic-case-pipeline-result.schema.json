@@ -53,6 +53,122 @@
       "title": "PipelineBudgetStage",
       "type": "object"
     },
+    "PipelineCanonicalPricingStage": {
+      "additionalProperties": false,
+      "description": "DT3: the canonical engine's plan riding alongside legacy sizing.\n\nINFORMATIONAL ONLY \u2014 legacy sizing remains authoritative and this stage can\nnever block the chain. A line the engine cannot price yet is a typed\n``not_priced`` with a reason, never a silent omission.",
+      "properties": {
+        "status": {
+          "enum": [
+            "priced_candidate",
+            "not_priced"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "default": "",
+          "title": "Reason",
+          "type": "string"
+        },
+        "profile_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile Id"
+        },
+        "plan_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Plan Id"
+        },
+        "contract_digest": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contract Digest"
+        },
+        "canonical_total_minor_units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Canonical Total Minor Units"
+        },
+        "legacy_sized_total_minor_units": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Legacy Sized Total Minor Units"
+        },
+        "neutral_assumed_driver_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Neutral Assumed Driver Count",
+          "type": "integer"
+        },
+        "required_missing_driver_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Missing Driver Ids",
+          "type": "array"
+        },
+        "authoritative": {
+          "const": false,
+          "default": false,
+          "title": "Authoritative",
+          "type": "boolean"
+        },
+        "candidate_only": {
+          "const": true,
+          "default": true,
+          "title": "Candidate Only",
+          "type": "boolean"
+        },
+        "note": {
+          "default": "canonical engine is a candidate successor; legacy sizing remains authoritative; totals are not expected to match (different bases)",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "PipelineCanonicalPricingStage",
+      "type": "object"
+    },
     "PipelineConfirmStage": {
       "additionalProperties": false,
       "properties": {
@@ -276,6 +392,17 @@
     },
     "export": {
       "$ref": "#/$defs/PipelineExportStage"
+    },
+    "canonical": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PipelineCanonicalPricingStage"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "status": {
       "enum": [
