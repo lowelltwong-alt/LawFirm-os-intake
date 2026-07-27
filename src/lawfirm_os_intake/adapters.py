@@ -336,6 +336,17 @@ def _packet_typed_json_valid(packet: IntakePreflightPacket) -> bool:
     return True
 
 
+def preflight_projection(packet: IntakePreflightPacket) -> dict[str, Any]:
+    """Comparison-stable projection of a preflight packet.
+
+    Public because condition comparison scores conditions on this surface; it is
+    the one shape in the repo designed to be compared across runs rather than
+    read as output.
+    """
+
+    return _preflight_projection(packet)
+
+
 def _preflight_projection(packet: IntakePreflightPacket) -> dict[str, Any]:
     return {
         "schema_ref": "schemas/intake-preflight-packet.schema.json",

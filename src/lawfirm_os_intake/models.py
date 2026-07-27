@@ -23004,3 +23004,134 @@ class EvaluationSplitAuditReport(StrictModel):
         if self.status != expected:
             raise ValueError("report status must match the presence of failed checks")
         return self
+
+
+# ---------------------------------------------------------------------------
+# Condition comparison (Wave 3b) — records keyed on (case x condition).
+#
+# Every existing report in this repo is single-condition. `ModelAdapterReport`
+# carries comparison fields, but `structured_candidate_hash` is currently set
+# equal to `deterministic_baseline_hash`, so that comparison is a tautology
+# until a genuinely different condition exists. Nothing here is keyed on a
+# (case, condition) pair, which is what a comparative claim requires.
+#
+# The budget ceiling is a field on the spec and a checked property of the run,
+# not a note in a document: a condition that is not permitted to call a model
+# must be shown, after the fact, not to have called one.
+# ---------------------------------------------------------------------------
+
+
+class EvaluationConditionSpec(StrictModel):
+    """One implementation strategy to be scored on the shared held-out set."""
+
+    condition_id: str
+    description: str
+    adapter: Literal["deterministic", "structured-model"]
+    practice_profile_ref: str
+    model_calls_permitted: int = Field(default=0, ge=0)
+    config_digest: str
+
+    @model_validator(mode="after")
+    def _condition_shape(self) -> "EvaluationConditionSpec":
+        if not self.condition_id.strip():
+            raise ValueError("condition_id is required")
+        if not self.config_digest.startswith("sha256:"):
+            raise ValueError("config_digest must be a sha256: prefixed digest")
+        # The deterministic adapter makes no provider call by construction, so a
+        # spec claiming otherwise is incoherent rather than merely over-budget.
+        if self.adapter == "deterministic" and self.model_calls_permitted:
+            raise ValueError("the deterministic condition may not permit model calls")
+        return self
+
+
+class ConditionRunRecord(StrictModel):
+    """The outcome of one condition on one case. The comparative unit."""
+
+    schema_version: str = "0.1"
+    record_id: str
+    case_ref: str
+    case_digest: str
+    partition: EvaluationPartition
+    condition_id: str
+    config_digest: str
+    status: Literal["completed", "failed"]
+    outcome_projection_digest: str
+    model_calls_permitted: int = Field(ge=0)
+    provider_call_performed: Literal[False] = False
+    run_dir_ref: str
+    failure_reason: str = ""
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _record_shape(self) -> "ConditionRunRecord":
+        if self.status == "failed" and not self.failure_reason.strip():
+            raise ValueError("a failed condition run must record why")
+        if self.status == "completed" and not self.outcome_projection_digest.startswith("sha256:"):
+            raise ValueError("a completed run must carry a projection digest")
+        return self
+
+
+class ConditionComparisonCheck(StrictModel):
+    check_id: str
+    status: Literal["passed", "failed"]
+    message: str
+    offending_refs: list[str] = Field(default_factory=list)
+
+
+class ConditionPairDelta(StrictModel):
+    """Whether two conditions agreed on a case. Agreement is not correctness."""
+
+    case_ref: str
+    left_condition_id: str
+    right_condition_id: str
+    outcomes_identical: bool
+    left_projection_digest: str
+    right_projection_digest: str
+
+
+class ConditionComparisonReport(StrictModel):
+    schema_version: str = "0.1"
+    report_id: str
+    split_id: str
+    split_manifest_ref: str
+    generated_at: str
+    scored_partition: EvaluationPartition
+    condition_ids: list[str] = Field(min_length=1)
+    case_count: int = Field(ge=0)
+    completed_run_count: int = Field(ge=0)
+    failed_run_count: int = Field(ge=0)
+    max_model_calls_permitted: int = Field(ge=0)
+    provider_calls_performed: int = Field(default=0, ge=0)
+    records: list[ConditionRunRecord] = Field(default_factory=list)
+    pair_deltas: list[ConditionPairDelta] = Field(default_factory=list)
+    checks: list[ConditionComparisonCheck] = Field(min_length=1)
+    status: Literal["passed", "failed"]
+    comparative_claim_supported: bool
+    comparative_claim_note: str
+    required_next_gates: list[str] = Field(default_factory=list)
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+    human_review_required: Literal[True] = True
+    external_writes_performed: Literal[False] = False
+    lake_write_performed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def _report_integrity(self) -> "ConditionComparisonReport":
+        failed = [check for check in self.checks if check.status == "failed"]
+        if self.status != ("failed" if failed else "passed"):
+            raise ValueError("report status must match the presence of failed checks")
+        if self.provider_calls_performed:
+            raise ValueError("a zero-spend comparison may not record a provider call")
+        # A single condition produces a baseline, never a comparison. Saying so
+        # in the record prevents the report being read as evidence of a
+        # comparison that did not happen.
+        supported = len(set(self.condition_ids)) > 1 and self.completed_run_count > 0
+        if self.comparative_claim_supported != supported:
+            raise ValueError(
+                "comparative_claim_supported must reflect whether >1 condition actually ran"
+            )
+        if not self.comparative_claim_note.strip():
+            raise ValueError("comparative_claim_note is required")
+        return self

@@ -1,0 +1,40 @@
+{
+  "additionalProperties": false,
+  "description": "Whether two conditions agreed on a case. Agreement is not correctness.",
+  "properties": {
+    "case_ref": {
+      "title": "Case Ref",
+      "type": "string"
+    },
+    "left_condition_id": {
+      "title": "Left Condition Id",
+      "type": "string"
+    },
+    "right_condition_id": {
+      "title": "Right Condition Id",
+      "type": "string"
+    },
+    "outcomes_identical": {
+      "title": "Outcomes Identical",
+      "type": "boolean"
+    },
+    "left_projection_digest": {
+      "title": "Left Projection Digest",
+      "type": "string"
+    },
+    "right_projection_digest": {
+      "title": "Right Projection Digest",
+      "type": "string"
+    }
+  },
+  "required": [
+    "case_ref",
+    "left_condition_id",
+    "right_condition_id",
+    "outcomes_identical",
+    "left_projection_digest",
+    "right_projection_digest"
+  ],
+  "title": "ConditionPairDelta",
+  "type": "object"
+}

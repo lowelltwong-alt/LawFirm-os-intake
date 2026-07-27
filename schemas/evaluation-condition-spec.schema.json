@@ -1,0 +1,45 @@
+{
+  "additionalProperties": false,
+  "description": "One implementation strategy to be scored on the shared held-out set.",
+  "properties": {
+    "condition_id": {
+      "title": "Condition Id",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "adapter": {
+      "enum": [
+        "deterministic",
+        "structured-model"
+      ],
+      "title": "Adapter",
+      "type": "string"
+    },
+    "practice_profile_ref": {
+      "title": "Practice Profile Ref",
+      "type": "string"
+    },
+    "model_calls_permitted": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Model Calls Permitted",
+      "type": "integer"
+    },
+    "config_digest": {
+      "title": "Config Digest",
+      "type": "string"
+    }
+  },
+  "required": [
+    "condition_id",
+    "description",
+    "adapter",
+    "practice_profile_ref",
+    "config_digest"
+  ],
+  "title": "EvaluationConditionSpec",
+  "type": "object"
+}

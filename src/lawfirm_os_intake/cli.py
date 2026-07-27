@@ -28,6 +28,7 @@ from .budget_fixture_bindings import run_budget_fixture_binding_candidates
 from .budget_fixture_update_pr_package import run_budget_fixture_update_pr_package
 from .budget_fixture_update_review import run_budget_fixture_update_review_record
 from .benchmarks import run_benchmark_replay_audit
+from .condition_comparison import load_condition_specs, run_condition_comparison
 from .evaluation_split import run_evaluation_split_audit
 from .budget_form import build_budget_form_template_audit_report, render_budget_form
 from .budget_human_review_outcome_owner_adoption import (
@@ -473,6 +474,37 @@ def _parser() -> argparse.ArgumentParser:
         help="Repository root for relative fixture refs; defaults to current directory.",
     )
     evaluation_split_audit.add_argument(
+        "--generated-at",
+        help="Optional fixed timestamp for deterministic tests and replayed reports.",
+    )
+
+    condition_comparison = sub.add_parser(
+        "run-condition-comparison",
+        help=(
+            "Run each declared implementation condition over the held-out cases and record "
+            "the outcome of every (case, condition) pair. Records; does not rank."
+        ),
+    )
+    condition_comparison.add_argument("--split-manifest", required=True)
+    condition_comparison.add_argument("--condition-specs", required=True)
+    condition_comparison.add_argument("--out-dir", required=True)
+    condition_comparison.add_argument("--repo-root", default=".")
+    condition_comparison.add_argument(
+        "--scored-partition",
+        default="holdout",
+        choices=["holdout", "development"],
+        help="Which partition to score. Defaults to holdout; development is for debugging only.",
+    )
+    condition_comparison.add_argument(
+        "--max-model-calls",
+        type=int,
+        default=0,
+        help=(
+            "Hard ceiling on provider calls, enforced before any case runs. Defaults to 0: "
+            "raising it is a deliberate spend decision."
+        ),
+    )
+    condition_comparison.add_argument(
         "--generated-at",
         help="Optional fixed timestamp for deterministic tests and replayed reports.",
     )
@@ -3075,6 +3107,38 @@ def main(argv: list[str] | None = None) -> int:
             )
             _print(report)
             return 0 if report["status"] == "passed" else 1
+
+        if args.command == "run-condition-comparison":
+            report, run_dir = run_condition_comparison(
+                split_manifest_path=args.split_manifest,
+                conditions=load_condition_specs(args.condition_specs),
+                out_dir=args.out_dir,
+                repo_root=args.repo_root,
+                scored_partition=args.scored_partition,
+                max_model_calls=args.max_model_calls,
+                generated_at=args.generated_at,
+            )
+            _print(
+                {
+                    "status": report.status,
+                    "report_id": report.report_id,
+                    "condition_ids": report.condition_ids,
+                    "case_count": report.case_count,
+                    "completed_run_count": report.completed_run_count,
+                    "failed_run_count": report.failed_run_count,
+                    "max_model_calls_permitted": report.max_model_calls_permitted,
+                    "provider_calls_performed": report.provider_calls_performed,
+                    "comparative_claim_supported": report.comparative_claim_supported,
+                    "comparative_claim_note": report.comparative_claim_note,
+                    "failed_checks": [c.check_id for c in report.checks if c.status == "failed"],
+                    "candidate_only": report.candidate_only,
+                    "human_review_required": report.human_review_required,
+                    "external_writes_performed": report.external_writes_performed,
+                    "lake_write_performed": report.lake_write_performed,
+                    "run_dir": str(run_dir),
+                }
+            )
+            return 0
 
         if args.command == "audit-evaluation-split":
             report, run_dir = run_evaluation_split_audit(

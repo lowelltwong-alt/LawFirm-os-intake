@@ -25,6 +25,11 @@ from lawfirm_os_intake.lessons import (  # noqa: E402
 )
 from lawfirm_os_intake.outbox import CrossingProof, CrossingRequest  # noqa: E402
 from lawfirm_os_intake.models import (  # noqa: E402
+    ConditionComparisonCheck,
+    ConditionComparisonReport,
+    ConditionPairDelta,
+    ConditionRunRecord,
+    EvaluationConditionSpec,
     EvaluationSplitAssignment,
     EvaluationSplitAuditReport,
     EvaluationSplitCheck,
@@ -1234,6 +1239,11 @@ MODELS = {
     "evaluation-split-manifest.schema.json": EvaluationSplitManifest,
     "evaluation-split-check.schema.json": EvaluationSplitCheck,
     "evaluation-split-audit-report.schema.json": EvaluationSplitAuditReport,
+    "evaluation-condition-spec.schema.json": EvaluationConditionSpec,
+    "condition-run-record.schema.json": ConditionRunRecord,
+    "condition-pair-delta.schema.json": ConditionPairDelta,
+    "condition-comparison-check.schema.json": ConditionComparisonCheck,
+    "condition-comparison-report.schema.json": ConditionComparisonReport,
     "run-ledger-integrity-report.schema.json": RunLedgerIntegrityReport,
     "dad-review-issue-record.schema.json": DADReviewIssueRecord,
     "dad-review-issue-outbox-mail.schema.json": DADReviewIssueOutboxMail,
