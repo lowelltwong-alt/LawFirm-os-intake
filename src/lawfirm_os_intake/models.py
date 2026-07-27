@@ -10574,6 +10574,146 @@ class CanonicalPricedWorkPlan(StrictModel):
         return self
 
 
+# --- DT4: driver-stratified synthetic matters (generation-spec v2) ------------
+#
+# Every explicit driver level MUST be expressed as observable evidence inside the
+# rendered documents (the marathon's biggest gap: unobservable drivers), and the
+# documents NEVER state the budget - dollars are computed deterministically
+# downstream by the canonical pricing engine. All validators fail closed.
+
+
+class RenderedMatterDocument(StrictModel):
+    doc_type: Literal[
+        "complaint",
+        "answer",
+        "expert_disclosure",
+        "demand_letter",
+        "scheduling_order",
+        "discovery_requests",
+    ]
+    text: str
+
+    @model_validator(mode="after")
+    def _non_empty(self) -> "RenderedMatterDocument":
+        if not self.text.strip():
+            raise ValueError("a rendered document cannot be empty")
+        return self
+
+
+class StratifiedSyntheticMatter(StrictModel):
+    """One driver-stratified synthetic med-mal matter with observable evidence."""
+
+    schema_version: str = "0.1"
+    case_id: str
+    line_id: str
+    subtype: str
+    difficulty: Literal["clear", "moderate", "hard"]
+    explicit_driver_levels: dict[str, str]
+    observable_driver_evidence: dict[str, str]
+    documents: list[RenderedMatterDocument]
+    signal_terms_used: list[str] = Field(default_factory=list)
+    distractor_terms_used: list[str] = Field(default_factory=list)
+    exposure_minor_units: int = Field(gt=0)
+    profile_id: str
+    plan_id: str
+    canonical_total_minor_units: int = Field(gt=0)
+    contract_digest: str
+    holdout_split: Literal["train", "holdout"]
+    budget_stated_in_documents: Literal[False] = False
+    reference_class_only: Literal[True] = True
+    calibrated: Literal[False] = False
+    real_world_accuracy_claim: Literal[False] = False
+    data_scope: Literal["synthetic_only"] = "synthetic_only"
+    candidate_only: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _matter_fail_closed(self) -> "StratifiedSyntheticMatter":
+        if not self.documents:
+            raise ValueError("a stratified matter requires rendered documents")
+        if not self.explicit_driver_levels:
+            raise ValueError("a stratified matter requires explicit driver levels")
+        # Observability: evidence for EVERY explicit driver, and each snippet must
+        # appear verbatim in at least one rendered document.
+        if set(self.observable_driver_evidence) != set(self.explicit_driver_levels):
+            raise ValueError("observable_driver_evidence must cover exactly the explicit drivers")
+        texts = [doc.text for doc in self.documents]
+        for driver_id, snippet in self.observable_driver_evidence.items():
+            if not snippet.strip():
+                raise ValueError(f"driver {driver_id!r} has an empty evidence snippet")
+            if not any(snippet in text for text in texts):
+                raise ValueError(
+                    f"evidence for driver {driver_id!r} does not appear in any document"
+                )
+        # The documents never state the computed budget (dollars are deterministic
+        # downstream); reject a standalone occurrence of the plan total.
+        import re as _re
+
+        amount = f"${self.canonical_total_minor_units // 100:,}"
+        pattern = _re.compile(r"(?<![\d,])" + _re.escape(amount) + r"(?![\d,])")
+        for text in texts:
+            if pattern.search(text):
+                raise ValueError("rendered documents must never state the computed budget")
+        # Anti-tautology shape: hard matters carry distractor terms; clear are clean.
+        if self.difficulty == "hard" and len(self.distractor_terms_used) < 2:
+            raise ValueError("a hard matter requires at least two distractor terms")
+        if self.difficulty == "clear" and self.distractor_terms_used:
+            raise ValueError("a clear matter cannot carry distractor terms")
+        return self
+
+
+class StratifiedManifestEntry(StrictModel):
+    case_id: str
+    subtype: str
+    difficulty: Literal["clear", "moderate", "hard"]
+    holdout_split: Literal["train", "holdout"]
+    plan_id: str
+
+
+class StratifiedCorpusManifest(StrictModel):
+    """Frozen manifest for the driver-stratified corpus, recomputed fail-closed."""
+
+    schema_version: str = "0.1"
+    corpus_id: str
+    generator_version: str
+    corpus_seed: int = Field(ge=0)
+    contract_digest: str
+    case_count: int = Field(gt=0)
+    subtype_counts: dict[str, int]
+    difficulty_counts: dict[str, int]
+    train_count: int = Field(ge=0)
+    holdout_count: int = Field(ge=0)
+    cases: list[StratifiedManifestEntry]
+    corpus_digest: str
+    holdout_split_digest: str
+
+    @model_validator(mode="after")
+    def _manifest_fail_closed(self) -> "StratifiedCorpusManifest":
+        if self.case_count != len(self.cases):
+            raise ValueError("manifest case_count does not match its entries")
+        subtype_counts: dict[str, int] = {}
+        difficulty_counts: dict[str, int] = {}
+        train = holdout = 0
+        for entry in self.cases:
+            subtype_counts[entry.subtype] = subtype_counts.get(entry.subtype, 0) + 1
+            difficulty_counts[entry.difficulty] = difficulty_counts.get(entry.difficulty, 0) + 1
+            if entry.holdout_split == "train":
+                train += 1
+            else:
+                holdout += 1
+        if subtype_counts != self.subtype_counts:
+            raise ValueError("manifest subtype_counts do not match its entries")
+        if difficulty_counts != self.difficulty_counts:
+            raise ValueError("manifest difficulty_counts do not match its entries")
+        if train != self.train_count or holdout != self.holdout_count:
+            raise ValueError("manifest split counts do not match its entries")
+        if self.holdout_count == 0:
+            raise ValueError("a stratified corpus requires a non-empty holdout")
+        split_basis = sorted(f"{e.case_id}:{e.holdout_split}" for e in self.cases)
+        if _digest_str_list(split_basis) != self.holdout_split_digest:
+            raise ValueError("holdout_split_digest does not equal the digest of the split pairs")
+        return self
+
+
 class FirmCheckpointCaseDisposition(StrictModel):
     """Firm disposition for one checkpoint case. Real firm review is a human gate;
     synthetic placeholders are explicitly labeled and never real validation."""

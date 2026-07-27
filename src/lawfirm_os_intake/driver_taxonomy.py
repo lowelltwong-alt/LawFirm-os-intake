@@ -194,3 +194,78 @@ def build_canonical_driver_profile(
         required_missing_driver_ids=required_missing,
         exception_candidates=(["missing_required_budget_driver"] if required_missing else []),
     )
+
+
+def build_explicit_canonical_profile(
+    explicit_levels: dict[str, str],
+    *,
+    repo_root: str | Path,
+    line_id: str = "medical_malpractice_defense",
+) -> CanonicalDriverProfile:
+    """Build a profile from EXPLICIT canonical driver levels, fail-closed.
+
+    For callers that know canonical levels directly (e.g. the stratified
+    synthetic generator) — no legacy mapping involved. Unknown driver ids and
+    unknown levels are errors; drivers not supplied become explicit
+    ``not_elicited`` assumptions exactly as in the legacy path."""
+
+    contract = load_driver_taxonomy(repo_root)
+    defs = _driver_defs(contract, line_id)
+    valid_ids = set(line_driver_ids(contract, line_id))
+
+    elicited: dict[str, CanonicalDriverAssignment] = {}
+    for driver_id, level in explicit_levels.items():
+        if driver_id not in valid_ids:
+            raise ValueError(f"unknown canonical driver {driver_id!r} for line {line_id!r}")
+        definition = defs[driver_id]
+        valid_levels = {entry["level"] for entry in definition["levels"]}
+        if level not in valid_levels:
+            raise ValueError(
+                f"driver {driver_id!r} has unknown level {level!r}; valid: {sorted(valid_levels)}"
+            )
+        elicited[driver_id] = CanonicalDriverAssignment(
+            driver_id=driver_id,
+            layer=definition["layer"],
+            level=level,
+            status="elicited",
+            source="explicit",
+        )
+
+    assignments: list[CanonicalDriverAssignment] = []
+    required_missing: list[str] = []
+    for driver_id in line_driver_ids(contract, line_id):
+        if driver_id in elicited:
+            assignments.append(elicited[driver_id])
+            continue
+        definition = defs[driver_id]
+        assignments.append(
+            CanonicalDriverAssignment(
+                driver_id=driver_id,
+                layer=definition["layer"],
+                status="not_elicited",
+                assumption_note=_NOT_ELICITED_NOTE,
+            )
+        )
+        if definition.get("required", False):
+            required_missing.append(driver_id)
+
+    not_elicited_ids = [a.driver_id for a in assignments if a.status == "not_elicited"]
+    basis = {
+        "line_id": line_id,
+        "contract_digest": EXPECTED_CONTRACT_DIGEST,
+        "assignments": [(a.driver_id, a.status, a.level) for a in assignments],
+        "source": "explicit",
+    }
+    profile_id = "driverprofile-" + digest_json(basis).removeprefix("sha256:")[:16]
+    return CanonicalDriverProfile(
+        profile_id=profile_id,
+        line_id=line_id,
+        contract_id=contract["contract_id"],
+        contract_version=contract["version"],
+        contract_digest=EXPECTED_CONTRACT_DIGEST,
+        assignments=assignments,
+        posture_flags={},
+        not_elicited_driver_ids=not_elicited_ids,
+        required_missing_driver_ids=required_missing,
+        exception_candidates=(["missing_required_budget_driver"] if required_missing else []),
+    )
