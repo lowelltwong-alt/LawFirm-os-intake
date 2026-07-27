@@ -53,8 +53,14 @@ RATE_CARD_REF = "config/synthetic-carrier-rate-card.yaml"
 PHASES = ("L100", "L200", "L300", "L400", "L500")
 _QUANTUM = Decimal("0.0001")
 
-# Which CLCM case-type median anchors each line's baseline hours.
-LINE_TO_CLCM_CASE_TYPE = {"medical_malpractice_defense": "professional_malpractice"}
+# Which CLCM case-type median anchors each line's baseline hours (DT5: all four
+# contract lines are CLCM-mapped; each uses its own CLCM stage-share vector).
+LINE_TO_CLCM_CASE_TYPE = {
+    "medical_malpractice_defense": "professional_malpractice",
+    "auto_bodily_injury_defense": "automobile_tort",
+    "general_premises_liability_defense": "premises_liability",
+    "epli_employment_defense": "employment",
+}
 
 # CLCM auto-tort median role mix (75.5 senior / 78 junior / 42.5 paralegal of 196
 # total attorney hours; the only case type with published role detail). Weights
@@ -141,7 +147,7 @@ def build_canonical_priced_work_plan(
         raise ValueError(f"no CLCM baseline mapping for line {profile.line_id!r}")
     baseline = contract["phase_baseline"]
     total_base_hours = Decimal(str(baseline["clcm_case_type_medians"][clcm_case_type]["hours"]))
-    fractions = baseline["fractions"]
+    fractions = baseline["by_case_type"][clcm_case_type]["fractions"]
 
     composition = contract["conventions"]["composition"]
     groups = [set(group) for group in composition.get("correlated_groups", [])]

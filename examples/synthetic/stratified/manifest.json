@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1",
-  "corpus_id": "stratcorpus-b6d759327fea49d8",
+  "corpus_id": "stratcorpus-34b64ffabacf67d9",
   "generator_version": "stratified-corpus-generator.v0_1",
   "corpus_seed": 20260726,
-  "contract_digest": "4fd1f971b46f8983f8bac0f9b81cb2310f69a3853c9d2adb2ea3e227d3403185",
+  "contract_digest": "587e3b92906bfea2de73921a6fcdda578e497f9bf319e2283555ccf7c49d0d88",
   "case_count": 174,
   "subtype_counts": {
     "birth_injury_obstetric": 6,
@@ -27,1220 +27,1220 @@
       "subtype": "birth_injury_obstetric",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-8bcba3105ee7f7cc"
+      "plan_id": "canonpriced-90dd223792933fc4"
     },
     {
       "case_id": "strat-birth_injury_obstetric-catastrophic-3_plus-clear-v1",
       "subtype": "birth_injury_obstetric",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-0a832e8da5ee5bc7"
+      "plan_id": "canonpriced-af4acfc23f836822"
     },
     {
       "case_id": "strat-birth_injury_obstetric-catastrophic-3_plus-moderate-v0",
       "subtype": "birth_injury_obstetric",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-52dc8aaf7db7af30"
+      "plan_id": "canonpriced-25964a6ed01c4cc5"
     },
     {
       "case_id": "strat-birth_injury_obstetric-catastrophic-3_plus-moderate-v1",
       "subtype": "birth_injury_obstetric",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-59f19ea4cf3ea159"
+      "plan_id": "canonpriced-4f55e950e3559657"
     },
     {
       "case_id": "strat-birth_injury_obstetric-catastrophic-3_plus-hard-v0",
       "subtype": "birth_injury_obstetric",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-25bb69303723491d"
+      "plan_id": "canonpriced-7ffa8ff747132c2b"
     },
     {
       "case_id": "strat-birth_injury_obstetric-catastrophic-3_plus-hard-v1",
       "subtype": "birth_injury_obstetric",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-56d09c7a50796b9a"
+      "plan_id": "canonpriced-aa3c00ca885c6fd4"
     },
     {
       "case_id": "strat-failure_to_diagnose-minor-2-clear-v0",
       "subtype": "failure_to_diagnose",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-bf29e00d143dbe92"
+      "plan_id": "canonpriced-57edbe78507f2ee0"
     },
     {
       "case_id": "strat-failure_to_diagnose-minor-2-clear-v1",
       "subtype": "failure_to_diagnose",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-9a50ed904741fa33"
+      "plan_id": "canonpriced-a415fd5f791dd54f"
     },
     {
       "case_id": "strat-failure_to_diagnose-minor-2-moderate-v0",
       "subtype": "failure_to_diagnose",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-dd6f8298966f580e"
+      "plan_id": "canonpriced-16697fb7748ffc44"
     },
     {
       "case_id": "strat-failure_to_diagnose-minor-2-moderate-v1",
       "subtype": "failure_to_diagnose",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-9a071b90ea6734ad"
+      "plan_id": "canonpriced-4eb3b49ae0985059"
     },
     {
       "case_id": "strat-failure_to_diagnose-minor-2-hard-v0",
       "subtype": "failure_to_diagnose",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-1856b44998394443"
+      "plan_id": "canonpriced-58665b8c7018089c"
     },
     {
       "case_id": "strat-failure_to_diagnose-minor-2-hard-v1",
       "subtype": "failure_to_diagnose",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-f5df2417b4de7c4b"
+      "plan_id": "canonpriced-2a79ca7fb97a91b8"
     },
     {
       "case_id": "strat-failure_to_diagnose-serious-2-clear-v0",
       "subtype": "failure_to_diagnose",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-364513fbe8f27168"
+      "plan_id": "canonpriced-c0d1a5ff6ef2e886"
     },
     {
       "case_id": "strat-failure_to_diagnose-serious-2-clear-v1",
       "subtype": "failure_to_diagnose",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-0fe84af46d2ce7e9"
+      "plan_id": "canonpriced-139383aed4aab11e"
     },
     {
       "case_id": "strat-failure_to_diagnose-serious-2-moderate-v0",
       "subtype": "failure_to_diagnose",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-7ceb700e9f4c6eb0"
+      "plan_id": "canonpriced-dc65ec9b3675b9e3"
     },
     {
       "case_id": "strat-failure_to_diagnose-serious-2-moderate-v1",
       "subtype": "failure_to_diagnose",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-2ad63f99e0a2b7d4"
+      "plan_id": "canonpriced-873e9dfee317485c"
     },
     {
       "case_id": "strat-failure_to_diagnose-serious-2-hard-v0",
       "subtype": "failure_to_diagnose",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-676dd8732945fde5"
+      "plan_id": "canonpriced-7dc879a1bff2790d"
     },
     {
       "case_id": "strat-failure_to_diagnose-serious-2-hard-v1",
       "subtype": "failure_to_diagnose",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-292a4eb72e281c7b"
+      "plan_id": "canonpriced-7e9699a9ed4917be"
     },
     {
       "case_id": "strat-failure_to_diagnose-catastrophic-2-clear-v0",
       "subtype": "failure_to_diagnose",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-0931288e4d916eec"
+      "plan_id": "canonpriced-002c5117dd4406a0"
     },
     {
       "case_id": "strat-failure_to_diagnose-catastrophic-2-clear-v1",
       "subtype": "failure_to_diagnose",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-fd923fa118257825"
+      "plan_id": "canonpriced-7df020e25236c0a0"
     },
     {
       "case_id": "strat-failure_to_diagnose-catastrophic-2-moderate-v0",
       "subtype": "failure_to_diagnose",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-e8dd30bfaec847bc"
+      "plan_id": "canonpriced-92c4164345573630"
     },
     {
       "case_id": "strat-failure_to_diagnose-catastrophic-2-moderate-v1",
       "subtype": "failure_to_diagnose",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-c517bf66b9a6654e"
+      "plan_id": "canonpriced-63450becf85bb583"
     },
     {
       "case_id": "strat-failure_to_diagnose-catastrophic-2-hard-v0",
       "subtype": "failure_to_diagnose",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-0975bac9f99a88cf"
+      "plan_id": "canonpriced-1fb710ab58a9edfb"
     },
     {
       "case_id": "strat-failure_to_diagnose-catastrophic-2-hard-v1",
       "subtype": "failure_to_diagnose",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-fbebf56ee6cb512b"
+      "plan_id": "canonpriced-54952162b0f0ba67"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-1-clear-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-c18237d9723edad9"
+      "plan_id": "canonpriced-89e6f69424ef4af3"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-1-clear-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-066291a2af93bcd9"
+      "plan_id": "canonpriced-a073a681caa6f260"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-1-moderate-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-a4f079ac5876d0b7"
+      "plan_id": "canonpriced-9e9108203297edd6"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-1-moderate-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-167d9d37a9442394"
+      "plan_id": "canonpriced-63dd1586538aad05"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-1-hard-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-1b77203fe5c234b5"
+      "plan_id": "canonpriced-edae3ac3a78ba1a5"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-1-hard-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-98a5259b4e5f10b9"
+      "plan_id": "canonpriced-33ba800b4c6cda5b"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-2-clear-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-c3b87df39cef2dbf"
+      "plan_id": "canonpriced-34c56f07a96e5031"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-2-clear-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-36df3b51d57f59fc"
+      "plan_id": "canonpriced-9f8b0e65c01f59ee"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-2-moderate-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-aeb4ddf23b6337a7"
+      "plan_id": "canonpriced-bd499a82c8564e71"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-2-moderate-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-ff52e0e394af9807"
+      "plan_id": "canonpriced-d6b5d5fb9b960ef1"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-2-hard-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-c9eb62e1b2c4e3da"
+      "plan_id": "canonpriced-c5494db74aaf8ff8"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-2-hard-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-cc923a2cc3d1dff9"
+      "plan_id": "canonpriced-a5073c21403b935a"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-3_plus-clear-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-af9b8eba97fd3042"
+      "plan_id": "canonpriced-8fd638df47fcb251"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-3_plus-clear-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-f1f03b97d9dc7f69"
+      "plan_id": "canonpriced-a6a03d72da0a1314"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-3_plus-moderate-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-ca20a660c2411b06"
+      "plan_id": "canonpriced-eb9af1e14eb9fb8b"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-3_plus-moderate-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-97907d628a2a698f"
+      "plan_id": "canonpriced-28e694ee8dfa1a91"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-3_plus-hard-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-a42f629142096461"
+      "plan_id": "canonpriced-32c66d91a6c29f2b"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-minor-3_plus-hard-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-b6a30d91b4b869bd"
+      "plan_id": "canonpriced-450debe913b72ffb"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-1-clear-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-a4854e9f4893c56b"
+      "plan_id": "canonpriced-07dc69c057ef1b35"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-1-clear-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-7fcde35db7ba3a23"
+      "plan_id": "canonpriced-5bd226497b9248b3"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-1-moderate-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-a4854e9f4893c56b"
+      "plan_id": "canonpriced-07dc69c057ef1b35"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-1-moderate-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-0e5fe90761e03f6b"
+      "plan_id": "canonpriced-5b42e5d2216bb936"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-1-hard-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-1dce51fd6eeb5deb"
+      "plan_id": "canonpriced-d8f6761b43d02023"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-1-hard-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-acf12a807e6d6aa4"
+      "plan_id": "canonpriced-55998cfe3b8b12d7"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-2-clear-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-b5adfbbf7353df13"
+      "plan_id": "canonpriced-6287340bd611e4cb"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-2-clear-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-50040d633e241936"
+      "plan_id": "canonpriced-19f8bfcf24cfadf6"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-2-moderate-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-4aad782eefbe797f"
+      "plan_id": "canonpriced-658d6ebb6471fd95"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-2-moderate-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-52ec516c3305481f"
+      "plan_id": "canonpriced-95f63988456411e9"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-2-hard-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-5899cc6f9a2f6971"
+      "plan_id": "canonpriced-b306dd050a15c75b"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-2-hard-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-f1afc3cbea79bf2b"
+      "plan_id": "canonpriced-fb87bca9b9b041a6"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-3_plus-clear-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-7567e5715b22bde0"
+      "plan_id": "canonpriced-6db21a77f2fb1828"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-3_plus-clear-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-f85f9305df836279"
+      "plan_id": "canonpriced-b14cc1ebd5ae2ea3"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-3_plus-moderate-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-2927f43ee96a0021"
+      "plan_id": "canonpriced-d43b1a9a922a3ac4"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-3_plus-moderate-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-1a10b4dd25e0d57a"
+      "plan_id": "canonpriced-b3227f3f85601038"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-3_plus-hard-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-8e7099ef63c45d1b"
+      "plan_id": "canonpriced-a7beaa157065a4b9"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-serious-3_plus-hard-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-2c040a9940c9d861"
+      "plan_id": "canonpriced-430ce4effffd39bb"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-1-clear-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-91e19c1945d54837"
+      "plan_id": "canonpriced-55ea430ab78f6286"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-1-clear-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-6206bfece6bd97a1"
+      "plan_id": "canonpriced-e72b72e97820ba91"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-1-moderate-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-a3cfc3f680071896"
+      "plan_id": "canonpriced-58d786a0dd36f63f"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-1-moderate-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-b7f16c11cc58c84f"
+      "plan_id": "canonpriced-97619eb50dafaee1"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-1-hard-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-706393abe70acf98"
+      "plan_id": "canonpriced-d8c9a027875937ca"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-1-hard-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-cc2ca0d7f21d2774"
+      "plan_id": "canonpriced-ca8c34d07d099fcf"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-2-clear-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-d0f1cce06750894f"
+      "plan_id": "canonpriced-1ef87a6971350706"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-2-clear-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-85d5b6320a3d7dfb"
+      "plan_id": "canonpriced-08d41ad4b88825a7"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-2-moderate-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-3c4a9843ea48bb42"
+      "plan_id": "canonpriced-363b801edaa57b0e"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-2-moderate-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-69489ce4d0f73c75"
+      "plan_id": "canonpriced-53f138031de71d1d"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-2-hard-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-f77587e5ebd1b8dc"
+      "plan_id": "canonpriced-52483847b1592190"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-2-hard-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-b2bcf92c1ceaaa2b"
+      "plan_id": "canonpriced-9b1e5cc6d7029b70"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-3_plus-clear-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-970183cee77fbd45"
+      "plan_id": "canonpriced-20148ed614bdfc32"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-3_plus-clear-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-c14dbbef3c360452"
+      "plan_id": "canonpriced-f4b117153977d359"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-3_plus-moderate-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-807117730a804686"
+      "plan_id": "canonpriced-f55875e2d327914e"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-3_plus-moderate-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-cd75fcb514f78f89"
+      "plan_id": "canonpriced-2f50daec0a6c9adf"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-3_plus-hard-v0",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-261e610832d83d41"
+      "plan_id": "canonpriced-7a342c5af918e7f0"
     },
     {
       "case_id": "strat-hospital_systems_vicarious-catastrophic-3_plus-hard-v1",
       "subtype": "hospital_systems_vicarious",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-7c1f697e6c76ae48"
+      "plan_id": "canonpriced-7df81f8cdf1c722e"
     },
     {
       "case_id": "strat-informed_consent-minor-1-clear-v0",
       "subtype": "informed_consent",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-1c79f94890f98f68"
+      "plan_id": "canonpriced-903e766276ce9f0e"
     },
     {
       "case_id": "strat-informed_consent-minor-1-clear-v1",
       "subtype": "informed_consent",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-7990a92d536a2afa"
+      "plan_id": "canonpriced-8e1c3562502a4d27"
     },
     {
       "case_id": "strat-informed_consent-minor-1-moderate-v0",
       "subtype": "informed_consent",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-199c01ecb2e8500d"
+      "plan_id": "canonpriced-06162c00e81ea5ee"
     },
     {
       "case_id": "strat-informed_consent-minor-1-moderate-v1",
       "subtype": "informed_consent",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-e46967cc0a3e2e63"
+      "plan_id": "canonpriced-0cbf5e5820c7ae11"
     },
     {
       "case_id": "strat-informed_consent-minor-1-hard-v0",
       "subtype": "informed_consent",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-f3684e440a210e70"
+      "plan_id": "canonpriced-4cf459ad24561975"
     },
     {
       "case_id": "strat-informed_consent-minor-1-hard-v1",
       "subtype": "informed_consent",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-b2461c414ed1283d"
+      "plan_id": "canonpriced-6ecc975ab86a028c"
     },
     {
       "case_id": "strat-informed_consent-minor-2-clear-v0",
       "subtype": "informed_consent",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-96a372e95479405f"
+      "plan_id": "canonpriced-a4b27f2925086404"
     },
     {
       "case_id": "strat-informed_consent-minor-2-clear-v1",
       "subtype": "informed_consent",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-4123c1052bef1c05"
+      "plan_id": "canonpriced-be8356577806a65a"
     },
     {
       "case_id": "strat-informed_consent-minor-2-moderate-v0",
       "subtype": "informed_consent",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-7880df9ad690e8c0"
+      "plan_id": "canonpriced-43ddba8698c8f48d"
     },
     {
       "case_id": "strat-informed_consent-minor-2-moderate-v1",
       "subtype": "informed_consent",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-c9783b83bc6202c7"
+      "plan_id": "canonpriced-5b5e6641c11d858c"
     },
     {
       "case_id": "strat-informed_consent-minor-2-hard-v0",
       "subtype": "informed_consent",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-9902f9fbf4c16793"
+      "plan_id": "canonpriced-92514875771c3e81"
     },
     {
       "case_id": "strat-informed_consent-minor-2-hard-v1",
       "subtype": "informed_consent",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-8902427993d4ea60"
+      "plan_id": "canonpriced-ebf778ad1d5210a2"
     },
     {
       "case_id": "strat-informed_consent-minor-3_plus-clear-v0",
       "subtype": "informed_consent",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-e9995e8a12a637ce"
+      "plan_id": "canonpriced-5ef4e5f947dffdfc"
     },
     {
       "case_id": "strat-informed_consent-minor-3_plus-clear-v1",
       "subtype": "informed_consent",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-a26670571e82d588"
+      "plan_id": "canonpriced-44726081befbf968"
     },
     {
       "case_id": "strat-informed_consent-minor-3_plus-moderate-v0",
       "subtype": "informed_consent",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-170ba487661c2a5d"
+      "plan_id": "canonpriced-0bf5bb0d112eaad6"
     },
     {
       "case_id": "strat-informed_consent-minor-3_plus-moderate-v1",
       "subtype": "informed_consent",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-511e8835c812441c"
+      "plan_id": "canonpriced-ac5989b3ed64b4aa"
     },
     {
       "case_id": "strat-informed_consent-minor-3_plus-hard-v0",
       "subtype": "informed_consent",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-3c362aa739f38081"
+      "plan_id": "canonpriced-62df9d4e3e23e007"
     },
     {
       "case_id": "strat-informed_consent-minor-3_plus-hard-v1",
       "subtype": "informed_consent",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-5b7d0efa2bc3f20a"
+      "plan_id": "canonpriced-290d907b8fe27b21"
     },
     {
       "case_id": "strat-medication_error-minor-2-clear-v0",
       "subtype": "medication_error",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-3c19323aea24a78c"
+      "plan_id": "canonpriced-6ba83c086fd22029"
     },
     {
       "case_id": "strat-medication_error-minor-2-clear-v1",
       "subtype": "medication_error",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-27bd7ab32f95c699"
+      "plan_id": "canonpriced-934b0efdcd21518f"
     },
     {
       "case_id": "strat-medication_error-minor-2-moderate-v0",
       "subtype": "medication_error",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-67abeea272efba90"
+      "plan_id": "canonpriced-b2651e6b45e05193"
     },
     {
       "case_id": "strat-medication_error-minor-2-moderate-v1",
       "subtype": "medication_error",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-6e4fefebbfbb9b4e"
+      "plan_id": "canonpriced-cb1248411c8b4e6b"
     },
     {
       "case_id": "strat-medication_error-minor-2-hard-v0",
       "subtype": "medication_error",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-97a0f067d32c18db"
+      "plan_id": "canonpriced-63a3134f6d32d9f5"
     },
     {
       "case_id": "strat-medication_error-minor-2-hard-v1",
       "subtype": "medication_error",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-33048f1711ad7833"
+      "plan_id": "canonpriced-1a33a609cd631a2b"
     },
     {
       "case_id": "strat-medication_error-serious-2-clear-v0",
       "subtype": "medication_error",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-3ea1c5eaf82ea4a5"
+      "plan_id": "canonpriced-33aba35fb55e4c9e"
     },
     {
       "case_id": "strat-medication_error-serious-2-clear-v1",
       "subtype": "medication_error",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-470c2362f55a121f"
+      "plan_id": "canonpriced-822f1ce2e4de1af6"
     },
     {
       "case_id": "strat-medication_error-serious-2-moderate-v0",
       "subtype": "medication_error",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-d2dbe6bae999bb8f"
+      "plan_id": "canonpriced-0d82f0fcb8dcc64c"
     },
     {
       "case_id": "strat-medication_error-serious-2-moderate-v1",
       "subtype": "medication_error",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-c65ec6ec9a6f69ff"
+      "plan_id": "canonpriced-c4336587cb72c857"
     },
     {
       "case_id": "strat-medication_error-serious-2-hard-v0",
       "subtype": "medication_error",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-0264bc100fbcccb1"
+      "plan_id": "canonpriced-004bfeef39ad684f"
     },
     {
       "case_id": "strat-medication_error-serious-2-hard-v1",
       "subtype": "medication_error",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-bf74a11f75f2068e"
+      "plan_id": "canonpriced-67121199d1d2839b"
     },
     {
       "case_id": "strat-medication_error-catastrophic-2-clear-v0",
       "subtype": "medication_error",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-dfd870141fef9456"
+      "plan_id": "canonpriced-daf9d1d44dcd8fe6"
     },
     {
       "case_id": "strat-medication_error-catastrophic-2-clear-v1",
       "subtype": "medication_error",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-c7be03d29689524a"
+      "plan_id": "canonpriced-e4d314db3ad8efc2"
     },
     {
       "case_id": "strat-medication_error-catastrophic-2-moderate-v0",
       "subtype": "medication_error",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-a0d486572fcc1624"
+      "plan_id": "canonpriced-ec82c4d57ecb25b7"
     },
     {
       "case_id": "strat-medication_error-catastrophic-2-moderate-v1",
       "subtype": "medication_error",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-24220b495a31022a"
+      "plan_id": "canonpriced-27b8aa3123d155c4"
     },
     {
       "case_id": "strat-medication_error-catastrophic-2-hard-v0",
       "subtype": "medication_error",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-a8be9e4234a8c649"
+      "plan_id": "canonpriced-a457d717557b8c11"
     },
     {
       "case_id": "strat-medication_error-catastrophic-2-hard-v1",
       "subtype": "medication_error",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-dbce22b0e0d8d8a8"
+      "plan_id": "canonpriced-7238738ca4170a45"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-1-clear-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-42c3b7abd4b20944"
+      "plan_id": "canonpriced-751fe85aefaa2d63"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-1-clear-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-19ba6703cf4ca46e"
+      "plan_id": "canonpriced-2c9375a6fae6999b"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-1-moderate-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-a810bd516586a827"
+      "plan_id": "canonpriced-1039a5dd3c02c3a5"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-1-moderate-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-0783efe0f8552ae6"
+      "plan_id": "canonpriced-0a9bf74c87ac5614"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-1-hard-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-fbb3780a48d4402e"
+      "plan_id": "canonpriced-98f0437f41cd4c13"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-1-hard-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-9a7d5744f4ae1224"
+      "plan_id": "canonpriced-7bc473b0d78fd2c1"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-2-clear-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-ff8a29610f4ce803"
+      "plan_id": "canonpriced-c2528e8c3171bce3"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-2-clear-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-9be336d3c2a545fd"
+      "plan_id": "canonpriced-1b41e35fed86591f"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-2-moderate-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-1a63ed70f898cfe1"
+      "plan_id": "canonpriced-2231872ad4703fda"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-2-moderate-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-a1ee851a47bfb99e"
+      "plan_id": "canonpriced-6645a5c579fdedd3"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-2-hard-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-78e484545f6b4311"
+      "plan_id": "canonpriced-d36844d7f4f7e173"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-2-hard-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-e8b2f201a6662eb7"
+      "plan_id": "canonpriced-26bc0a3e36ab59d5"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-3_plus-clear-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-949a8f7eebda75a1"
+      "plan_id": "canonpriced-86391408374abef9"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-3_plus-clear-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-8bcc9ed742e1884e"
+      "plan_id": "canonpriced-7d1e7430691eec05"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-3_plus-moderate-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-422b9a9e89bd0ce9"
+      "plan_id": "canonpriced-489eaf59be043e1b"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-3_plus-moderate-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-8bfc72c748faca6a"
+      "plan_id": "canonpriced-d2a509ff8e7c03dc"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-3_plus-hard-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-88c05e64f26448ab"
+      "plan_id": "canonpriced-f98b8fe79672fda0"
     },
     {
       "case_id": "strat-nursing_home_ltc-minor-3_plus-hard-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-6881bebe53165e68"
+      "plan_id": "canonpriced-9b6cf2f12796abf7"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-1-clear-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-9a3adc88e67b13f5"
+      "plan_id": "canonpriced-66f7c55c0cbc7d7c"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-1-clear-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-f08e808b2f008ee0"
+      "plan_id": "canonpriced-3e21f5580d4c66fc"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-1-moderate-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-86139908051118d5"
+      "plan_id": "canonpriced-367a579ba231b05f"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-1-moderate-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-8945b76409f4f872"
+      "plan_id": "canonpriced-f35eba82af56eb1b"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-1-hard-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-68f8e71e87b56815"
+      "plan_id": "canonpriced-56e7eaf05f17050b"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-1-hard-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-e30c4bb5fa2b64b1"
+      "plan_id": "canonpriced-a35391ddd727d07b"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-2-clear-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-48559eb2c54f20ad"
+      "plan_id": "canonpriced-c0de5ed536cbfc80"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-2-clear-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-aa2e00db3873e5f3"
+      "plan_id": "canonpriced-9f7b5bc41637ff63"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-2-moderate-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-aa2e00db3873e5f3"
+      "plan_id": "canonpriced-9f7b5bc41637ff63"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-2-moderate-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-d6f01587af0cda25"
+      "plan_id": "canonpriced-dea2f31e58a4d379"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-2-hard-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-0735c95998e67507"
+      "plan_id": "canonpriced-c8cf79266730dd16"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-2-hard-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-32dca92d060d1bdd"
+      "plan_id": "canonpriced-769d029cd23073cb"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-3_plus-clear-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-2f4fffefb6eee5ef"
+      "plan_id": "canonpriced-57447968d73f3a41"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-3_plus-clear-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-b887b175a2254b74"
+      "plan_id": "canonpriced-d8561b2b70ad9728"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-3_plus-moderate-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-eb6f322057cf2472"
+      "plan_id": "canonpriced-0e30f8ccf05bc3bc"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-3_plus-moderate-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-e61233a46854321e"
+      "plan_id": "canonpriced-9e43103c6dfc46a8"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-3_plus-hard-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-a2d87807d6279981"
+      "plan_id": "canonpriced-c7ae7e15f0e14e76"
     },
     {
       "case_id": "strat-nursing_home_ltc-serious-3_plus-hard-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-5b8793eaf70d5c5a"
+      "plan_id": "canonpriced-b56b547d450d2abb"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-1-clear-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-e0ebcb3f2d2f8c64"
+      "plan_id": "canonpriced-cfe10cbe3a2266fc"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-1-clear-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-36a936efa030f36d"
+      "plan_id": "canonpriced-a5bfab78704b0e73"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-1-moderate-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-5e87f9f7e8f97d0f"
+      "plan_id": "canonpriced-3727b66bd2a96cb4"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-1-moderate-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-72448ca245caf006"
+      "plan_id": "canonpriced-acc778f6ba6a0cd9"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-1-hard-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-07b22175b7e1beff"
+      "plan_id": "canonpriced-377c2ea0277b415a"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-1-hard-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-6679a2bcf84449b6"
+      "plan_id": "canonpriced-a4970fcd7efb956f"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-2-clear-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-1e018821337e6587"
+      "plan_id": "canonpriced-d0c5613cd6310061"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-2-clear-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-52fa4c71b1b53bbc"
+      "plan_id": "canonpriced-45ea104bdc7dda91"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-2-moderate-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-86560fa151e2672a"
+      "plan_id": "canonpriced-a0f680c5f1326bd9"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-2-moderate-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-5b126281be1903ba"
+      "plan_id": "canonpriced-413e45338a526c80"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-2-hard-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-814f8b80ff4154b5"
+      "plan_id": "canonpriced-0ce826757f57b044"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-2-hard-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-b0f17b01a535acec"
+      "plan_id": "canonpriced-f7a14b8c122be0f6"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-3_plus-clear-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-8adbbd656621ad40"
+      "plan_id": "canonpriced-9f87d764b2ee948d"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-3_plus-clear-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "clear",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-da13cc93797d75de"
+      "plan_id": "canonpriced-056aee2b117a1184"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-3_plus-moderate-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-f8f243abcb01deb4"
+      "plan_id": "canonpriced-800ee6e25a087d9d"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-3_plus-moderate-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "moderate",
       "holdout_split": "train",
-      "plan_id": "canonpriced-e65bd2516c050ef8"
+      "plan_id": "canonpriced-6ad85ce3a19f5029"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-3_plus-hard-v0",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-e92c5151bb151a3d"
+      "plan_id": "canonpriced-efff1068eb1fa5bb"
     },
     {
       "case_id": "strat-nursing_home_ltc-catastrophic-3_plus-hard-v1",
       "subtype": "nursing_home_ltc",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-6e30b5f2b016cec0"
+      "plan_id": "canonpriced-6b0451dc5880b355"
     },
     {
       "case_id": "strat-surgical_error-serious-1-clear-v0",
       "subtype": "surgical_error",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-43f1178ba63ba3af"
+      "plan_id": "canonpriced-6d48f6b6549a8761"
     },
     {
       "case_id": "strat-surgical_error-serious-1-clear-v1",
       "subtype": "surgical_error",
       "difficulty": "clear",
       "holdout_split": "train",
-      "plan_id": "canonpriced-09d15de5e1eec300"
+      "plan_id": "canonpriced-f9513224fb68683d"
     },
     {
       "case_id": "strat-surgical_error-serious-1-moderate-v0",
       "subtype": "surgical_error",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-dd102a8438cfe405"
+      "plan_id": "canonpriced-78a43368e4fe09c3"
     },
     {
       "case_id": "strat-surgical_error-serious-1-moderate-v1",
       "subtype": "surgical_error",
       "difficulty": "moderate",
       "holdout_split": "holdout",
-      "plan_id": "canonpriced-9f1f90aefbb95529"
+      "plan_id": "canonpriced-f6918b5a4a598d76"
     },
     {
       "case_id": "strat-surgical_error-serious-1-hard-v0",
       "subtype": "surgical_error",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-66873cd3c053c160"
+      "plan_id": "canonpriced-403f6dd92ccd517c"
     },
     {
       "case_id": "strat-surgical_error-serious-1-hard-v1",
       "subtype": "surgical_error",
       "difficulty": "hard",
       "holdout_split": "train",
-      "plan_id": "canonpriced-219d461f68438e55"
+      "plan_id": "canonpriced-3d251ac36b43007a"
     }
   ],
-  "corpus_digest": "sha256:b6d759327fea49d85dcccdab820d020496603db8b3b880b7661b1c118c1afbbe",
+  "corpus_digest": "sha256:34b64ffabacf67d93e439860d83d116faddf4234f90ae6a9f927468cc86a414f",
   "holdout_split_digest": "sha256:7667104141ad1ba57a5d749fdd4d1e7edf4d9ae0d7d4e40a85a2b2e37827316f"
 }
