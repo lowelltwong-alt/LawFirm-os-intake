@@ -1,6 +1,6 @@
 {
   "contract_id": "budget-driver-taxonomy",
-  "version": "1.0.0-candidate",
+  "version": "1.1.0-candidate",
   "status": "candidate",
   "candidate_only": true,
   "reference_class_only": true,
@@ -22,41 +22,128 @@
   ],
   "conventions": {
     "magnitude_semantics": "Each level carries a deterministic point multiplier on baseline hours for the driver's target UTBMS rows (baseline level = 1.0). 'range' records the researched band; 'point' is the governed deterministic value (midpoint unless a sourced number pins it). mode=additive levels carry additive_delta added to the row multiplier stack. mode=posture_flag drivers carry no hour effect; they are recorded posture only. mode=phase_block drivers gate a whole phase's baseline block rather than multiplying.",
-    "confidence_values": ["sourced_high", "sourced_medium", "anchored", "judgment"],
+    "confidence_values": [
+      "sourced_high",
+      "sourced_medium",
+      "anchored",
+      "judgment"
+    ],
     "composition": {
       "default": "multiplicative_across_drivers_per_row",
       "correlated_groups": [
-        ["plaintiff_structure", "admin_posture", "punitive_exposure"]
+        [
+          "plaintiff_structure",
+          "admin_posture",
+          "punitive_exposure"
+        ]
       ],
       "correlated_rule": "within a correlated group apply the largest multiplier in full and the square root of each remaining multiplier (capped composite; governed judgment parameter)",
       "row_multiplier_cap": 10.0
     }
   },
   "phase_baseline": {
-    "note": "Fraction of total baseline hours per UTBMS phase, anchored to the NCSC Civil Litigation Cost Model professional-malpractice vector (Hannaford-Agor & Waters 2013, Table 4: Initiate 8% / Discovery 25% / Settlement 6% / Pretrial 11% / Trial 42% / Post-disposition 7%; 472 median attorney hours; CLCM Settlement nests under L100/L160, Post-disposition approximated as L500). CLCM baselines assume a case litigated through trial; the trial_likelihood / trial_posture drivers scale L400 around this shape. Corroborating: FJC 2009 defense discovery median 27%. Vintage 2012 survey, n=312 ABOTA attorneys.",
-    "fractions": { "L100": 0.14, "L200": 0.11, "L300": 0.25, "L400": 0.43, "L500": 0.07 },
-    "confidence": { "L100": "sourced_medium", "L200": "sourced_medium", "L300": "sourced_medium", "L400": "sourced_medium", "L500": "sourced_medium" },
+    "note": "Per-case-type fractions of total baseline hours per UTBMS phase, anchored to the NCSC Civil Litigation Cost Model stage shares (Hannaford-Agor & Waters 2013, Table 4; 312 ABOTA attorneys, 2012). Mapping: CLCM Initiate+Settlement -> L100 (Settlement nests under L160), Pretrial -> L200, Discovery -> L300, Trial -> L400, Post-disposition ~ L500. Table 4 percentages are whole-number rounded; each vector's residual to 1.00 is added to L400 (trial, the largest share) and recorded in residual_note. CLCM baselines assume a case litigated through trial; trial drivers scale L400 around this shape. Corroborating: FJC 2009 defense discovery median 27%. Confidence sourced_medium throughout (real survey, 2012 vintage, category labels not line-exact).",
+    "by_case_type": {
+      "professional_malpractice": {
+        "fractions": {
+          "L100": 0.14,
+          "L200": 0.11,
+          "L300": 0.25,
+          "L400": 0.43,
+          "L500": 0.07
+        },
+        "residual_note": "8+6/11/25/42+1/7"
+      },
+      "automobile_tort": {
+        "fractions": {
+          "L100": 0.14,
+          "L200": 0.1,
+          "L300": 0.21,
+          "L400": 0.47,
+          "L500": 0.08
+        },
+        "residual_note": "6+8/10/21/46+1/8"
+      },
+      "premises_liability": {
+        "fractions": {
+          "L100": 0.17,
+          "L200": 0.14,
+          "L300": 0.19,
+          "L400": 0.42,
+          "L500": 0.08
+        },
+        "residual_note": "8+9/14/19/41+1/8"
+      },
+      "employment": {
+        "fractions": {
+          "L100": 0.18,
+          "L200": 0.15,
+          "L300": 0.21,
+          "L400": 0.39,
+          "L500": 0.07
+        },
+        "residual_note": "11+7/15/21/39/7"
+      }
+    },
+    "confidence": "sourced_medium",
     "clcm_case_type_medians": {
       "note": "Total median attorney hours (and median total cost per side incl. experts) per CLCM case type; per-line phase vectors available in the source for auto/premises/real-property/contract/employment/malpractice.",
-      "automobile_tort": { "hours": 196, "cost_usd": 43000 },
-      "premises_liability": { "hours": 218, "cost_usd": 54000 },
-      "real_property": { "hours": 284, "cost_usd": 66000 },
-      "contract": { "hours": 367, "cost_usd": 91000 },
-      "employment": { "hours": 374, "cost_usd": 88000 },
-      "professional_malpractice": { "hours": 472, "cost_usd": 122000 }
+      "automobile_tort": {
+        "hours": 196,
+        "cost_usd": 43000
+      },
+      "premises_liability": {
+        "hours": 218,
+        "cost_usd": 54000
+      },
+      "real_property": {
+        "hours": 284,
+        "cost_usd": 66000
+      },
+      "contract": {
+        "hours": 367,
+        "cost_usd": 91000
+      },
+      "employment": {
+        "hours": 374,
+        "cost_usd": 88000
+      },
+      "professional_malpractice": {
+        "hours": 472,
+        "cost_usd": 122000
+      }
     }
   },
   "universal_drivers": [
     {
       "driver_id": "case_stakes",
       "layer": "universal",
-      "utbms_rows": ["L100", "L200", "L300", "L400", "L500"],
+      "utbms_rows": [
+        "L100",
+        "L200",
+        "L300",
+        "L400",
+        "L500"
+      ],
       "mode": "multiplicative",
       "required": true,
       "levels": [
-        { "level": "low", "point": 0.85 },
-        { "level": "medium", "point": 1.0 },
-        { "level": "high", "point": 1.55, "range": [1.3, 1.8] }
+        {
+          "level": "low",
+          "point": 0.85
+        },
+        {
+          "level": "medium",
+          "point": 1.0
+        },
+        {
+          "level": "high",
+          "point": 1.55,
+          "range": [
+            1.3,
+            1.8
+          ]
+        }
       ],
       "confidence": "sourced_high",
       "source": "FJC 2010 Table 2 (defendant model, n=715): stakes elasticity 0.251; 10x stakes -> 1.78x"
@@ -64,13 +151,31 @@
     {
       "driver_id": "case_duration",
       "layer": "universal",
-      "utbms_rows": ["L100", "L200", "L300", "L400"],
+      "utbms_rows": [
+        "L100",
+        "L200",
+        "L300",
+        "L400"
+      ],
       "mode": "multiplicative",
       "required": false,
       "levels": [
-        { "level": "short", "point": 0.85 },
-        { "level": "typical", "point": 1.0 },
-        { "level": "long", "point": 1.4, "range": [1.3, 1.5] }
+        {
+          "level": "short",
+          "point": 0.85
+        },
+        {
+          "level": "typical",
+          "point": 1.0
+        },
+        {
+          "level": "long",
+          "point": 1.4,
+          "range": [
+            1.3,
+            1.5
+          ]
+        }
       ],
       "confidence": "sourced_high",
       "source": "FJC 2010: duration elasticity 0.260; 4x duration -> 1.46x"
@@ -78,13 +183,25 @@
     {
       "driver_id": "party_count",
       "layer": "universal",
-      "utbms_rows": ["L200", "L300"],
+      "utbms_rows": [
+        "L200",
+        "L300"
+      ],
       "mode": "multiplicative",
       "required": false,
       "levels": [
-        { "level": "1", "point": 1.0 },
-        { "level": "2_3", "point": 1.15 },
-        { "level": "4_plus", "point": 1.35 }
+        {
+          "level": "1",
+          "point": 1.0
+        },
+        {
+          "level": "2_3",
+          "point": 1.15
+        },
+        {
+          "level": "4_plus",
+          "point": 1.35
+        }
       ],
       "confidence": "judgment",
       "source": "No public coefficient exists: FJC 2010 confirmed to model NO party-count variable (full-text read, pass-2). Runs indirectly via discovery/deposition proxies."
@@ -92,13 +209,26 @@
     {
       "driver_id": "written_discovery_burden",
       "layer": "universal",
-      "utbms_rows": ["L310", "L320", "L350"],
+      "utbms_rows": [
+        "L310",
+        "L320",
+        "L350"
+      ],
       "mode": "multiplicative",
       "required": false,
       "levels": [
-        { "level": "light", "point": 0.9 },
-        { "level": "moderate", "point": 1.0 },
-        { "level": "heavy", "point": 1.2 }
+        {
+          "level": "light",
+          "point": 0.9
+        },
+        {
+          "level": "moderate",
+          "point": 1.0
+        },
+        {
+          "level": "heavy",
+          "point": 1.2
+        }
       ],
       "confidence": "sourced_medium",
       "source": "FJC 2010: ordinal discovery-level +5.1%/unit (defense, p=.003); ordinal scale wording unpublished"
@@ -106,13 +236,33 @@
     {
       "driver_id": "ediscovery_volume",
       "layer": "universal",
-      "utbms_rows": ["L320", "L350"],
+      "utbms_rows": [
+        "L320",
+        "L350"
+      ],
       "mode": "multiplicative",
       "required": false,
       "levels": [
-        { "level": "none", "point": 1.0 },
-        { "level": "esi_no_disputes", "point": 1.18, "range": [1.15, 1.2] },
-        { "level": "esi_with_disputes", "point": 1.38, "range": [1.35, 1.4] }
+        {
+          "level": "none",
+          "point": 1.0
+        },
+        {
+          "level": "esi_no_disputes",
+          "point": 1.18,
+          "range": [
+            1.15,
+            1.2
+          ]
+        },
+        {
+          "level": "esi_with_disputes",
+          "point": 1.38,
+          "range": [
+            1.35,
+            1.4
+          ]
+        }
       ],
       "confidence": "sourced_high",
       "source": "FJC 2010: ESI dual-role +16.9% (p=.044); each ESI dispute +10.2% (p=.004)"
@@ -120,13 +270,33 @@
     {
       "driver_id": "deposition_burden",
       "layer": "universal",
-      "utbms_rows": ["L330", "E115"],
+      "utbms_rows": [
+        "L330",
+        "E115"
+      ],
       "mode": "multiplicative",
       "required": false,
       "levels": [
-        { "level": "none", "point": 1.0 },
-        { "level": "limited_3_5", "point": 1.2, "range": [1.15, 1.25] },
-        { "level": "heavy_8_plus", "point": 1.6, "range": [1.4, 1.8] }
+        {
+          "level": "none",
+          "point": 1.0
+        },
+        {
+          "level": "limited_3_5",
+          "point": 1.2,
+          "range": [
+            1.15,
+            1.25
+          ]
+        },
+        {
+          "level": "heavy_8_plus",
+          "point": 1.6,
+          "range": [
+            1.4,
+            1.8
+          ]
+        }
       ],
       "confidence": "sourced_high",
       "source": "FJC 2010: +4.8% per non-expert deposition (p<.000); 12 depos -> 1.79x"
@@ -134,13 +304,26 @@
     {
       "driver_id": "expert_intensity",
       "layer": "universal",
-      "utbms_rows": ["L130", "L340", "E119"],
+      "utbms_rows": [
+        "L130",
+        "L340",
+        "E119"
+      ],
       "mode": "multiplicative",
       "required": false,
       "levels": [
-        { "level": "none", "point": 1.0 },
-        { "level": "some", "point": 1.1 },
-        { "level": "heavy", "point": 1.25 }
+        {
+          "level": "none",
+          "point": 1.0
+        },
+        {
+          "level": "some",
+          "point": 1.1
+        },
+        {
+          "level": "heavy",
+          "point": 1.25
+        }
       ],
       "confidence": "judgment",
       "source": "FJC 2010 defense expert-deposition coefficient NOT significant (-0.023, p=.377); band leans on plaintiff-side proxy +11.3%/expert depo. Lines override with sourced type-specific expert drivers."
@@ -148,13 +331,24 @@
     {
       "driver_id": "dispositive_motion_practice",
       "layer": "universal",
-      "utbms_rows": ["L240"],
+      "utbms_rows": [
+        "L240"
+      ],
       "mode": "multiplicative",
       "required": false,
       "levels": [
-        { "level": "none", "point": 1.0 },
-        { "level": "filed_no_ruling", "point": 1.05 },
-        { "level": "ruled", "point": 1.22 }
+        {
+          "level": "none",
+          "point": 1.0
+        },
+        {
+          "level": "filed_no_ruling",
+          "point": 1.05
+        },
+        {
+          "level": "ruled",
+          "point": 1.22
+        }
       ],
       "confidence": "sourced_high",
       "source": "FJC 2010: any SJ ruling +22.3% (defense, p=.002); mid tier interpolated (judgment)"
@@ -162,13 +356,24 @@
     {
       "driver_id": "adr_mediation",
       "layer": "universal",
-      "utbms_rows": ["L160"],
+      "utbms_rows": [
+        "L160"
+      ],
       "mode": "multiplicative",
       "required": false,
       "levels": [
-        { "level": "low", "point": 1.0 },
-        { "level": "medium", "point": 0.95 },
-        { "level": "high", "point": 0.85 }
+        {
+          "level": "low",
+          "point": 1.0
+        },
+        {
+          "level": "medium",
+          "point": 0.95
+        },
+        {
+          "level": "high",
+          "point": 0.85
+        }
       ],
       "confidence": "judgment",
       "source": "Absent from FJC hypothesis set; assumed dampening from earlier resolution"
@@ -176,12 +381,26 @@
     {
       "driver_id": "trial_posture",
       "layer": "universal",
-      "utbms_rows": ["L410", "L420", "L430", "L440", "L450", "L460", "L470"],
+      "utbms_rows": [
+        "L410",
+        "L420",
+        "L430",
+        "L440",
+        "L450",
+        "L460",
+        "L470"
+      ],
       "mode": "multiplicative",
       "required": true,
       "levels": [
-        { "level": "settled", "point": 1.0 },
-        { "level": "tried", "point": 1.24 }
+        {
+          "level": "settled",
+          "point": 1.0
+        },
+        {
+          "level": "tried",
+          "point": 1.24
+        }
       ],
       "confidence": "sourced_high",
       "source": "FJC 2010: trial termination +24.3% whole-case (defense, p=.006), controlling for stakes/duration. Lines may override with phase-hours ratios (e.g. med-mal ALAE-by-disposition)."
@@ -189,12 +408,22 @@
     {
       "driver_id": "appeal",
       "layer": "universal",
-      "utbms_rows": ["L510", "L520", "L530"],
+      "utbms_rows": [
+        "L510",
+        "L520",
+        "L530"
+      ],
       "mode": "phase_block",
       "required": false,
       "levels": [
-        { "level": "none", "point": 0.0 },
-        { "level": "appealed", "point": 1.0 }
+        {
+          "level": "none",
+          "point": 0.0
+        },
+        {
+          "level": "appealed",
+          "point": 1.0
+        }
       ],
       "confidence": "judgment",
       "source": "FJC dataset stops at trial-court disposition; price appeal as a separate flat L500 block. Lines may override with sourced appeal-likelihood multipliers."
@@ -203,18 +432,33 @@
   "lines": {
     "medical_malpractice_defense": {
       "matter_type": "synthetic_med_mal_defense_v1",
-      "universal_overrides": { "trial_posture": "trial_likelihood", "appeal": "appeal_likelihood" },
+      "universal_overrides": {
+        "trial_posture": "trial_likelihood",
+        "appeal": "appeal_likelihood"
+      },
       "drivers": [
         {
           "driver_id": "damages_severity",
           "layer": "line",
-          "utbms_rows": ["L130", "L340"],
+          "utbms_rows": [
+            "L130",
+            "L340"
+          ],
           "mode": "multiplicative",
           "required": true,
           "levels": [
-            { "level": "minor", "point": 1.0 },
-            { "level": "serious", "point": 1.5 },
-            { "level": "catastrophic", "point": 2.6 }
+            {
+              "level": "minor",
+              "point": 1.0
+            },
+            {
+              "level": "serious",
+              "point": 1.5
+            },
+            {
+              "level": "catastrophic",
+              "point": 2.6
+            }
           ],
           "confidence": "sourced_medium",
           "source": "NEJM 2010 (Seabury et al., verified): defense cost $45,070 paid vs $17,130 unpaid = 2.63; serious tier interpolated (judgment)"
@@ -222,13 +466,26 @@
         {
           "driver_id": "defendant_provider_count",
           "layer": "line",
-          "utbms_rows": ["L110", "L120", "L340"],
+          "utbms_rows": [
+            "L110",
+            "L120",
+            "L340"
+          ],
           "mode": "multiplicative",
           "required": false,
           "levels": [
-            { "level": "1", "point": 1.0 },
-            { "level": "2_3", "point": 1.4 },
-            { "level": "4_plus", "point": 1.9 }
+            {
+              "level": "1",
+              "point": 1.0
+            },
+            {
+              "level": "2_3",
+              "point": 1.4
+            },
+            {
+              "level": "4_plus",
+              "point": 1.9
+            }
           ],
           "confidence": "judgment",
           "source": "GAO-04-128T qualitative (multi-defendant costs more); no numeric coefficient exists publicly (pass-2 confirmed)"
@@ -236,13 +493,27 @@
         {
           "driver_id": "implicated_specialties",
           "layer": "line",
-          "utbms_rows": ["L130", "L340", "L420", "E119"],
+          "utbms_rows": [
+            "L130",
+            "L340",
+            "L420",
+            "E119"
+          ],
           "mode": "multiplicative",
           "required": true,
           "levels": [
-            { "level": "1", "point": 1.0 },
-            { "level": "2", "point": 1.6 },
-            { "level": "3_plus", "point": 2.4 }
+            {
+              "level": "1",
+              "point": 1.0
+            },
+            {
+              "level": "2",
+              "point": 1.6
+            },
+            {
+              "level": "3_plus",
+              "point": 2.4
+            }
           ],
           "confidence": "judgment",
           "source": "Direction sourced (NJ own-specialty SOC expert qualification rule, Epstein Becker 2020; ~1 defense expert/single-specialty case, Eplasty 2017); magnitudes judgment"
@@ -250,12 +521,21 @@
         {
           "driver_id": "causation_disputed",
           "layer": "line",
-          "utbms_rows": ["L340", "E119"],
+          "utbms_rows": [
+            "L340",
+            "E119"
+          ],
           "mode": "additive",
           "required": false,
           "levels": [
-            { "level": "not_disputed", "additive_delta": 0.0 },
-            { "level": "disputed", "additive_delta": 0.8 }
+            {
+              "level": "not_disputed",
+              "additive_delta": 0.0
+            },
+            {
+              "level": "disputed",
+              "additive_delta": 0.8
+            }
           ],
           "confidence": "judgment",
           "source": "Causation is a distinct, often-contested expert role (practitioner lit); +0.8 magnitude judgment"
@@ -263,13 +543,25 @@
         {
           "driver_id": "medical_record_volume",
           "layer": "line",
-          "utbms_rows": ["L110", "L320"],
+          "utbms_rows": [
+            "L110",
+            "L320"
+          ],
           "mode": "multiplicative",
           "required": false,
           "levels": [
-            { "level": "low", "point": 1.0 },
-            { "level": "medium", "point": 1.4 },
-            { "level": "high", "point": 2.0 }
+            {
+              "level": "low",
+              "point": 1.0
+            },
+            {
+              "level": "medium",
+              "point": 1.4
+            },
+            {
+              "level": "high",
+              "point": 2.0
+            }
           ],
           "confidence": "judgment",
           "source": "Direction anchored (Studdert NEJM 2006 severity-cost correlation); band judgment"
@@ -277,13 +569,25 @@
         {
           "driver_id": "theory_of_liability",
           "layer": "line",
-          "utbms_rows": ["L120", "L210"],
+          "utbms_rows": [
+            "L120",
+            "L210"
+          ],
           "mode": "multiplicative",
           "required": false,
           "levels": [
-            { "level": "negligence", "point": 1.0 },
-            { "level": "informed_consent", "point": 1.1 },
-            { "level": "both", "point": 1.3 }
+            {
+              "level": "negligence",
+              "point": 1.0
+            },
+            {
+              "level": "informed_consent",
+              "point": 1.1
+            },
+            {
+              "level": "both",
+              "point": 1.3
+            }
           ],
           "confidence": "judgment",
           "source": "Judgment"
@@ -291,12 +595,21 @@
         {
           "driver_id": "affidavit_of_merit",
           "layer": "line",
-          "utbms_rows": ["L210", "L110"],
+          "utbms_rows": [
+            "L210",
+            "L110"
+          ],
           "mode": "additive",
           "required": false,
           "levels": [
-            { "level": "none", "additive_delta": 0.0 },
-            { "level": "required", "additive_delta": 0.3 }
+            {
+              "level": "none",
+              "additive_delta": 0.0
+            },
+            {
+              "level": "required",
+              "additive_delta": 0.3
+            }
           ],
           "confidence": "judgment",
           "source": "Tier population sourced (~28-29 affidavit states, NCSL 2021 + NJ); magnitude judgment. Independent flag, NOT mutually exclusive with screening_panel (pass-2 structural finding)"
@@ -304,13 +617,25 @@
         {
           "driver_id": "screening_panel",
           "layer": "line",
-          "utbms_rows": ["L210", "L110"],
+          "utbms_rows": [
+            "L210",
+            "L110"
+          ],
           "mode": "additive",
           "required": false,
           "levels": [
-            { "level": "none", "additive_delta": 0.0 },
-            { "level": "waivable", "additive_delta": 0.3 },
-            { "level": "mandatory", "additive_delta": 0.6 }
+            {
+              "level": "none",
+              "additive_delta": 0.0
+            },
+            {
+              "level": "waivable",
+              "additive_delta": 0.3
+            },
+            {
+              "level": "mandatory",
+              "additive_delta": 0.6
+            }
           ],
           "confidence": "judgment",
           "source": "Panel tier shrinking: KY struck 2018, NH repealed 2023, WY 2022, DE 2024; MA tribunal ACTIVE (pass-2 correction). Magnitude judgment"
@@ -318,13 +643,28 @@
         {
           "driver_id": "trial_likelihood",
           "layer": "line",
-          "utbms_rows": ["L410", "L420", "L430", "L440", "L450"],
+          "utbms_rows": [
+            "L410",
+            "L420",
+            "L430",
+            "L440",
+            "L450"
+          ],
           "mode": "multiplicative",
           "required": true,
           "levels": [
-            { "level": "low", "point": 0.4 },
-            { "level": "medium", "point": 1.0 },
-            { "level": "high", "point": 2.3 }
+            {
+              "level": "low",
+              "point": 0.4
+            },
+            {
+              "level": "medium",
+              "point": 1.0
+            },
+            {
+              "level": "high",
+              "point": 2.3
+            }
           ],
           "confidence": "sourced_medium",
           "source": "Carroll 2013 (BMC Health Serv Res, PIAA) ALAE by disposition: dismissed ~$15K / settled ~$39K / verdict ~$90K -> 0.38 / 1.0 / 2.3; pre-2008 vintage"
@@ -332,13 +672,26 @@
         {
           "driver_id": "appeal_likelihood",
           "layer": "line",
-          "utbms_rows": ["L510", "L520", "L530"],
+          "utbms_rows": [
+            "L510",
+            "L520",
+            "L530"
+          ],
           "mode": "multiplicative",
           "required": false,
           "levels": [
-            { "level": "low", "point": 0.1 },
-            { "level": "medium", "point": 1.0 },
-            { "level": "high", "point": 2.0 }
+            {
+              "level": "low",
+              "point": 0.1
+            },
+            {
+              "level": "medium",
+              "point": 1.0
+            },
+            {
+              "level": "high",
+              "point": 2.0
+            }
           ],
           "confidence": "anchored",
           "source": "Med-mal trials appealed 17.5% (BJS NCJ 212979, 2006; 149/851, 60.4% plaintiff-initiated); endpoints judgment"
@@ -350,73 +703,760 @@
           "mode": "posture_flag",
           "required": false,
           "levels": [
-            { "level": "capped", "point": 1.0 },
-            { "level": "uncapped", "point": 1.0 }
+            {
+              "level": "capped",
+              "point": 1.0
+            },
+            {
+              "level": "uncapped",
+              "point": 1.0
+            }
           ],
           "confidence": "sourced_medium",
           "source": "RAND RB9071: MICRA caps cut payouts ~30%; NO evidence caps change defense HOURS -> bifurcated posture flag, not an hours multiplier (pass-2 reclassification)"
         }
       ],
       "subtype_priors": {
-        "surgical_error": { "damages_severity": "serious", "implicated_specialties": "1" },
-        "failure_to_diagnose": { "causation_disputed": "disputed", "implicated_specialties": "2", "medical_record_volume": "high" },
-        "birth_injury_obstetric": { "damages_severity": "catastrophic", "implicated_specialties": "3_plus", "medical_record_volume": "high" },
-        "medication_error": { "implicated_specialties": "2" },
-        "hospital_systems_vicarious": { "defendant_provider_count": "4_plus", "medical_record_volume": "high" },
-        "nursing_home_ltc": { "medical_record_volume": "high" },
-        "informed_consent": { "theory_of_liability": "informed_consent", "damages_severity": "minor" }
+        "surgical_error": {
+          "damages_severity": "serious",
+          "implicated_specialties": "1"
+        },
+        "failure_to_diagnose": {
+          "causation_disputed": "disputed",
+          "implicated_specialties": "2",
+          "medical_record_volume": "high"
+        },
+        "birth_injury_obstetric": {
+          "damages_severity": "catastrophic",
+          "implicated_specialties": "3_plus",
+          "medical_record_volume": "high"
+        },
+        "medication_error": {
+          "implicated_specialties": "2"
+        },
+        "hospital_systems_vicarious": {
+          "defendant_provider_count": "4_plus",
+          "medical_record_volume": "high"
+        },
+        "nursing_home_ltc": {
+          "medical_record_volume": "high"
+        },
+        "informed_consent": {
+          "theory_of_liability": "informed_consent",
+          "damages_severity": "minor"
+        }
       }
     },
     "epli_employment_defense": {
       "matter_type": "synthetic_epli_employment_defense_v1",
       "universal_overrides": {},
       "drivers": [
-        { "driver_id": "plaintiff_structure", "layer": "line", "utbms_rows": ["L110", "L210", "L250", "L260", "L310", "L320", "L330", "L410"], "mode": "multiplicative", "required": true, "levels": [ { "level": "single", "point": 1.0 }, { "level": "multi_2_9", "point": 1.9, "range": [1.6, 2.2] }, { "level": "class_collective", "point": 6.0, "range": [4.0, 8.0] } ], "confidence": "judgment", "source": "Direction sourced (class = most expensive, multi-year; SHRM/defense-bar); band judgment - no public hours ratio exists" },
-        { "driver_id": "claim_type", "layer": "line", "utbms_rows": ["L110", "L120", "L210", "L310", "L340"], "mode": "multiplicative", "required": true, "levels": [ { "level": "wrongful_termination", "point": 1.0 }, { "level": "discrimination_retaliation", "point": 1.45 }, { "level": "harassment", "point": 1.5 }, { "level": "wage_hour", "point": 1.65 } ], "confidence": "anchored", "source": "Novian Law case-type cost/duration ranges (single source); wage-hour = 90% of employment class filings (ADP Research Institute)" },
-        { "driver_id": "admin_posture", "layer": "line", "utbms_rows": ["L100", "L210"], "mode": "multiplicative", "required": false, "levels": [ { "level": "charge_only", "point": 0.22, "range": [0.15, 0.3] }, { "level": "suit_after_rts", "point": 1.0 }, { "level": "eeoc_systemic", "point": 4.5, "range": [3.0, 6.0] } ], "confidence": "anchored", "source": "EEOC FY2024 (primary): 111 merits suits = 76 individual / 22 multi-victim / 13 systemic; multipliers judgment" },
-        { "driver_id": "comparator_witness_volume", "layer": "line", "utbms_rows": ["L110", "L330", "L410"], "mode": "multiplicative", "required": false, "levels": [ { "level": "low_le3", "point": 1.0 }, { "level": "moderate_4_10", "point": 1.45 }, { "level": "high_11_plus", "point": 2.15 } ], "confidence": "judgment", "source": "Judgment (sublinear per-witness)" },
-        { "driver_id": "esi_volume", "layer": "line", "utbms_rows": ["L320", "L310"], "mode": "multiplicative", "required": false, "levels": [ { "level": "low", "point": 1.0 }, { "level": "moderate", "point": 2.15 }, { "level": "high", "point": 4.0, "range": [3.0, 5.0] } ], "confidence": "judgment", "source": "Direction sourced (employment cases ESI-heavy); band judgment; applies to L320 specifically" },
-        { "driver_id": "expert_need", "layer": "line", "utbms_rows": ["L130", "L340", "E119"], "mode": "additive", "required": false, "levels": [ { "level": "none", "additive_delta": 0.0 }, { "level": "single_economist", "additive_delta": 0.4 }, { "level": "multi_disparate_impact", "additive_delta": 1.15 } ], "confidence": "judgment", "source": "Trigger taxonomy anchored (disparate impact => statistician + I/O psych); deltas judgment" },
-        { "driver_id": "punitive_exposure", "layer": "line", "utbms_rows": ["L120", "L240", "L340"], "mode": "multiplicative", "required": false, "levels": [ { "level": "none", "point": 1.0 }, { "level": "pled_plausible", "point": 1.3 }, { "level": "systemic", "point": 2.5 } ], "confidence": "judgment", "source": "Legal standard + EEOC caps sourced; band judgment; member of correlated group (capped composite)" }
+        {
+          "driver_id": "plaintiff_structure",
+          "layer": "line",
+          "utbms_rows": [
+            "L110",
+            "L210",
+            "L250",
+            "L260",
+            "L310",
+            "L320",
+            "L330",
+            "L410"
+          ],
+          "mode": "multiplicative",
+          "required": true,
+          "levels": [
+            {
+              "level": "single",
+              "point": 1.0
+            },
+            {
+              "level": "multi_2_9",
+              "point": 1.9,
+              "range": [
+                1.6,
+                2.2
+              ]
+            },
+            {
+              "level": "class_collective",
+              "point": 6.0,
+              "range": [
+                4.0,
+                8.0
+              ]
+            }
+          ],
+          "confidence": "judgment",
+          "source": "Direction sourced (class = most expensive, multi-year; SHRM/defense-bar); band judgment - no public hours ratio exists"
+        },
+        {
+          "driver_id": "claim_type",
+          "layer": "line",
+          "utbms_rows": [
+            "L110",
+            "L120",
+            "L210",
+            "L310",
+            "L340"
+          ],
+          "mode": "multiplicative",
+          "required": true,
+          "levels": [
+            {
+              "level": "wrongful_termination",
+              "point": 1.0
+            },
+            {
+              "level": "discrimination_retaliation",
+              "point": 1.45
+            },
+            {
+              "level": "harassment",
+              "point": 1.5
+            },
+            {
+              "level": "wage_hour",
+              "point": 1.65
+            }
+          ],
+          "confidence": "anchored",
+          "source": "Novian Law case-type cost/duration ranges (single source); wage-hour = 90% of employment class filings (ADP Research Institute)"
+        },
+        {
+          "driver_id": "admin_posture",
+          "layer": "line",
+          "utbms_rows": [
+            "L100",
+            "L210"
+          ],
+          "mode": "multiplicative",
+          "required": false,
+          "levels": [
+            {
+              "level": "charge_only",
+              "point": 0.22,
+              "range": [
+                0.15,
+                0.3
+              ]
+            },
+            {
+              "level": "suit_after_rts",
+              "point": 1.0
+            },
+            {
+              "level": "eeoc_systemic",
+              "point": 4.5,
+              "range": [
+                3.0,
+                6.0
+              ]
+            }
+          ],
+          "confidence": "anchored",
+          "source": "EEOC FY2024 (primary): 111 merits suits = 76 individual / 22 multi-victim / 13 systemic; multipliers judgment"
+        },
+        {
+          "driver_id": "comparator_witness_volume",
+          "layer": "line",
+          "utbms_rows": [
+            "L110",
+            "L330",
+            "L410"
+          ],
+          "mode": "multiplicative",
+          "required": false,
+          "levels": [
+            {
+              "level": "low_le3",
+              "point": 1.0
+            },
+            {
+              "level": "moderate_4_10",
+              "point": 1.45
+            },
+            {
+              "level": "high_11_plus",
+              "point": 2.15
+            }
+          ],
+          "confidence": "judgment",
+          "source": "Judgment (sublinear per-witness)"
+        },
+        {
+          "driver_id": "esi_volume",
+          "layer": "line",
+          "utbms_rows": [
+            "L320",
+            "L310"
+          ],
+          "mode": "multiplicative",
+          "required": false,
+          "levels": [
+            {
+              "level": "low",
+              "point": 1.0
+            },
+            {
+              "level": "moderate",
+              "point": 2.15
+            },
+            {
+              "level": "high",
+              "point": 4.0,
+              "range": [
+                3.0,
+                5.0
+              ]
+            }
+          ],
+          "confidence": "judgment",
+          "source": "Direction sourced (employment cases ESI-heavy); band judgment; applies to L320 specifically"
+        },
+        {
+          "driver_id": "expert_need",
+          "layer": "line",
+          "utbms_rows": [
+            "L130",
+            "L340",
+            "E119"
+          ],
+          "mode": "additive",
+          "required": false,
+          "levels": [
+            {
+              "level": "none",
+              "additive_delta": 0.0
+            },
+            {
+              "level": "single_economist",
+              "additive_delta": 0.4
+            },
+            {
+              "level": "multi_disparate_impact",
+              "additive_delta": 1.15
+            }
+          ],
+          "confidence": "judgment",
+          "source": "Trigger taxonomy anchored (disparate impact => statistician + I/O psych); deltas judgment"
+        },
+        {
+          "driver_id": "punitive_exposure",
+          "layer": "line",
+          "utbms_rows": [
+            "L120",
+            "L240",
+            "L340"
+          ],
+          "mode": "multiplicative",
+          "required": false,
+          "levels": [
+            {
+              "level": "none",
+              "point": 1.0
+            },
+            {
+              "level": "pled_plausible",
+              "point": 1.3
+            },
+            {
+              "level": "systemic",
+              "point": 2.5
+            }
+          ],
+          "confidence": "judgment",
+          "source": "Legal standard + EEOC caps sourced; band judgment; member of correlated group (capped composite)"
+        }
       ],
       "subtype_priors": {
-        "single_plaintiff_discrimination": { "plaintiff_structure": "single", "claim_type": "discrimination_retaliation" },
-        "harassment": { "claim_type": "harassment", "comparator_witness_volume": "moderate_4_10", "esi_volume": "moderate" },
-        "wage_hour_collective": { "plaintiff_structure": "class_collective", "claim_type": "wage_hour", "expert_need": "single_economist" },
-        "warn_rif_class": { "plaintiff_structure": "class_collective", "esi_volume": "high" }
+        "single_plaintiff_discrimination": {
+          "plaintiff_structure": "single",
+          "claim_type": "discrimination_retaliation"
+        },
+        "harassment": {
+          "claim_type": "harassment",
+          "comparator_witness_volume": "moderate_4_10",
+          "esi_volume": "moderate"
+        },
+        "wage_hour_collective": {
+          "plaintiff_structure": "class_collective",
+          "claim_type": "wage_hour",
+          "expert_need": "single_economist"
+        },
+        "warn_rif_class": {
+          "plaintiff_structure": "class_collective",
+          "esi_volume": "high"
+        }
       }
     },
     "general_premises_liability_defense": {
       "matter_type": "synthetic_gl_premises_defense_v1",
       "universal_overrides": {},
       "drivers": [
-        { "driver_id": "injury_severity", "layer": "line", "utbms_rows": ["L130", "L340", "E119"], "mode": "multiplicative", "required": true, "levels": [ { "level": "soft_tissue", "point": 1.0 }, { "level": "moderate", "point": 2.0, "range": [1.5, 2.5] }, { "level": "catastrophic", "point": 4.5, "range": [3.0, 6.0] } ], "confidence": "judgment", "source": "Direction anchored (BJS premises median award $59K = 2.2x general-tort $27K); band judgment" },
-        { "driver_id": "liability_clarity", "layer": "line", "utbms_rows": ["L110", "L120", "L240"], "mode": "multiplicative", "required": true, "levels": [ { "level": "clear", "point": 0.7 }, { "level": "disputed", "point": 1.0 }, { "level": "heavily_disputed_comparative", "point": 1.55, "range": [1.3, 1.8] } ], "confidence": "anchored", "source": "BJS: 1/3 of premises plaintiff-wins reduced ~42% for comparative fault (highest of any tort); band judgment" },
-        { "driver_id": "notice_complexity", "layer": "line", "utbms_rows": ["L110", "L310"], "mode": "multiplicative", "required": false, "levels": [ { "level": "open_and_obvious", "point": 0.7 }, { "level": "actual_notice", "point": 1.0 }, { "level": "constructive_notice_dispute", "point": 1.7, "range": [1.4, 2.0] } ], "confidence": "judgment", "source": "Direction anchored (open-and-obvious narrowing shifts cases off SJ - defense-bar sources); band judgment" },
-        { "driver_id": "responsible_party_count", "layer": "line", "utbms_rows": ["L110", "L210"], "mode": "multiplicative", "required": false, "levels": [ { "level": "single", "point": 1.0 }, { "level": "owner_plus_manager", "point": 1.45 }, { "level": "three_plus_cross_claims", "point": 2.15, "range": [1.8, 2.5] } ], "confidence": "judgment", "source": "Direction anchored (indemnity/contribution cross-claims routine); band judgment" },
-        { "driver_id": "expert_need", "layer": "line", "utbms_rows": ["L130", "L340", "L420", "E119"], "mode": "multiplicative", "required": false, "levels": [ { "level": "none", "point": 1.0 }, { "level": "single", "point": 1.6 }, { "level": "multi", "point": 2.85, "range": [2.2, 3.5] } ], "confidence": "judgment", "source": "Expert taxonomy + rates sourced (Expert Institute/SEAK); count/hour band judgment" },
-        { "driver_id": "surveillance_sub_rosa", "layer": "line", "utbms_rows": ["L110"], "mode": "additive", "required": false, "levels": [ { "level": "none", "additive_delta": 0.0 }, { "level": "ordered", "additive_delta": 0.2 } ], "confidence": "judgment", "source": "Practice sourced; attorney-hour uplift judgment" },
-        { "driver_id": "prior_incident_discovery", "layer": "line", "utbms_rows": ["L310", "L320"], "mode": "multiplicative", "required": false, "levels": [ { "level": "none", "point": 1.0 }, { "level": "routine_lookback", "point": 1.3 }, { "level": "pattern_notice_dispute", "point": 1.9, "range": [1.6, 2.2] } ], "confidence": "judgment", "source": "Direction anchored (3-5yr lookback standard; contested discovery front - Carlton Fields); band judgment" }
+        {
+          "driver_id": "injury_severity",
+          "layer": "line",
+          "utbms_rows": [
+            "L130",
+            "L340",
+            "E119"
+          ],
+          "mode": "multiplicative",
+          "required": true,
+          "levels": [
+            {
+              "level": "soft_tissue",
+              "point": 1.0
+            },
+            {
+              "level": "moderate",
+              "point": 2.0,
+              "range": [
+                1.5,
+                2.5
+              ]
+            },
+            {
+              "level": "catastrophic",
+              "point": 4.5,
+              "range": [
+                3.0,
+                6.0
+              ]
+            }
+          ],
+          "confidence": "judgment",
+          "source": "Direction anchored (BJS premises median award $59K = 2.2x general-tort $27K); band judgment"
+        },
+        {
+          "driver_id": "liability_clarity",
+          "layer": "line",
+          "utbms_rows": [
+            "L110",
+            "L120",
+            "L240"
+          ],
+          "mode": "multiplicative",
+          "required": true,
+          "levels": [
+            {
+              "level": "clear",
+              "point": 0.7
+            },
+            {
+              "level": "disputed",
+              "point": 1.0
+            },
+            {
+              "level": "heavily_disputed_comparative",
+              "point": 1.55,
+              "range": [
+                1.3,
+                1.8
+              ]
+            }
+          ],
+          "confidence": "anchored",
+          "source": "BJS: 1/3 of premises plaintiff-wins reduced ~42% for comparative fault (highest of any tort); band judgment"
+        },
+        {
+          "driver_id": "notice_complexity",
+          "layer": "line",
+          "utbms_rows": [
+            "L110",
+            "L310"
+          ],
+          "mode": "multiplicative",
+          "required": false,
+          "levels": [
+            {
+              "level": "open_and_obvious",
+              "point": 0.7
+            },
+            {
+              "level": "actual_notice",
+              "point": 1.0
+            },
+            {
+              "level": "constructive_notice_dispute",
+              "point": 1.7,
+              "range": [
+                1.4,
+                2.0
+              ]
+            }
+          ],
+          "confidence": "judgment",
+          "source": "Direction anchored (open-and-obvious narrowing shifts cases off SJ - defense-bar sources); band judgment"
+        },
+        {
+          "driver_id": "responsible_party_count",
+          "layer": "line",
+          "utbms_rows": [
+            "L110",
+            "L210"
+          ],
+          "mode": "multiplicative",
+          "required": false,
+          "levels": [
+            {
+              "level": "single",
+              "point": 1.0
+            },
+            {
+              "level": "owner_plus_manager",
+              "point": 1.45
+            },
+            {
+              "level": "three_plus_cross_claims",
+              "point": 2.15,
+              "range": [
+                1.8,
+                2.5
+              ]
+            }
+          ],
+          "confidence": "judgment",
+          "source": "Direction anchored (indemnity/contribution cross-claims routine); band judgment"
+        },
+        {
+          "driver_id": "expert_need",
+          "layer": "line",
+          "utbms_rows": [
+            "L130",
+            "L340",
+            "L420",
+            "E119"
+          ],
+          "mode": "multiplicative",
+          "required": false,
+          "levels": [
+            {
+              "level": "none",
+              "point": 1.0
+            },
+            {
+              "level": "single",
+              "point": 1.6
+            },
+            {
+              "level": "multi",
+              "point": 2.85,
+              "range": [
+                2.2,
+                3.5
+              ]
+            }
+          ],
+          "confidence": "judgment",
+          "source": "Expert taxonomy + rates sourced (Expert Institute/SEAK); count/hour band judgment"
+        },
+        {
+          "driver_id": "surveillance_sub_rosa",
+          "layer": "line",
+          "utbms_rows": [
+            "L110"
+          ],
+          "mode": "additive",
+          "required": false,
+          "levels": [
+            {
+              "level": "none",
+              "additive_delta": 0.0
+            },
+            {
+              "level": "ordered",
+              "additive_delta": 0.2
+            }
+          ],
+          "confidence": "judgment",
+          "source": "Practice sourced; attorney-hour uplift judgment"
+        },
+        {
+          "driver_id": "prior_incident_discovery",
+          "layer": "line",
+          "utbms_rows": [
+            "L310",
+            "L320"
+          ],
+          "mode": "multiplicative",
+          "required": false,
+          "levels": [
+            {
+              "level": "none",
+              "point": 1.0
+            },
+            {
+              "level": "routine_lookback",
+              "point": 1.3
+            },
+            {
+              "level": "pattern_notice_dispute",
+              "point": 1.9,
+              "range": [
+                1.6,
+                2.2
+              ]
+            }
+          ],
+          "confidence": "judgment",
+          "source": "Direction anchored (3-5yr lookback standard; contested discovery front - Carlton Fields); band judgment"
+        }
       ],
       "subtype_priors": {
         "slip_and_fall": {},
-        "negligent_security": { "liability_clarity": "heavily_disputed_comparative", "expert_need": "multi", "responsible_party_count": "three_plus_cross_claims", "prior_incident_discovery": "pattern_notice_dispute" },
-        "dog_bite": { "responsible_party_count": "single", "prior_incident_discovery": "pattern_notice_dispute" },
-        "product_on_premises": { "expert_need": "multi", "responsible_party_count": "three_plus_cross_claims" }
+        "negligent_security": {
+          "liability_clarity": "heavily_disputed_comparative",
+          "expert_need": "multi",
+          "responsible_party_count": "three_plus_cross_claims",
+          "prior_incident_discovery": "pattern_notice_dispute"
+        },
+        "dog_bite": {
+          "responsible_party_count": "single",
+          "prior_incident_discovery": "pattern_notice_dispute"
+        },
+        "product_on_premises": {
+          "expert_need": "multi",
+          "responsible_party_count": "three_plus_cross_claims"
+        }
       }
     },
     "auto_bodily_injury_defense": {
       "matter_type": "synthetic_auto_bi_defense_v1",
-      "universal_overrides": {},
+      "universal_overrides": {
+        "trial_posture": "trial_likelihood",
+        "appeal": "appeal_likelihood"
+      },
       "drivers": [
-        { "driver_id": "claimant_attorney_involvement", "layer": "line", "utbms_rows": ["L100", "L200", "L300", "L400"], "mode": "multiplicative", "required": true, "levels": [ { "level": "none", "point": 1.0 }, { "level": "early_representation", "point": 1.45 }, { "level": "active_litigation_counsel", "point": 2.5, "range": [2.0, 3.0] } ], "confidence": "anchored", "source": "IRC (~35k closed claims, 12 insurers): represented $77,600 vs unrepresented $22,700 = 3.5x dollars; hour band anchored to ratio" },
-        { "driver_id": "medical_specials_band", "layer": "line", "utbms_rows": ["L100", "L110", "E119"], "mode": "multiplicative", "required": false, "levels": [ { "level": "low", "point": 0.8 }, { "level": "medium", "point": 1.15 }, { "level": "high", "point": 1.8, "range": [1.6, 2.0] } ], "confidence": "judgment", "source": "Severity gradient anchored (IRC: soft-tissue ~40% of PI claims); band judgment" },
-        { "driver_id": "injury_severity_band", "layer": "line", "utbms_rows": ["L100", "L200", "L400", "E119"], "mode": "multiplicative", "required": true, "levels": [ { "level": "minor", "point": 0.85 }, { "level": "moderate", "point": 1.2 }, { "level": "severe", "point": 2.15, "range": [1.8, 2.5] } ], "confidence": "judgment", "source": "Volume distribution sourced (NHTSA CISS: minor/moderate dominate; serious-tail estimates contested 2025); band judgment" },
-        { "driver_id": "liability_clarity", "layer": "line", "utbms_rows": ["L100", "L200"], "mode": "multiplicative", "required": false, "levels": [ { "level": "clear", "point": 0.7 }, { "level": "mixed", "point": 1.0 }, { "level": "disputed", "point": 1.55, "range": [1.4, 1.7] } ], "confidence": "judgment", "source": "Direction anchored (BJS: plaintiffs win 58-61% of auto trials); band judgment" },
-        { "driver_id": "coverage_complication", "layer": "line", "utbms_rows": ["L100", "L200"], "mode": "multiplicative", "required": false, "levels": [ { "level": "none", "point": 1.0 }, { "level": "present", "point": 1.4, "range": [1.3, 1.5] } ], "confidence": "judgment", "source": "No public dataset (UM/UIM/stacking as hour driver); judgment" },
-        { "driver_id": "fact_witness_count", "layer": "line", "utbms_rows": ["L300"], "mode": "multiplicative", "required": false, "levels": [ { "level": "1_2", "point": 1.0 }, { "level": "3_5", "point": 1.3 }, { "level": "6_plus", "point": 1.7 } ], "confidence": "judgment", "source": "Judgment; no witness-count study found" },
-        { "driver_id": "trial_likelihood", "layer": "line", "utbms_rows": ["L400", "E115"], "mode": "multiplicative", "required": false, "levels": [ { "level": "low", "point": 1.0 }, { "level": "medium", "point": 1.5 }, { "level": "high", "point": 3.0 } ], "confidence": "anchored", "source": "Trial rate sourced (~3-5% of PI cases tried; auto = 33% of tort jury trials, BJS); high-band hours judgment" },
-        { "driver_id": "appeal_likelihood", "layer": "line", "utbms_rows": ["L500"], "mode": "multiplicative", "required": false, "levels": [ { "level": "low", "point": 1.0 }, { "level": "medium", "point": 1.3 }, { "level": "high", "point": 1.8 } ], "confidence": "anchored", "source": "Base rate sourced High: ~13-14.7% of tort trials appealed (BJS 2001 & 2005); level multipliers judgment" }
+        {
+          "driver_id": "claimant_attorney_involvement",
+          "layer": "line",
+          "utbms_rows": [
+            "L100",
+            "L200",
+            "L300",
+            "L400"
+          ],
+          "mode": "multiplicative",
+          "required": true,
+          "levels": [
+            {
+              "level": "none",
+              "point": 1.0
+            },
+            {
+              "level": "early_representation",
+              "point": 1.45
+            },
+            {
+              "level": "active_litigation_counsel",
+              "point": 2.5,
+              "range": [
+                2.0,
+                3.0
+              ]
+            }
+          ],
+          "confidence": "anchored",
+          "source": "IRC (~35k closed claims, 12 insurers): represented $77,600 vs unrepresented $22,700 = 3.5x dollars; hour band anchored to ratio"
+        },
+        {
+          "driver_id": "medical_specials_band",
+          "layer": "line",
+          "utbms_rows": [
+            "L100",
+            "L110",
+            "E119"
+          ],
+          "mode": "multiplicative",
+          "required": false,
+          "levels": [
+            {
+              "level": "low",
+              "point": 0.8
+            },
+            {
+              "level": "medium",
+              "point": 1.15
+            },
+            {
+              "level": "high",
+              "point": 1.8,
+              "range": [
+                1.6,
+                2.0
+              ]
+            }
+          ],
+          "confidence": "judgment",
+          "source": "Severity gradient anchored (IRC: soft-tissue ~40% of PI claims); band judgment"
+        },
+        {
+          "driver_id": "injury_severity_band",
+          "layer": "line",
+          "utbms_rows": [
+            "L100",
+            "L200",
+            "L400",
+            "E119"
+          ],
+          "mode": "multiplicative",
+          "required": true,
+          "levels": [
+            {
+              "level": "minor",
+              "point": 0.85
+            },
+            {
+              "level": "moderate",
+              "point": 1.2
+            },
+            {
+              "level": "severe",
+              "point": 2.15,
+              "range": [
+                1.8,
+                2.5
+              ]
+            }
+          ],
+          "confidence": "judgment",
+          "source": "Volume distribution sourced (NHTSA CISS: minor/moderate dominate; serious-tail estimates contested 2025); band judgment"
+        },
+        {
+          "driver_id": "liability_clarity",
+          "layer": "line",
+          "utbms_rows": [
+            "L100",
+            "L200"
+          ],
+          "mode": "multiplicative",
+          "required": false,
+          "levels": [
+            {
+              "level": "clear",
+              "point": 0.7
+            },
+            {
+              "level": "mixed",
+              "point": 1.0
+            },
+            {
+              "level": "disputed",
+              "point": 1.55,
+              "range": [
+                1.4,
+                1.7
+              ]
+            }
+          ],
+          "confidence": "judgment",
+          "source": "Direction anchored (BJS: plaintiffs win 58-61% of auto trials); band judgment"
+        },
+        {
+          "driver_id": "coverage_complication",
+          "layer": "line",
+          "utbms_rows": [
+            "L100",
+            "L200"
+          ],
+          "mode": "multiplicative",
+          "required": false,
+          "levels": [
+            {
+              "level": "none",
+              "point": 1.0
+            },
+            {
+              "level": "present",
+              "point": 1.4,
+              "range": [
+                1.3,
+                1.5
+              ]
+            }
+          ],
+          "confidence": "judgment",
+          "source": "No public dataset (UM/UIM/stacking as hour driver); judgment"
+        },
+        {
+          "driver_id": "fact_witness_count",
+          "layer": "line",
+          "utbms_rows": [
+            "L300"
+          ],
+          "mode": "multiplicative",
+          "required": false,
+          "levels": [
+            {
+              "level": "1_2",
+              "point": 1.0
+            },
+            {
+              "level": "3_5",
+              "point": 1.3
+            },
+            {
+              "level": "6_plus",
+              "point": 1.7
+            }
+          ],
+          "confidence": "judgment",
+          "source": "Judgment; no witness-count study found"
+        },
+        {
+          "driver_id": "trial_likelihood",
+          "layer": "line",
+          "utbms_rows": [
+            "L400",
+            "E115"
+          ],
+          "mode": "multiplicative",
+          "required": false,
+          "levels": [
+            {
+              "level": "low",
+              "point": 1.0
+            },
+            {
+              "level": "medium",
+              "point": 1.5
+            },
+            {
+              "level": "high",
+              "point": 3.0
+            }
+          ],
+          "confidence": "anchored",
+          "source": "Trial rate sourced (~3-5% of PI cases tried; auto = 33% of tort jury trials, BJS); high-band hours judgment"
+        },
+        {
+          "driver_id": "appeal_likelihood",
+          "layer": "line",
+          "utbms_rows": [
+            "L500"
+          ],
+          "mode": "multiplicative",
+          "required": false,
+          "levels": [
+            {
+              "level": "low",
+              "point": 1.0
+            },
+            {
+              "level": "medium",
+              "point": 1.3
+            },
+            {
+              "level": "high",
+              "point": 1.8
+            }
+          ],
+          "confidence": "anchored",
+          "source": "Base rate sourced High: ~13-14.7% of tort trials appealed (BJS 2001 & 2005); level multipliers judgment"
+        }
       ],
       "subtype_priors": {}
     }
@@ -428,23 +1468,39 @@
       "party_count": {
         "kind": "canonical_banded_int",
         "canonical_driver": "party_count",
-        "bands": { "1": "1", "2_3": "2_3", "4_plus": "4_plus" }
+        "bands": {
+          "1": "1",
+          "2_3": "2_3",
+          "4_plus": "4_plus"
+        }
       },
       "injury_severity": {
         "kind": "canonical_level_map",
         "canonical_driver": "damages_severity",
-        "levels": { "soft_tissue": "minor", "surgical": "serious", "catastrophic": "catastrophic" }
+        "levels": {
+          "soft_tissue": "minor",
+          "surgical": "serious",
+          "catastrophic": "catastrophic"
+        }
       },
       "liability_clarity": {
         "kind": "canonical_level_map",
         "canonical_driver": "causation_disputed",
-        "levels": { "clear": "not_disputed", "comparative": "disputed", "disputed": "disputed" },
+        "levels": {
+          "clear": "not_disputed",
+          "comparative": "disputed",
+          "disputed": "disputed"
+        },
         "note": "Lossy: legacy 'comparative' collapsed to 'disputed' (med-mal has no comparative-fault tier); recorded on the assignment"
       },
       "exposure_band": {
         "kind": "canonical_level_map",
         "canonical_driver": "case_stakes",
-        "levels": { "low": "low", "medium": "medium", "high": "high" }
+        "levels": {
+          "low": "low",
+          "medium": "medium",
+          "high": "high"
+        }
       },
       "venue": {
         "kind": "posture_flag_passthrough",

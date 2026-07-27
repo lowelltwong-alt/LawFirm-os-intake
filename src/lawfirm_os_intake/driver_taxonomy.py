@@ -33,11 +33,11 @@ from .models import CanonicalDriverAssignment, CanonicalDriverProfile
 from .util import digest_json
 
 CONTRACT_REF = "config/budget-driver-taxonomy.v1.json"
-EXPECTED_CONTRACT_DIGEST = "4fd1f971b46f8983f8bac0f9b81cb2310f69a3853c9d2adb2ea3e227d3403185"
+EXPECTED_CONTRACT_DIGEST = "587e3b92906bfea2de73921a6fcdda578e497f9bf319e2283555ccf7c49d0d88"
 
 _NOT_ELICITED_NOTE = (
     "not elicited at intake; neutral multiplier 1.0 applied as a rule-attributed "
-    "assumption per budget-driver-taxonomy@1.0.0-candidate"
+    "assumption per budget-driver-taxonomy@1.1.0-candidate"
 )
 
 

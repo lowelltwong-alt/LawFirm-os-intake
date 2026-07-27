@@ -35,7 +35,7 @@ def test_contract_loads_and_digest_is_pinned(repo_root):
     assert contract["status"] == "candidate"
     assert contract["calibrated"] is False
     assert contract["reference_class_only"] is True
-    assert EXPECTED_CONTRACT_DIGEST.startswith("4fd1f971")
+    assert EXPECTED_CONTRACT_DIGEST.startswith("587e3b92")
 
 
 def test_tampered_contract_is_rejected(repo_root, tmp_path):
