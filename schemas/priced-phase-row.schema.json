@@ -1,0 +1,93 @@
+{
+  "$defs": {
+    "PricedRoleCell": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "senior_attorney",
+            "junior_attorney",
+            "paralegal"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "weight": {
+          "title": "Weight",
+          "type": "string"
+        },
+        "hours": {
+          "title": "Hours",
+          "type": "string"
+        },
+        "rate_minor_units": {
+          "minimum": 0,
+          "title": "Rate Minor Units",
+          "type": "integer"
+        },
+        "dollars_minor_units": {
+          "minimum": 0,
+          "title": "Dollars Minor Units",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "role",
+        "weight",
+        "hours",
+        "rate_minor_units",
+        "dollars_minor_units"
+      ],
+      "title": "PricedRoleCell",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "phase": {
+      "enum": [
+        "L100",
+        "L200",
+        "L300",
+        "L400",
+        "L500"
+      ],
+      "title": "Phase",
+      "type": "string"
+    },
+    "base_hours": {
+      "title": "Base Hours",
+      "type": "string"
+    },
+    "multiplier": {
+      "title": "Multiplier",
+      "type": "string"
+    },
+    "adjusted_hours": {
+      "title": "Adjusted Hours",
+      "type": "string"
+    },
+    "role_cells": {
+      "items": {
+        "$ref": "#/$defs/PricedRoleCell"
+      },
+      "title": "Role Cells",
+      "type": "array"
+    },
+    "dollars_minor_units": {
+      "minimum": 0,
+      "title": "Dollars Minor Units",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "phase",
+    "base_hours",
+    "multiplier",
+    "adjusted_hours",
+    "role_cells",
+    "dollars_minor_units"
+  ],
+  "title": "PricedPhaseRow",
+  "type": "object"
+}

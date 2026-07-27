@@ -1,0 +1,291 @@
+{
+  "$defs": {
+    "AppliedDriverEffect": {
+      "additionalProperties": false,
+      "properties": {
+        "driver_id": {
+          "title": "Driver Id",
+          "type": "string"
+        },
+        "level": {
+          "title": "Level",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "multiplicative",
+            "additive"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "factor": {
+          "title": "Factor",
+          "type": "string"
+        },
+        "phases": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Phases",
+          "type": "array"
+        },
+        "confidence": {
+          "title": "Confidence",
+          "type": "string"
+        },
+        "source": {
+          "default": "",
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "driver_id",
+        "level",
+        "mode",
+        "factor",
+        "phases",
+        "confidence"
+      ],
+      "title": "AppliedDriverEffect",
+      "type": "object"
+    },
+    "PricedPhaseRow": {
+      "additionalProperties": false,
+      "properties": {
+        "phase": {
+          "enum": [
+            "L100",
+            "L200",
+            "L300",
+            "L400",
+            "L500"
+          ],
+          "title": "Phase",
+          "type": "string"
+        },
+        "base_hours": {
+          "title": "Base Hours",
+          "type": "string"
+        },
+        "multiplier": {
+          "title": "Multiplier",
+          "type": "string"
+        },
+        "adjusted_hours": {
+          "title": "Adjusted Hours",
+          "type": "string"
+        },
+        "role_cells": {
+          "items": {
+            "$ref": "#/$defs/PricedRoleCell"
+          },
+          "title": "Role Cells",
+          "type": "array"
+        },
+        "dollars_minor_units": {
+          "minimum": 0,
+          "title": "Dollars Minor Units",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "phase",
+        "base_hours",
+        "multiplier",
+        "adjusted_hours",
+        "role_cells",
+        "dollars_minor_units"
+      ],
+      "title": "PricedPhaseRow",
+      "type": "object"
+    },
+    "PricedRoleCell": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "senior_attorney",
+            "junior_attorney",
+            "paralegal"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "weight": {
+          "title": "Weight",
+          "type": "string"
+        },
+        "hours": {
+          "title": "Hours",
+          "type": "string"
+        },
+        "rate_minor_units": {
+          "minimum": 0,
+          "title": "Rate Minor Units",
+          "type": "integer"
+        },
+        "dollars_minor_units": {
+          "minimum": 0,
+          "title": "Dollars Minor Units",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "role",
+        "weight",
+        "hours",
+        "rate_minor_units",
+        "dollars_minor_units"
+      ],
+      "title": "PricedRoleCell",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Deterministically priced work plan from a CanonicalDriverProfile.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "plan_id": {
+      "title": "Plan Id",
+      "type": "string"
+    },
+    "line_id": {
+      "title": "Line Id",
+      "type": "string"
+    },
+    "profile_id": {
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "contract_id": {
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "contract_version": {
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "contract_digest": {
+      "title": "Contract Digest",
+      "type": "string"
+    },
+    "clcm_case_type": {
+      "title": "Clcm Case Type",
+      "type": "string"
+    },
+    "total_base_hours": {
+      "title": "Total Base Hours",
+      "type": "string"
+    },
+    "carrier_id": {
+      "title": "Carrier Id",
+      "type": "string"
+    },
+    "state": {
+      "title": "State",
+      "type": "string"
+    },
+    "phase_rows": {
+      "items": {
+        "$ref": "#/$defs/PricedPhaseRow"
+      },
+      "title": "Phase Rows",
+      "type": "array"
+    },
+    "applied_drivers": {
+      "items": {
+        "$ref": "#/$defs/AppliedDriverEffect"
+      },
+      "title": "Applied Drivers",
+      "type": "array"
+    },
+    "neutral_assumed_driver_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Neutral Assumed Driver Ids",
+      "type": "array"
+    },
+    "posture_flags": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Posture Flags",
+      "type": "object"
+    },
+    "total_adjusted_hours": {
+      "title": "Total Adjusted Hours",
+      "type": "string"
+    },
+    "total_dollars_minor_units": {
+      "minimum": 0,
+      "title": "Total Dollars Minor Units",
+      "type": "integer"
+    },
+    "expense_rows_note": {
+      "default": "E-code expense rows (E115 court reporter, E119 experts) are excluded from attorney-hour pricing; expenses are a separate layer",
+      "title": "Expense Rows Note",
+      "type": "string"
+    },
+    "reference_class_only": {
+      "const": true,
+      "default": true,
+      "title": "Reference Class Only",
+      "type": "boolean"
+    },
+    "calibrated": {
+      "const": false,
+      "default": false,
+      "title": "Calibrated",
+      "type": "boolean"
+    },
+    "real_world_accuracy_claim": {
+      "const": false,
+      "default": false,
+      "title": "Real World Accuracy Claim",
+      "type": "boolean"
+    },
+    "dollars_remain_deterministic": {
+      "const": true,
+      "default": true,
+      "title": "Dollars Remain Deterministic",
+      "type": "boolean"
+    },
+    "candidate_only": {
+      "const": true,
+      "default": true,
+      "title": "Candidate Only",
+      "type": "boolean"
+    },
+    "non_authoritative": {
+      "const": true,
+      "default": true,
+      "title": "Non Authoritative",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "plan_id",
+    "line_id",
+    "profile_id",
+    "contract_id",
+    "contract_version",
+    "contract_digest",
+    "clcm_case_type",
+    "total_base_hours",
+    "carrier_id",
+    "state",
+    "phase_rows",
+    "applied_drivers",
+    "total_adjusted_hours",
+    "total_dollars_minor_units"
+  ],
+  "title": "CanonicalPricedWorkPlan",
+  "type": "object"
+}

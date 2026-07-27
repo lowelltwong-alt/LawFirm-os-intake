@@ -10385,6 +10385,130 @@ class CanonicalDriverProfile(StrictModel):
         return self
 
 
+# --- DT2: deterministic canonical pricing (phase hours x drivers x rates) ------
+#
+# Every stored value is recomputable from sibling fields with fixed quantization
+# rules (hours 4dp HALF_UP; cell dollars = hours x rate_minor rounded HALF_UP to
+# integer minor units). Tampering any cell, multiplier, or total fails validation.
+
+
+def _dec(value: str) -> "Decimal":
+    from decimal import Decimal
+
+    return Decimal(value)
+
+
+class PricedRoleCell(StrictModel):
+    role: Literal["senior_attorney", "junior_attorney", "paralegal"]
+    weight: str
+    hours: str
+    rate_minor_units: int = Field(ge=0)
+    dollars_minor_units: int = Field(ge=0)
+
+    @model_validator(mode="after")
+    def _cell_recomputed(self) -> "PricedRoleCell":
+        from decimal import ROUND_HALF_UP
+
+        expected = int(
+            (_dec(self.hours) * self.rate_minor_units).to_integral_value(rounding=ROUND_HALF_UP)
+        )
+        if self.dollars_minor_units != expected:
+            raise ValueError(
+                f"role cell dollars {self.dollars_minor_units} != recomputed {expected}"
+            )
+        return self
+
+
+class PricedPhaseRow(StrictModel):
+    phase: Literal["L100", "L200", "L300", "L400", "L500"]
+    base_hours: str
+    multiplier: str
+    adjusted_hours: str
+    role_cells: list[PricedRoleCell]
+    dollars_minor_units: int = Field(ge=0)
+
+    @model_validator(mode="after")
+    def _row_recomputed(self) -> "PricedPhaseRow":
+        from decimal import ROUND_HALF_UP, Decimal
+
+        quantum = Decimal("0.0001")
+        expected_adjusted = (_dec(self.base_hours) * _dec(self.multiplier)).quantize(
+            quantum, rounding=ROUND_HALF_UP
+        )
+        if _dec(self.adjusted_hours) != expected_adjusted:
+            raise ValueError("adjusted_hours does not equal base_hours x multiplier")
+        if not self.role_cells:
+            raise ValueError("a priced phase row requires role cells")
+        for cell in self.role_cells:
+            expected_hours = (expected_adjusted * _dec(cell.weight)).quantize(
+                quantum, rounding=ROUND_HALF_UP
+            )
+            if _dec(cell.hours) != expected_hours:
+                raise ValueError(
+                    f"{self.phase}/{cell.role} hours {cell.hours} != recomputed {expected_hours}"
+                )
+        if self.dollars_minor_units != sum(c.dollars_minor_units for c in self.role_cells):
+            raise ValueError("phase dollars do not equal the sum of role cells")
+        return self
+
+
+class AppliedDriverEffect(StrictModel):
+    driver_id: str
+    level: str
+    mode: Literal["multiplicative", "additive"]
+    factor: str
+    phases: list[str]
+    confidence: str
+    source: str = ""
+
+
+class CanonicalPricedWorkPlan(StrictModel):
+    """Deterministically priced work plan from a CanonicalDriverProfile."""
+
+    schema_version: str = "0.1"
+    plan_id: str
+    line_id: str
+    profile_id: str
+    contract_id: str
+    contract_version: str
+    contract_digest: str
+    clcm_case_type: str
+    total_base_hours: str
+    carrier_id: str
+    state: str
+    phase_rows: list[PricedPhaseRow]
+    applied_drivers: list[AppliedDriverEffect]
+    neutral_assumed_driver_ids: list[str] = Field(default_factory=list)
+    posture_flags: dict[str, str] = Field(default_factory=dict)
+    total_adjusted_hours: str
+    total_dollars_minor_units: int = Field(ge=0)
+    expense_rows_note: str = (
+        "E-code expense rows (E115 court reporter, E119 experts) are excluded from "
+        "attorney-hour pricing; expenses are a separate layer"
+    )
+    reference_class_only: Literal[True] = True
+    calibrated: Literal[False] = False
+    real_world_accuracy_claim: Literal[False] = False
+    dollars_remain_deterministic: Literal[True] = True
+    candidate_only: Literal[True] = True
+    non_authoritative: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _plan_recomputed(self) -> "CanonicalPricedWorkPlan":
+        phases = [row.phase for row in self.phase_rows]
+        if phases != ["L100", "L200", "L300", "L400", "L500"]:
+            raise ValueError("phase rows must cover L100..L500 exactly once, in order")
+        expected_total = sum(row.dollars_minor_units for row in self.phase_rows)
+        if self.total_dollars_minor_units != expected_total:
+            raise ValueError(
+                f"total dollars {self.total_dollars_minor_units} != recomputed {expected_total}"
+            )
+        expected_hours = sum((_dec(row.adjusted_hours) for row in self.phase_rows))
+        if _dec(self.total_adjusted_hours) != expected_hours:
+            raise ValueError("total_adjusted_hours does not equal the sum of phase rows")
+        return self
+
+
 class FirmCheckpointCaseDisposition(StrictModel):
     """Firm disposition for one checkpoint case. Real firm review is a human gate;
     synthetic placeholders are explicitly labeled and never real validation."""
