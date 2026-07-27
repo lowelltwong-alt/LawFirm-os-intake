@@ -45,7 +45,7 @@ from .models import (
     GradedDimensionScore,
     IntakePreflightPacket,
 )
-from .util import digest_json, digest_text, load_json, now_iso, write_json
+from .util import digest_json, digest_text, load_json, load_jsonl, now_iso, write_json
 
 CONDITION_GRADING_REPORT_FILENAME = "condition_grading_report.json"
 CONDITION_GRADING_NOTES_FILENAME = "condition_grading_report.md"
@@ -226,6 +226,11 @@ def _grade_gold(
             note="intake_preflight_packet.json absent from the run directory",
         )
     packet = IntakePreflightPacket.model_validate(load_json(packet_path))
+    # The gold exception-label check compares against the run's dry-run
+    # exception candidates; omitting them scores recall against an empty list.
+    # That omission was this module's own first defect, caught by decomposing
+    # the very scores it produces (grader_defect, per the failure taxonomy).
+    exception_candidates = load_jsonl(run_dir / "exception_lake_candidates.jsonl")
     passed = failed = 0
     for gold_ref in gold_refs:
         gold = FixtureGoldSpec.model_validate(load_json(repo_root / gold_ref))
@@ -235,6 +240,7 @@ def _grade_gold(
             packet=packet,
             stage="preflight",
             evaluated_artifact_refs={"preflight_packet": str(packet_path)},
+            preflight_exception_candidates=exception_candidates,
         )
         passed += sum(1 for check in gold_report.checks if check.status == "passed")
         failed += sum(1 for check in gold_report.checks if check.status == "failed")

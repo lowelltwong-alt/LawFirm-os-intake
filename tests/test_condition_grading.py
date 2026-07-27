@@ -108,6 +108,34 @@ def test_development_grading_exercises_the_gold_path(repo_root: Path, tmp_path: 
     assert aggregate.mean_score is not None
 
 
+def test_gold_grading_passes_exception_candidates_through(repo_root: Path, tmp_path: Path) -> None:
+    """Regression for this module's own first defect: the gold exception-label
+    check compares against the run's dry-run exception candidates, and omitting
+    them scored recall against an empty list (a grader_defect, caught by
+    decomposing the score). Both gold-mapped cases must now conform fully."""
+
+    comparison_dir = _comparison(repo_root, tmp_path, partition="development")
+    report, _ = run_condition_grading(
+        comparison_dir=comparison_dir,
+        split_manifest_path=repo_root / SPLIT_REF,
+        out_dir=tmp_path / "grading-dev",
+        repo_root=repo_root,
+        generated_at="2026-07-27T00:00:00Z",
+    )
+
+    gold_scores = [
+        item
+        for item in report.scores
+        if item.dimension == "gold_conformance" and item.basis == "gold_compared"
+    ]
+    assert gold_scores, "gold-mapped cases must be graded"
+    for item in gold_scores:
+        assert item.score == 1.0, (
+            f"{item.case_ref}: {item.numerator}/{item.denominator} — an exception-label "
+            "recall failure here usually means candidates were not passed to the gold builder"
+        )
+
+
 def test_ranking_cannot_be_edited_into_the_report(repo_root: Path, tmp_path: Path) -> None:
     comparison_dir = _comparison(repo_root, tmp_path)
     _, out_dir = run_condition_grading(
