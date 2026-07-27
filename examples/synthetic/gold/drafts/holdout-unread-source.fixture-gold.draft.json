@@ -1,0 +1,64 @@
+{
+  "schema_version": "0.1",
+  "applies_to": "preflight",
+  "reviewed": false,
+  "reviewer_id": "PENDING-OWNER-REVIEW",
+  "reviewed_at": "PENDING",
+  "data_scope": "synthetic_only",
+  "expected_preflight_status": "human_intake_review_required",
+  "require_source_bound_evidence": true,
+  "expected_prohibited_next_steps": [
+    "do_not_clear_conflicts",
+    "do_not_accept_representation",
+    "do_not_send_client_or_carrier_communications",
+    "do_not_open_matter_or_imanage_workspace",
+    "do_not_docket_deadlines",
+    "do_not_submit_budget"
+  ],
+  "gold_id": "fixture-gold-holdout-unread-source-draft-v0-1",
+  "fixture_id": "syn-bundle-holdout-unread-source-001",
+  "expected_source_coverage": {
+    "coverage_complete": false
+  },
+  "expected_source_states": [
+    {
+      "source_id": "syn-unread-email-001",
+      "read_state": "read",
+      "availability_state": "available"
+    },
+    {
+      "source_id": "syn-unread-guidelines-001",
+      "read_state": "unread",
+      "availability_state": "available"
+    }
+  ],
+  "expected_party_role_candidates": {
+    "Harbor Point Insurance": [
+      "insurance_carrier",
+      "payer"
+    ],
+    "Dr. Maya Chen": [
+      "insured_or_prospective_represented_client"
+    ],
+    "John Smith": [
+      "claimant_or_adverse_party"
+    ]
+  },
+  "expected_missing_information": [
+    "incident_date",
+    "jurisdiction",
+    "response_or_reporting_deadline"
+  ],
+  "expected_critic_finding_codes": [
+    "ROLE_CANDIDATES_AMBIGUOUS",
+    "DATE_OR_DEADLINE_REQUIRES_REVIEW",
+    "MISSING_REQUIRED_INTAKE_INFORMATION"
+  ],
+  "expected_preflight_exception_labels": [
+    "source_unread",
+    "critic_role_candidates_ambiguous",
+    "critic_date_or_deadline_requires_review",
+    "critic_missing_required_intake_information",
+    "intake_escalation_required"
+  ]
+}
